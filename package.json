@@ -1,0 +1,16 @@
+{
+  "name": "sample",
+  "version": "1.0.0",
+  "description": "Sample",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/XfortunaX/sample.git"
+  },
+  "keywords": [],
+  "author": "",
+  "homepage": "https://github.com/XfortunaX/sample.git#readme"
+}

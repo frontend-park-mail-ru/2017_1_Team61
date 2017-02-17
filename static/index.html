@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="css/index.css">
+	<title>Test</title>
+</head>
+<body>
+
+    <style>
+        @import "compass/css3";
+
+        body {
+            background-color: #232876;
+        }
+
+        .head {
+            text-align: center;
+            font-size: 3em;
+            color: deeppink;
+        }
+
+        .flex-container {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+
+            display: -webkit-box;
+            display: -moz-box;
+            display: -ms-flexbox;
+            display: -webkit-flex;
+            display: flex;
+
+            -webkit-flex-flow: row wrap;
+            justify-content: space-around;
+        }
+
+        .group-2 {
+            margin: 50px;
+        }
+
+        .flex-item {
+            padding: 5px;
+            width: 200px;
+            height: 150px;
+            margin-top: 10px;
+
+            line-height: 150px;
+            color: black;
+            font-weight: bold;
+            font-size: 2.5em;
+            text-align: center;
+        }
+
+        #new-game {
+            margin: 40px;
+            background: #FFC342;
+            width: 250px;
+            height: 250px;
+            border-radius: 5em;
+            line-height: 250px;
+        }
+
+        #profile {
+            background: #18A7B5;
+        }
+
+        #rating {
+            background: #F75E25;
+        }
+
+        #achievement {
+            font-size: 2em;
+            background: #387901;
+        }
+
+        #exit {
+            background: #374030;
+            color: white;
+        }
+
+    </style>
+
+    <div class="head">
+        <h1>FastBall</h1>
+    </div>
+
+	<ul class="flex-container group-1">
+		<li class="flex-item" id="rating" onclick='location.href="/rating"'>Рейтинг</li>
+		<li class="flex-item" id="achievement" onclick='location.href="/achievement"'>Достижения</li>
+	</ul>
+
+    <ul class="flex-container group-2">
+        <li class="flex-item" id="profile" onclick='location.href="/profile"'>Профиль</li>
+        <li class="flex-item" id="new-game" onclick='location.href="/game"'>Новая игра</li>
+        <li class="flex-item" id="exit" onclick='location.href="/game"'>Выход</li>
+    </ul>
+
+ <!--   <script>
+        'use strict';
+
+        // Получаем ссылки на элементы страницы:
+        const game = document.getElementById('new game');
+        const profile = document.getElementById('profile');
+        const rating = document.getElementById('rating');
+        const achievement  = document.getElementById('achievement');
+        const exit  = document.getElementById('exit');
+
+        // Добавляем функцию, которая будет вызываться при
+        // клике на кнопку
+
+        game.onclick = function () {
+            location.href="/game";
+        }
+        profile.onclick = function () {
+            location.href="/profile";
+        }
+        rating.onclick = function () {
+            location.href="/rating";
+        }
+        achievement.onclick = function () {
+            location.href="/achievement";
+        }
+        exit.onclick = function () {
+            location.href="/game";
+        }
+    </script> -->
+
+
+<!--	<h3><button id="new_game"><a href="/game">Новая игра</a></button></h3>
+	<h3><button id="profile"><a href="/profile">Профиль</a></button></h3>
+	<h3><button id="rating"><a href="/rating">Рейтинг</a></button></h3>
+	<h3><button id="achievement"><a href="/achievement">Достижения</a></button></h3>
+	<h3><button id="exit"><a href="/">Выход</a></button></h3> -->
+
+
+<!--	<div>
+		<label for="input">Введите имя:</label>
+		<input type="text" id="input">
+		<br/>
+		<button id="button">Обновить ссылку!</button>
+	</div>
+	<h3>
+		<a href="" id="link">Тут пока пусто</a>
+	</h3>
+
+	<script>
+		'use strict';
+
+		// Получаем ссылки на элементы страницы:
+		const button = document.getElementById('button');
+		const input = document.getElementById('input');
+		const link = document.getElementById('link');
+
+		// Добавляем функцию, которая будет вызываться при
+		// клике на кнопку
+		button.onclick = function () {
+			// Получаем введённое значение
+			const name = input.value;
+			// Обновляем ссылку
+			link.href = `/hello?name=${name}`;
+			// Обновляем надпись на ссылке
+			link.textContent = `Открыть ${link.href}`;
+		}
+	</script> -->
+
+</body>
+</html>
