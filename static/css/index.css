@@ -1,0 +1,79 @@
+body {
+    background: -webkit-linear-gradient(top, #1B6990, #141C4C);
+    user-select: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+.head {
+    text-align: center;
+    font-size: 2.2em;
+    color: deeppink;
+}
+
+.menu__group-1, .menu__group-2 {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+
+    -webkit-flex-flow: row wrap;
+    justify-content: space-around;
+}
+
+.menu__group-2 {
+    margin: 50px;
+}
+
+.group-1__item, .group-2__item {
+    padding: 5px;
+    width: 200px;
+    height: 150px;
+    margin-top: 10px;
+
+    line-height: 150px;
+    color: black;
+    font-weight: bold;
+    font-size: 2.5em;
+    text-align: center;
+}
+
+.new-game {
+    margin: 40px;
+    background: -webkit-linear-gradient(top left, #FDD835, #FFF59D, #FDD835);
+    border: 12px outset #FFF59D;
+    width: 250px;
+    height: 250px;
+    border-radius: 5em;
+    line-height: 250px;
+}
+
+.profile {
+    background: -webkit-linear-gradient(top, #184177, #18A7B5, #184177);
+    border: 6px outset #18A7B5;
+}
+
+.rating {
+    background: -webkit-linear-gradient(top, #FB8C00, #FFCA28, #FB8C00);
+    border: 6px outset #FFCA28;
+}
+
+.achievement {
+    font-size: 2em;
+    background: -webkit-linear-gradient(top, #004D40, #00897B, #004D40);
+    border: 6px outset #00897B;
+}
+
+.exit {
+    background: -webkit-linear-gradient(top, #424242, #757575, #424242);
+    border: 6px outset #757575;
+    color: white;
+}
+

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/achievement.css">
+    <title>Achievement</title>
+</head>
+<body>
+
+    <div class="achivement_page">
+        <a href="/"><div class="return-on-main">На главную</div></a>
+
+        <div class="head">Достижения</div>
+
+        <div class="content">
+            <div class="achievement">
+                <ul class="achievement__list" id="achiv_list">
+                    <!--<li class="flex-item" id="back">вперед</li>-->
+                    <li class="achievement__list__item"><img src="/images/achievement_1.png"></li>
+                    <li class="achievement__list__item"><img src="/images/achievement_2.png"></li>
+                    <li class="achievement__list__item"><img src="/images/achievement_3.png"></li>
+                    <li class="achievement__list__item"><img src="/images/achievement_4.png"></li>
+                    <li class="achievement__list__item"><img src="/images/achievement_5.png"></li>
+                    <li class="achievement__list__item"><img src="/images/achievement_6.png"></li>
+                    <li class="achievement__list__item"><img src="/images/achievement_7.png"></li>
+                    <li class="achievement__list__item"><img src="/images/achievement_8.png"></li>
+                    <!--<li class="flex-item" id="forward">назад</li>-->
+                </ul>
+                <div class="achievement__description" id="achiv_descr">
+                    <div class="achievement__description__item">
+                        <h3>Какое-то интересное и увлекательное описание достижения 1</h3>
+                    </div>
+                    <div class="achievement__description__item">
+                        <h3>Какое-то интересное и увлекательное описание достижения 2</h3>
+                    </div>
+                    <div class="achievement__description__item">
+                        <h3>Какое-то интересное и увлекательное описание достижения 3</h3>
+                    </div>
+                    <div class="achievement__description__item">
+                        <h3>Какое-то интересное и увлекательное описание достижения 4</h3>
+                    </div>
+                    <div class="achievement__description__item">
+                        <h3>Какое-то интересное и увлекательное описание достижения 5</h3>
+                    </div>
+                    <div class="achievement__description__item">
+                        <h3>Какое-то интересное и увлекательное описание достижения 6</h3>
+                    </div>
+                    <div class="achievement__description__item">
+                        <h3>Какое-то интересное и увлекательное описание достижения 7</h3>
+                    </div>
+                    <div class="achievement__description__item">
+                        <h3>Какое-то интересное и увлекательное описание достижения 8</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        var achivement_list = document.getElementById("achiv_list");
+        var list_ach = achivement_list.getElementsByTagName('*');
+        var achivement_descr = document.getElementById("achiv_descr");
+        var list_descr = achivement_descr.getElementsByTagName('*');
+
+        window.onload = function() {
+            list_ach[0].style.width = 240 + 'px';
+            list_ach[0].style.height = 240 + 'px';
+            list_ach[0].getElementsByTagName("img")[0].style.width = 240 + 'px';
+            list_ach[0].getElementsByTagName("img")[0].style.height = 240 + 'px';
+            list_descr[0].style.display = 'inline';
+        };
+
+        for(let i = 0; i < list_ach.length; i += 2) {
+            list_ach[i].onmouseover = function() {
+                for(let j = 0; j < list_ach.length; j += 2) {
+                    list_ach[j].style.width = 150 + 'px';
+                    list_ach[j].style.height = 150 + 'px';
+                    list_ach[j].getElementsByTagName("img")[0].style.width = 150 + 'px';
+                    list_ach[j].getElementsByTagName("img")[0].style.height = 150 + 'px';
+                    list_descr[j].style.display = 'none';
+                }
+                list_ach[i].style.width = 240 + 'px';
+                list_ach[i].style.height = 240 + 'px';
+                list_ach[i].getElementsByTagName("img")[0].style.width = 240 + 'px';
+                list_ach[i].getElementsByTagName("img")[0].style.height = 240 + 'px';
+                list_descr[i].style.display = 'inline';
+                 achivement_list.onwheel = function (e) {
+                    var delta = e.deltaY || e.detail || e.wheelDelta;
+                    if(delta > 0) {
+                        achivement_list.scrollLeft += 40;
+                    } else {
+                        achivement_list.scrollLeft -= 40;
+                    }
+                }
+            };
+        };
+
+    </script>
+
+</body>
+</html>
