@@ -7,13 +7,17 @@ a {
     text-decoration: none;
 }
 
-.head {
+.title {
+    margin-top: 40px;
+    margin-bottom: 15px;
+
     text-align: center;
-    font-size: 2.2em;
+    font-size: 5em;
+    font-weight: bold;
     color: deeppink;
 }
 
-.menu__group-1, .menu__group-2 {
+.list {
     padding: 0;
     margin: 0;
     list-style: none;
@@ -28,14 +32,14 @@ a {
     justify-content: space-around;
 }
 
-.menu__group-2 {
+.list-down {
     margin: 50px;
 }
 
-.group-1__item, .group-2__item {
-    padding: 5px;
+.list__item {
     width: 200px;
     height: 150px;
+    padding: 5px;
     margin-top: 10px;
 
     line-height: 150px;
@@ -46,12 +50,13 @@ a {
 }
 
 .new-game {
+    width: 250px;
+    height: 250px;
     margin: 40px;
     background: -webkit-linear-gradient(top left, #FDD835, #FFF59D, #FDD835);
     border: 12px outset #FFF59D;
-    width: 250px;
-    height: 250px;
     border-radius: 5em;
+
     line-height: 250px;
 }
 

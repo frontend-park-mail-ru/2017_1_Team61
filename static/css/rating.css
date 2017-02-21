@@ -7,16 +7,32 @@ a {
     text-decoration: none;
 }
 
-.head {
+.title {
+    margin-top: 15px;
+    margin-bottom: 15px;
+
     text-align: center;
     font-size: 3.5em;
     font-weight: bold;
     color: black;
-    margin-top: 15px;
-    margin-bottom: 15px;
 }
 
-.rating__selection, .rating__best {
+.return-on-main {
+    width: 150px;
+    height: 50px;
+    margin-top: 20px;
+    margin-left: 10px;
+    background: -webkit-linear-gradient(top, #FB8C00, #FFCA28, #FB8C00);
+    border: 6px outset #FFCA28;
+
+    text-align: center;
+    font-weight: bold;
+    line-height: 50px;
+    font-size: 1.5em;
+    color: black;
+}
+
+.list {
     padding: 0;
     list-style: none;
 
@@ -31,54 +47,79 @@ a {
     justify-content: center;
 }
 
-.rating__selection {
+.selection__list {
     width: 60%;
     margin-left: 20%;
     margin-top: 25px;
     margin-bottom: 15px;
-    background: -webkit-linear-gradient(top, #4DB6AC, #03A9F4, #4DB6AC);
-    border: 6px outset #03A9F4;
+
+    background: -webkit-linear-gradient(top, #6A1B9A, #AB47BC, #6A1B9A);
+    border: 6px outset #AB47BC;
     border-radius: 5em;
 }
 
-.rating__best {
+.rating__list {
     width: 50%;
     margin-left: 25%;
     margin-top: 0px;
     margin-bottom: 5px;
+
     background: -webkit-linear-gradient(top, #4DB6AC, #90CAF9, #4DB6AC);
-    border: 2px outset #90CAF9;
+    opacity: 0.7;
 }
 
-.rating__selection__item, .rating__best__item, .return-on-main {
-    display: inline-block;
+.first {
+    width: 60%;
+    height: 80px;
+    margin-left: 20%;
+}
 
-    user-select: none;
+.first .list__item{
+    line-height: 80px;
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+.second {
+    width: 56.6%;
+    height: 72px;
+    margin-left: 21.7%;
+}
+
+.second .list__item{
+    line-height: 72px;
+    margin-left: 4%;
+    margin-right: 4%;
+}
+
+.third {
+    width: 53.3%;
+    height: 64px;
+    margin-left: 23.3%;
+}
+
+.third .list__item{
+    line-height: 64px;
+    margin-left: 2%;
+    margin-right: 2%;
+}
+
+.list__item {
+    width: 200px;
+    height: 50px;
+
+    display: inline-block;
 
     line-height: 50px;
     color: black;
     font-weight: bold;
     font-size: 1.5em;
     text-align: center;
-
-    color: #333;
-    text-align: center;
-    width: 200px;
-    height: 50px;
 }
 
-.return-on-main {
-    width: 150px;
-    height: 50px;
-    background: -webkit-linear-gradient(top, #FB8C00, #FFCA28, #FB8C00);
-    border: 6px outset #FFCA28;
-    text-align: center;
-    text-weight: bold;
-
-    line-height: 50px;
-    font-size: 1.5em;
-    color: black;
-    margin: 20px;
+.selection__list .list__item {
+    margin-left: 5%;
+    margin-right: 5%;
 }
 
 .score:hover, .quickness:hover, .friend-duel:hover {

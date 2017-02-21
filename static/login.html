@@ -7,26 +7,31 @@
 </head>
 <body>
 
-    <div>
-        <h1>Регистрация</h1>
-    </div>
+    <div class="login-page">
 
-    <div>
-        <h2><button id="return">На главную</button></h2>
-    </div>
+        <div class="title">FastBall</div>
 
-    <div>
-        <div>
-            <label for="nickname">Введите имя:</label>
-            <input type="text" id="nickname">
+        <div class="content">
+            <form class="input-form" method="post" action="/index.html">
+                <div class="input-block input-e-mail">
+                     <input class="input-block__e-mail" type="text" placeholder="E-mail вашей учетной записи">
+                </div>
+                <div class="input-block input-password">
+                    <input class="input-block__password" type="password" placeholder="Ваш пароль">
+                </div>
+                <div class="button-submit">
+                    <button type="submit">
+                        <a href="/index.html">Авторизация</a>
+                    </button>
+                </div>
+                <hr>
+                <ul class="help-links">
+                    <li><a href="/sign_up.html">Создать учетную запись!</a></li>
+                    <li><a href="/recovery-password.html">Не можете войти?</a></li>
+                </ul>
+            </form>
         </div>
-        <div>
-            <label for="password">Пароль:</label>
-            <input type="text" id="password">
-        </div>
-        <div>
-            <h3><button id="sign_up">Зарегистрироваться</button></h3>
-        </div>
+
     </div>
 
 </body>

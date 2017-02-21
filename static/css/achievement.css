@@ -3,88 +3,81 @@ body {
     user-select: none;
 }
 
-.achivement_page {
-    width: 100%;
-    height: 100%;
-}
-
-.head {
-    text-align: center;
-    font-size: 3.5em;
-    font-weight: bold;
-    color: black;
-    margin-top: 15px;
-    margin-bottom: 15px;
-}
-
 a {
     text-decoration: none;
 }
 
-img {
-    width: 150px;
-    height: 150px;
-}
+.title {
+    margin-top: 15px;
+    margin-bottom: 15px;
 
-.achievement__list {
-    position: relative;
-    overflow: hidden;
-    width: 20%;
-    height: 320px;
-    list-style: none;
-    padding-left: 15%;
-    padding-right: 15%;
-    white-space: nowrap;
-    touchScrolling: true;
-    margin-left: 25%;
-}
-
-.achievement__list__item, .return-on-main {
-    display: inline-block;
-    padding: 5px;
-    margin-top: 10px;
-    user-select: none;
-
-    line-height: 50px;
-    color: black;
+    text-align: center;
+    font-size: 3.5em;
     font-weight: bold;
-    font-size: 1.5em;
-    text-align: center;
-
-    margin: 10px;
-    color: #333;
-    padding: 10px;
-    text-align: center;
-    width: 200px;
-    height: 100px;
+    color: black;
 }
 
 .return-on-main {
     width: 150px;
     height: 50px;
+    margin-top: 20px;
+    margin-left: 10px;
     background: -webkit-linear-gradient(top, #FB8C00, #FFCA28, #FB8C00);
     border: 6px outset #FFCA28;
 
+    text-align: center;
+    font-weight: bold;
     line-height: 50px;
     font-size: 1.5em;
     color: black;
 }
 
-.achievement__list__item {
+.scrollable-list {
+    width: 20%;
+    height: 320px;
+    margin-left: 25%;
+    padding-left: 15%;
+    padding-right: 15%;
+
+    list-style: none;
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+
+    touchScrolling: true;
+}
+
+.scrollable-list__item {
+    width: 150px;
+    height: 150px;
+    padding: 10px;
+    margin: 10px;
+
+    display: inline-block;
+    user-select: none;
+
+    line-height: 50px;
+    color: black;
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: center;
+}
+
+.scrollable-list__item img {
     width: 150px;
     height: 150px;
 }
 
-.achievement__description {
-    margin-top: 10px;
+.scrollable-list-description {
     width: 40%;
     height: 150px;
+    margin-top: 10px;
     margin-left: 30%;
+
     text-align: center;
     border: 4px solid aquamarine;
 }
 
-.achievement__description__item {
-    position: relative;
+.scrollable-list-description__item {
     display: none;
 }

@@ -1,0 +1,104 @@
+body {
+    background: -webkit-linear-gradient(top, #1B6990, #141C4C);
+    background-repeat: no-repeat;
+    user-select: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+.title {
+    margin-top: 90px;
+    margin-bottom: 15px;
+
+    text-align: center;
+    font-size: 5em;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px,
+                -1px 1px 1px;
+    background: -webkit-linear-gradient(top, #F06292, #EC407A, #F06292);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.input-form {
+    margin-top: 65px;
+    margin-bottom: 220px;
+    text-align: center;
+}
+
+.input-block__e-mail {
+    height: 40px;
+    width: 340px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 2px;
+    border: 1px solid rgba(255,255,255,0.3);
+    background-color: rgba(0,0,0,0.5);
+    color: rgba(255,255,255,0.7);
+    font-size: 1.2em;
+}
+
+.input-block {
+    margin-bottom: 24px;
+}
+
+.input-block__password {
+    height: 40px;
+    width: 340px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 2px;
+    border: 1px solid rgba(255,255,255,0.3);
+    background-color: rgba(0,0,0,0.5);
+    color: rgba(255,255,255,0.7);
+    font-size: 1.2em;
+}
+
+button {
+    height: 44px;
+    width: 360px;
+    margin-top: 30px;
+    border-radius: 2px;
+    border-style: none;
+    background: -webkit-linear-gradient(top, #03A9F4, #0288D1);
+    color: white;
+    font-size: 1.2em;
+}
+
+button a {
+    color: white;
+}
+
+.help-links {
+    color: #00AEFF;
+    list-style-type: none;
+}
+
+ul {
+    margin-top: 5px;
+    padding: 20px;
+    padding-top: 10px;
+}
+
+li a {
+    font-size: 1.3em;
+    color: #00AEFF;
+    text-align: center;
+}
+
+li {
+    margin-bottom: 16px;
+}
+
+li a:hover {
+    color: white;
+    text-decoration: double;
+}
+
+hr {
+    margin-top: 24px;
+    align: center;
+    width: 360px;
+}
