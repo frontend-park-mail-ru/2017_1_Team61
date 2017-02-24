@@ -14,14 +14,22 @@
 
         <div class="content">
             <ul class="scrollable-list" id="scroll_list">
-                <li class="scrollable-list__item"><img src="/images/achievement_1.png"></li>
-                <li class="scrollable-list__item"><img src="/images/achievement_2.png"></li>
-                <li class="scrollable-list__item"><img src="/images/achievement_3.png"></li>
-                <li class="scrollable-list__item"><img src="/images/achievement_4.png"></li>
-                <li class="scrollable-list__item"><img src="/images/achievement_5.png"></li>
-                <li class="scrollable-list__item"><img src="/images/achievement_6.png"></li>
-                <li class="scrollable-list__item"><img src="/images/achievement_7.png"></li>
-                <li class="scrollable-list__item"><img src="/images/achievement_8.png"></li>
+                <li class="scrollable-list__item"><img src="/images/achievement_1.png"
+                    ondrag="return false" ondragdrop="return false" ondragstart="return false"></li>
+                <li class="scrollable-list__item"><img src="/images/achievement_2.png"
+                    ondrag="return false" ondragdrop="return false" ondragstart="return false"></li>
+                <li class="scrollable-list__item"><img src="/images/achievement_3.png"
+                    ondrag="return false" ondragdrop="return false" ondragstart="return false"></li>
+                <li class="scrollable-list__item"><img src="/images/achievement_4.png"
+                    ondrag="return false" ondragdrop="return false" ondragstart="return false"></li>
+                <li class="scrollable-list__item"><img src="/images/achievement_5.png"
+                    ondrag="return false" ondragdrop="return false" ondragstart="return false"></li>
+                <li class="scrollable-list__item"><img src="/images/achievement_6.png"
+                    ondrag="return false" ondragdrop="return false" ondragstart="return false"></li>
+                <li class="scrollable-list__item"><img src="/images/achievement_7.png"
+                    ondrag="return false" ondragdrop="return false" ondragstart="return false"></li>
+                <li class="scrollable-list__item"><img src="/images/achievement_8.png"
+                    ondrag="return false" ondragdrop="return false" ondragstart="return false"></li>
             </ul>
             <div class="scrollable-list-description" id="scroll_list_description">
                 <div class="scrollable-list-description__item">
@@ -48,9 +56,13 @@
                 <div class="scrollable-list-description__item">
                     <h3>Какое-то интересное и увлекательное описание достижения 8</h3>
                 </div>
-              </div>
-           </div>
-     </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var Xpos = 0;
+    </script>
 
     <script>
 
@@ -65,31 +77,70 @@
             list[0].getElementsByTagName("img")[0].style.width = 240 + 'px';
             list[0].getElementsByTagName("img")[0].style.height = 240 + 'px';
             list_description[0].style.display = 'inline';
+            scroll_list.scrollLeft = scroll_list.width / 2;
         };
 
-        for(let i = 0; i < list.length; i += 2) {
-            list[i].onmouseover = function() {
-                for(let j = 0; j < list.length; j += 2) {
-                    list[j].style.width = 150 + 'px';
-                    list[j].style.height = 150 + 'px';
-                    list[j].getElementsByTagName("img")[0].style.width = 150 + 'px';
-                    list[j].getElementsByTagName("img")[0].style.height = 150 + 'px';
-                    list_description[j].style.display = 'none';
-                }
-                list[i].style.width = 240 + 'px';
-                list[i].style.height = 240 + 'px';
-                list[i].getElementsByTagName("img")[0].style.width = 240 + 'px';
-                list[i].getElementsByTagName("img")[0].style.height = 240 + 'px';
-                list_description[i].style.display = 'inline';
-                scroll_list.onwheel = function (e) {
-                    var delta = e.deltaY || e.detail || e.wheelDelta;
-                    if(delta > 0) {
-                        scroll_list.scrollLeft += 40;
-                    } else {
-                        scroll_list.scrollLeft -= 40;
-                    }
+        scroll_list.onmouseover = function () {
+            scroll_list.onwheel = function (e) {
+                var delta = e.deltaY || e.detail || e.wheelDelta;
+                if(delta > 0) {
+                    scroll_list.scrollLeft += 40;
+                } else {
+                    scroll_list.scrollLeft -= 40;
                 }
             };
+        };
+
+        function ItemDetect() {
+            for(let i = 0; i < list.length; i += 2) {
+                list[i].style.width = 150 + 'px';
+                list[i].style.height = 150 + 'px';
+                list[i].getElementsByTagName("img")[0].style.width = 150 + 'px';
+                list[i].getElementsByTagName("img")[0].style.height = 150 + 'px';
+                list_description[i].style.display = 'none';
+                let item_atr = list[i].getBoundingClientRect();
+                let list_atr = scroll_list.getBoundingClientRect();
+                if(item_atr.left + item_atr.width / 2 - list_atr.left < list_atr.width / 2 + item_atr.width / 1.7  &&
+                    item_atr.left + item_atr.width / 2 - list_atr.left > list_atr.width / 2 - item_atr.width / 1.7 ) {
+                    list[i].style.width = 240 + 'px';
+                    list[i].style.height = 240 + 'px';
+                    list[i].getElementsByTagName("img")[0].style.width = 240 + 'px';
+                    list[i].getElementsByTagName("img")[0].style.height = 240 + 'px';
+                    list_description[i].style.display = 'inline';
+                }
+            }
+        }
+
+        scroll_list.onmousemove = function () {
+            scroll_list.onmousedown = function () {
+                Xpos = event.clientX;
+            };
+            if (Xpos !== 0) {
+                var del = event.clientX - Xpos;
+                scroll_list.scrollLeft -= del * 2;
+                Xpos = event.clientX;
+            }
+            ItemDetect();
+        };
+
+        scroll_list.addEventListener('touchmove', function(event) {
+            scroll_list.addEventListener('touchstart', function(event) {
+                Xpos = event.changedTouches[0].clientX;
+            }, false);
+            if (Xpos !== 0) {
+                var del = event.changedTouches[0].clientX - Xpos;
+                scroll_list.scrollLeft -= del * 2;
+                Xpos = event.changedTouches[0].clientX;
+            }
+            ItemDetect();
+        }, false);
+
+        scroll_list.addEventListener('touchend', function(event) {
+            Xpos = 0;
+        }, false);
+
+        window.onmouseup = function () {
+            Xpos = 0;
         };
 
     </script>

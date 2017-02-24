@@ -1,64 +1,107 @@
-@import "compass/css3";
-
 body {
-    background-color: #3540F8;
+    background: -webkit-linear-gradient(top, #1B6990,#141C4C);
+    user-select: none;
 }
 
-.head {
+a {
+    text-decoration: none;
+}
+
+.title {
+    margin-top: 15px;
+    margin-bottom: 15px;
+
     text-align: center;
-    font-size: 2em;
-    color: #F75E25;
-}
-
-.flex-container {
-    padding: 0;
-    list-style: none;
-
-    display: -webkit-box;
-    display: -moz-box;
-    display: -ms-flexbox;
-    display: -webkit-flex;
-    display: flex;
-
-    -webkit-flex-flow: row wrap;
-    flex-flow: row wrap;
-    justify-content: center;
-}
-
-.flex-item {
-    padding: 5px;
-    width: 200px;
-    height: 50px;
-    margin-top: 10px;
-
-    line-height: 50px;
-    color: black;
+    font-size: 3.5em;
     font-weight: bold;
-    font-size: 1.5em;
-    text-align: center;
+    color: black;
 }
 
-#return {
+.return-on-main {
     width: 150px;
     height: 50px;
-    background: darkorange;
+    margin-top: 20px;
+    margin-left: 10px;
+    background: -webkit-linear-gradient(top, #FB8C00, #FFCA28, #FB8C00);
+    border: 6px outset #FFCA28;
 
+    text-align: center;
+    font-weight: bold;
     line-height: 50px;
     font-size: 1.5em;
+    color: black;
 }
 
-#score {
-    background: #4169E1;
+.user-info {
+    height: 700px;
+    width: 70%;
+    margin-top: 3%;
+    margin-left: 15%;
+    margin-bottom: 18%;
+    border: 3px solid rgba(255,255,255,0.3);
+    background-color: rgba(69, 90, 100, 0.5);
+    color: rgba(255,255,255,0.8);
+    text-align: left;
 }
 
-#quickness {
-    background: #4169E1;
+.column {
+    float: left;
+    padding: 2%;
 }
 
-#friend-duel {
-    background: #4169E1;
+.column-left {
+    width: 24%;
+    text-align: -webkit-center;
 }
 
-#score:hover, #quickness:hover, #friend-duel:hover {
-    background: #423189;
+.column-right {
+    width: 68%;
+}
+
+.avatar img {
+    width: 90%;
+    height: auto;
+    border-radius: 50%;
+    border: 0.5em solid rgba(239, 108, 0, 0.9);
+}
+
+.level {
+    width: 45%;
+    height: 20%;
+    font-size: 200%;
+    font-weight: bold;
+    margin-top: 10px;
+    border-radius: 30px;
+    border: 5px solid rgba(247, 127, 23, 0.9);
+}
+
+.nickname {
+    display: inline;
+    margin-top: 6px;
+}
+
+.nickname__label, .nickname__name {
+    display: inline-block;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 1.8em;
+}
+
+.nickname__label {
+    width: 25%;
+}
+
+.e-mail {
+    display: inline;
+}
+
+.e-mail__label, .e-mail__name {
+    display: inline-block;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 1.8em;
+}
+
+.e-mail__label {
+    width: 25%;
 }

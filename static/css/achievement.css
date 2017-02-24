@@ -24,6 +24,7 @@ a {
     margin-left: 10px;
     background: -webkit-linear-gradient(top, #FB8C00, #FFCA28, #FB8C00);
     border: 6px outset #FFCA28;
+    display: inline-block;
 
     text-align: center;
     font-weight: bold;
@@ -33,11 +34,11 @@ a {
 }
 
 .scrollable-list {
-    width: 20%;
+    width: 200px;
     height: 320px;
-    margin-left: 25%;
-    padding-left: 15%;
-    padding-right: 15%;
+    margin: auto;
+    padding-left: 250px;
+    padding-right: 250px;
 
     list-style: none;
     position: relative;
@@ -64,18 +65,22 @@ a {
 }
 
 .scrollable-list__item img {
+    user-select: none;
     width: 150px;
     height: 150px;
 }
 
 .scrollable-list-description {
     width: 40%;
+    margin-bottom: 20%;
     height: 150px;
     margin-top: 10px;
     margin-left: 30%;
 
     text-align: center;
-    border: 4px solid aquamarine;
+    border: 3px solid rgba(255,255,255,0.3);
+    background-color: rgba(69, 90, 100, 0.5);
+    color: rgba(0,0,0,0.7);
 }
 
 .scrollable-list-description__item {
