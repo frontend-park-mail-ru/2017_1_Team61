@@ -35,94 +35,40 @@
                             }
                         }
 
-                        function GenereateFirstList() {
+                        function CreateList(num) {
+                            let newLi = document.createElement('li');
+                            newLi.className = "scrollable-list__item";
+                            let div = document.createElement('div');
+                            div.className = "record";
+                            let h4_1 = document.createElement('h4');
+                            h4_1.className = "record__number";
+                            h4_1.innerHTML = num;
+                            let h4_2 = document.createElement('h4');
+                            h4_2.className = "record__name";
+                            h4_2.innerHTML = "Ник";
+                            let h4_3 = document.createElement('h4');
+                            h4_3.className = "record__score";
+                            h4_3.innerHTML = "Очки";
+                            let h4_4 = document.createElement('h4');
+                            h4_4.className = "record__round";
+                            h4_4.innerHTML = "Раунд";
+                            div.appendChild(h4_1);
+                            div.appendChild(h4_2);
+                            div.appendChild(h4_3);
+                            div.appendChild(h4_4);
+                            newLi.appendChild(div);
+                            scroll_list.appendChild(newLi);
+                        }
+
+                        function GenerateList(from, to) {
                             RemoveList();
-                            for(let i = 0; i < 50; i++) {
-                                let newLi = document.createElement('li');
-                                newLi.className = "scrollable-list__item";
-                                let div = document.createElement('div');
-                                div.className = "record";
-                                let h4_1 = document.createElement('h4');
-                                h4_1.className = "record__number";
-                                h4_1.innerHTML = i;
-                                let h4_2 = document.createElement('h4');
-                                h4_2.className = "record__name";
-                                h4_2.innerHTML = "Ник";
-                                let h4_3 = document.createElement('h4');
-                                h4_3.className = "record__score";
-                                h4_3.innerHTML = "Очки";
-                                let h4_4 = document.createElement('h4');
-                                h4_4.className = "record__round";
-                                h4_4.innerHTML = "Раунд";
-                                div.appendChild(h4_1);
-                                div.appendChild(h4_2);
-                                div.appendChild(h4_3);
-                                div.appendChild(h4_4);
-                                newLi.appendChild(div);
-                                scroll_list.appendChild(newLi);
+                            for(let i = from; i < to; i++) {
+                                CreateList(i);
                             }
                             scroll_list.scrollTop = 0;
                         }
 
-                        function GenereateSecondList() {
-                            RemoveList();
-                            for(let i = 51; i < 100; i++) {
-                                let newLi = document.createElement('li');
-                                newLi.className = "scrollable-list__item";
-                                let div = document.createElement('div');
-                                div.className = "record";
-                                let h4_1 = document.createElement('h4');
-                                h4_1.className = "record__number";
-                                h4_1.innerHTML = i;
-                                let h4_2 = document.createElement('h4');
-                                h4_2.className = "record__name";
-                                h4_2.innerHTML = "Ник";
-                                let h4_3 = document.createElement('h4');
-                                h4_3.className = "record__score";
-                                h4_3.innerHTML = "Очки";
-                                let h4_4 = document.createElement('h4');
-                                h4_4.className = "record__round";
-                                h4_4.innerHTML = "Раунд";
-                                div.appendChild(h4_1);
-                                div.appendChild(h4_2);
-                                div.appendChild(h4_3);
-                                div.appendChild(h4_4);
-                                newLi.appendChild(div);
-                                scroll_list.appendChild(newLi);
-                            }
-                            scroll_list.scrollTop = 0;
-                        }
-
-                        function GenereateThirdList() {
-                            RemoveList();
-                            for(let i = 101; i < 150; i++) {
-                                let newLi = document.createElement('li');
-                                newLi.className = "scrollable-list__item";
-                                let div = document.createElement('div');
-                                div.className = "record";
-                                let h4_1 = document.createElement('h4');
-                                h4_1.className = "record__number";
-                                h4_1.innerHTML = i;
-                                let h4_2 = document.createElement('h4');
-                                h4_2.className = "record__name";
-                                h4_2.innerHTML = "Ник";
-                                let h4_3 = document.createElement('h4');
-                                h4_3.className = "record__score";
-                                h4_3.innerHTML = "Очки";
-                                let h4_4 = document.createElement('h4');
-                                h4_4.className = "record__round";
-                                h4_4.innerHTML = "Раунд";
-                                div.appendChild(h4_1);
-                                div.appendChild(h4_2);
-                                div.appendChild(h4_3);
-                                div.appendChild(h4_4);
-                                newLi.appendChild(div);
-                                scroll_list.appendChild(newLi);
-                            }
-                            scroll_list.scrollTop = 0;
-                        }
-
-                        GenereateFirstList();
+                        GenerateList(0, 50);
                     </script>
                 </ul>
 
@@ -133,20 +79,16 @@
     <script>
 
         select[0].onmousedown = function () {
-            GenereateFirstList();
+            GenerateList(0, 50);
         };
 
         select[1].onmousedown = function () {
-            GenereateSecondList();
+            GenerateList(51, 100);
         };
 
         select[2].onmousedown = function () {
-            GenereateThirdList();
+            GenerateList(101, 150);
         };
-
-        function ItemDetect() {
-
-        }
 
         scroll_list.onmouseover = function () {
             for(let i = 2; i < list.length; i += 6) {
@@ -172,7 +114,6 @@
                 scroll_list.scrollTop -= del * 2;
                 Ypos = event.clientY;
             }
-            ItemDetect();
         };
 
         scroll_list.addEventListener('touchmove', function(event) {
@@ -184,7 +125,6 @@
                 scroll_list.scrollTop -= del * 2;
                 Ypos = event.changedTouches[0].clientY;
             }
-            ItemDetect();
         }, false);
 
         scroll_list.addEventListener('touchend', function(event) {

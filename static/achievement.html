@@ -71,15 +71,6 @@
         var scroll_list_description = document.getElementById("scroll_list_description");
         var list_description = scroll_list_description.getElementsByTagName('*');
 
-        window.onload = function() {
-            list[0].style.width = 240 + 'px';
-            list[0].style.height = 240 + 'px';
-            list[0].getElementsByTagName("img")[0].style.width = 240 + 'px';
-            list[0].getElementsByTagName("img")[0].style.height = 240 + 'px';
-            list_description[0].style.display = 'inline';
-            scroll_list.scrollLeft = scroll_list.width / 2;
-        };
-
         scroll_list.onmouseover = function () {
             scroll_list.onwheel = function (e) {
                 var delta = e.deltaY || e.detail || e.wheelDelta;
@@ -111,7 +102,7 @@
             }
         }
 
-        scroll_list.onmousemove = function () {
+        window.onmousemove = function () {
             scroll_list.onmousedown = function () {
                 Xpos = event.clientX;
             };
