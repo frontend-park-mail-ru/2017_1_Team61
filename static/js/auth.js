@@ -41,37 +41,72 @@
 //     // console.log(form.elements.item(0).valueOf());
 // })();
 
- function signup() {
-        event.preventDefault();
-        //console.log(this);
-         //const data = new FormData(form);
-        const form = document.getElementsByClassName("input-form")[0];
-        const data = {
-            'email': form.elements[0].value,
-            'password': form.elements[2].value,
-            'login': form.elements[4].value
-        };
-        console.log(JSON.stringify(data));
+//  function signup() {
+//         event.preventDefault();
+//         //console.log(this);
+//          //const data = new FormData(form);
+//         const form = document.getElementsByClassName("input-form")[0];
+//         const data = {
+//             'email': form.elements[0].value,
+//             'password': form.elements[2].value,
+//             'login': form.elements[4].value
+//         };
+//         console.log(JSON.stringify(data));
+//
+//         // var XHR = ("onload" in new XMLHttpRequest()) ? XMLHttpRequest : XDomainRequest;
+//         //
+//         const  xhr = new XMLHttpRequest();
+//         xhr.withCredentials = true;
+//
+//         xhr.open('POST', 'https://fastball-backend.herokuapp.com/api/signup', true);
+//         xhr.setRequestHeader('Content-Type', 'application/json');
+//
+//         xhr.onload = function() {
+//             window.location.replace('/profile.html');
+//             // console.log(this.message);
+//         };
+//
+//         xhr.onerror = function() {
+//             alert( 'Ошибка ' + this.status );
+//         };
+//
+//         xhr.send(JSON.stringify(data));
+//        // return false;
+// }
 
-        // var XHR = ("onload" in new XMLHttpRequest()) ? XMLHttpRequest : XDomainRequest;
-        //
-        const  xhr = new XMLHttpRequest();
-        xhr.withCredentials = true;
+function signup() {
+    event.preventDefault();
+    //console.log(this);
+    //const data = new FormData(form);
+    const form = document.getElementsByClassName("input-form")[0];
+    const data = {
+        'email': form.elements[0].value,
+        'password': form.elements[2].value,
+        'login': form.elements[4].value
+    };
+    console.log(JSON.stringify(data));
 
-        xhr.open('POST', 'http://fastball-backend.herokuapp.com/api/signup', true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
+    // var XHR = ("onload" in new XMLHttpRequest()) ? XMLHttpRequest : XDomainRequest;
+    //
 
-        xhr.onload = function() {
-            window.location.replace('/profile.html');
-            // console.log(this.message);
-        };
+    const api = new API();
 
-        xhr.onerror = function() {
-            alert( 'Ошибка ' + this.status );
-        };
+    api.post('/signup', data, () => {
+        window.location.replace('/profile.html');
+    });
 
-        xhr.send(JSON.stringify(data));
-       // return false;
+
+    // xhr.onload = function() {
+    //     window.location.replace('/profile.html');
+    //     // console.log(this.message);
+    // };
+    //
+    // xhr.onerror = function() {
+    //     alert( 'Ошибка ' + this.status );
+    // };
+    //
+    // xhr.send(JSON.stringify(data));
+    // // return false;
 }
 
 function login() {
@@ -85,26 +120,35 @@ function login() {
     };
     console.log(JSON.stringify(data));
 
+    const api = new API();
+
+    api.post('/login', data, () => {
+        window.location.replace('/profile.html');
+    });
+
     // var XHR = ("onload" in new XMLHttpRequest()) ? XMLHttpRequest : XDomainRequest;
     //
-    const  xhr = new XMLHttpRequest();
-    xhr.withCredentials = true;
-
-    xhr.open('POST', 'http://fastball-backend.herokuapp.com/api/login', true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-
-    xhr.onload = function() {
-        // alert(this.responseText);
-        debugger;
-        window.location.replace('/profile.html');
-    };
-
-    xhr.onerror = function() {
-        alert( 'Ошибка ' + this.status );
-    };
-
-    xhr.send(JSON.stringify(data));
-    // return false;
+    // const  xhr = new XMLHttpRequest();
+    // xhr.withCredentials = true;
+    //
+    // xhr.open('POST', 'https://fastball-backend.herokuapp.com/api/login', true);
+    // xhr.setRequestHeader('Content-Type', 'application/json');
+    //
+    // xhr.onload = function() {
+    //     if (xhr.status ==200 ) {
+    //         window.location.replace('/profile.html');
+    //     } else {
+    //         console.log('error');
+    //     }
+    //
+    // };
+    //
+    // xhr.onerror = function() {
+    //     alert( 'Ошибка ' + this.status );
+    // };
+    //
+    // xhr.send(JSON.stringify(data));
+    // // return false;
 }
 
 
