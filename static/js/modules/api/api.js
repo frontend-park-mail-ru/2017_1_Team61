@@ -60,27 +60,10 @@
             if (data) {
                 this._checkObjectString(data); //TODO check this
                 postParams.body = JSON.stringify(data);
-            }
+            } else
+                postParams.boby = null;
 
-            fetch(this._baseUrl + url, postParams)
-                .then(response => {
-                    if (response.status == 200) {
-                        //console.log(response);
-                        return response;
-                    }
-                    throw new Error('Server error');
-                })
-                .then(object => {
-                    if (onSucces) {
-                        if (typeof onSucces != 'function')
-                            throw new TypeError('onSucces is not a function');
-                        else
-                            onSucces(object);
-                    }
-                })
-                .catch(error => {
-                    console.log(error);
-                })
+            this._fetchUrl(this._baseUrl + url, postParams, onSucces)
         }
 
         get(url, onSucces) {
@@ -91,19 +74,45 @@
 
             //postParams.body = JSON.stringify(data);
 
-            fetch(this._baseUrl + url, getParams)
+             this._fetchUrl(this._baseUrl + url, getParams, onSucces);
+
+        }
+
+        _fetchUrl(url, params, onSucces) {
+            //console.log(params);
+            fetch(url, params)
                 .then(response => {
-                    if (response.status == 200) {
-                        return response.json();
+                    if (onSucces) {
+                        if (typeof onSucces != 'function')
+                            throw new TypeError('onSucces is not a function');
+                        else
+                            onSucces(response);
                     }
-                    throw new Error('Server error');
-                })
-                .then(object => {
-                    onSucces(object);
                 })
                 .catch(error => {
                     console.log(error);
                 })
+        }
+
+        RespJSON(response, onSucces) {
+            console.log(response);
+            if (!response)
+                throw new TypeError('response is null');
+            if (response.status == 200) {
+                response.json()
+                    .then(json => {
+                        if (onSucces) {
+                            if (typeof onSucces != 'function')
+                                throw new TypeError('onSucces is not a function');
+                            else
+                                onSucces(json);
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    })
+            }
+
         }
         
         _checkObjectString(object) {

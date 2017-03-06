@@ -91,22 +91,10 @@ function signup() {
 
     const api = new API();
 
-    api.post('/signup', data, () => {
-        window.location.replace('/profile.html');
+    api.post('/signup', data, response => {
+        if (response.status == 200)
+            window.location.replace('/profile.html');
     });
-
-
-    // xhr.onload = function() {
-    //     window.location.replace('/profile.html');
-    //     // console.log(this.message);
-    // };
-    //
-    // xhr.onerror = function() {
-    //     alert( 'Ошибка ' + this.status );
-    // };
-    //
-    // xhr.send(JSON.stringify(data));
-    // // return false;
 }
 
 function login() {
@@ -122,8 +110,9 @@ function login() {
 
     const api = new API();
 
-    api.post('/login', data, () => {
-        window.location.replace('/profile.html');
+    api.post('/login', data, response => {
+        if (response.status ==200)
+            window.location.replace('/profile.html');
     });
 
     // var XHR = ("onload" in new XMLHttpRequest()) ? XMLHttpRequest : XDomainRequest;

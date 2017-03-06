@@ -9,8 +9,10 @@
     // xhr.open('GET', 'https://fastball-backend.herokuapp.com/api/user', true);
     //xhr.setRequestHeader('Content-Type', 'application/json');
     const api = new API();
-     api.get('/user', function(data) {
+     api.get('/user', r => {api.RespJSON(r, data =>{
             // const data = JSON.parse(this.responseText);
+
+         // console.log(r);
 
             const name = document.getElementsByClassName('nickname__name')[0];
             const email = document.getElementsByClassName('e-mail__name')[0];
@@ -38,12 +40,6 @@
             loginPage.appendChild(loginButton);
 
 
-    });
+     })});
 
-    // xhr.onerror = function() {
-    //     alert( 'Ошибка ' + this.status );
-    //
-    // };
-    //
-    // xhr.send();
 })();
