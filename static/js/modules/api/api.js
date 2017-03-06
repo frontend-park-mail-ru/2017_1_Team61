@@ -61,7 +61,7 @@
                 this._checkObjectString(data); //TODO check this
                 postParams.body = JSON.stringify(data);
             } else
-                postParams.boby = null;
+                postParams.body = null;
 
             this._fetchUrl(this._baseUrl + url, postParams, onSucces)
         }
@@ -69,17 +69,15 @@
         get(url, onSucces) {
             const getParams = this._fetchParams;
             getParams.method = 'GET';
+            getParams.body = null;
 
             //this._checkObjectString(data); //TODO check this
-
-            //postParams.body = JSON.stringify(data);
 
              this._fetchUrl(this._baseUrl + url, getParams, onSucces);
 
         }
 
         _fetchUrl(url, params, onSucces) {
-            //console.log(params);
             fetch(url, params)
                 .then(response => {
                     if (onSucces) {
@@ -90,12 +88,13 @@
                     }
                 })
                 .catch(error => {
-                    console.log(error);
+                    console.log(params);
+                    console.log('Catch' + error);
                 })
         }
 
         RespJSON(response, onSucces) {
-            console.log(response);
+
             if (!response)
                 throw new TypeError('response is null');
             if (response.status == 200) {

@@ -14,10 +14,25 @@
     <script type="text/javascript" src="js/modules/jasmine/lib/jasmine-2.5.2/jasmine-html.js"></script>
     <script type="text/javascript" src="js/modules/jasmine/lib/jasmine-2.5.2/boot.js"></script>
 
-    <!--tests here-->
-    <!--<script src="js/tests/simple_test.js"></script>-->
-
+    <!--include modules-->
+    <script src="js/tests/randomstring/randstring.js"></script>
     <script src="js/modules/api/api.js"></script>
-    <script src="js/tests/apiTest.js"></script>
+
+    <script>
+        window.nickname = rs.generate({
+            length: 12,
+            charset: 'alphabetic'
+        });
+
+        window.password = rs.generate();
+        window.email = rs.generate({length: 8}) + '@fastball.com';
+    </script>
+
+    <!--tests here-->
+    <script src="js/tests/sign_up_tests.js"></script>
+    <script src="js/tests/get_user_tests.js"></script>
+    <script src="js/tests/login_tests.js"></script>
+    <script src="js/tests/change_password.js"></script>
+    <script src="js/tests/leaderbord_tests.js"></script>
 </body>
 </html>
