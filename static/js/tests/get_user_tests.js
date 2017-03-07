@@ -7,18 +7,15 @@ describe("Проверка текущего пользователя", function(
     const api = new API();
 
     beforeAll(done => {
-        api.post('/logout', null, response => {
-            done(true);
-        });
+        api.logout().then(done(true));
     });
 
      it("Получение данных неавторизованного пользователя 403", done => {
-        // console.log(nickname);
-        // console.log(email);
-        api.get('/user', response => {
-            expect(response.status).toBe(403);
-            done(true);
-        });
+        api.getUser()
+            .then(response => {
+                expect(response.status).toBe(403);
+                done(true);
+            })
 
     });
     it("Авторизация пользователя 200", done => {
@@ -26,7 +23,8 @@ describe("Проверка текущего пользователя", function(
             'password': password,
             'login': nickname
         };
-        api.post('/login', data, response => {
+        api.login(data)
+            .then(response => {
             expect(response.status).toBe(200);
             done(true);
         });
@@ -37,16 +35,15 @@ describe("Проверка текущего пользователя", function(
             'email': email,
             'login': nickname
         };
-        api.get('/user', response => {
-            // expect(response.status).toBe(200);
-            api.RespJSON(response, json => {
+        api.getUser()
+            .then(response => {
+                return response.json();})
+            .then(json => {
                 const compare = json['login'] == user['login'] &&
-                                json['email'] == user['email'];
+                    json['email'] == user['email'];
                 expect(compare).toBe(true);
                 done(true);
             });
-        });
-
     });
 
 });

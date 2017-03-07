@@ -2,10 +2,10 @@
  * Created by tlakatlekutl on 02.03.17.
  */
 
-;(function () {
   'use strict';
 
 function signup() {
+    // debugger;
     event.preventDefault();
 
     const form = document.getElementsByClassName("input-form")[0];
@@ -17,9 +17,10 @@ function signup() {
 
     const api = new API();
 
-    api.post('/signup', data, response => {
-        if (response.status == 200)
-            window.location.replace('/profile.html');
+    api.signup(data)
+        .then(response => {
+            if (response.status == 200)
+                window.location.replace('/profile.html');
     });
 }
 
@@ -35,12 +36,13 @@ function login() {
 
     const api = new API();
 
-    api.post('/login', data, response => {
-        if (response.status == 200)
-            window.location.replace('/profile.html');
-    });
+    api.login(data)
+        .then(response => {
+            if (response.status == 200)
+                window.location.replace('/profile.html');
+        });
 }
 
-})();
+
 
 

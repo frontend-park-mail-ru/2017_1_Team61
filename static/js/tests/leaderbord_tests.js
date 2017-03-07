@@ -8,10 +8,11 @@ describe("Получение рейтинга пользователей", funct
 
     it("Получение даннных 200", done => {
 
-        expect(true).toBe(true);
-        done(true);
-
-    });
-
+        api.getLeaderBoard()
+            .then(response => {
+                expect(response.status).toBe(200);
+                done(true);
+            });
+        })
 });
 

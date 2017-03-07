@@ -6,30 +6,35 @@
     'use strict';
 
     const api = new API();
-     api.get('/user', r => {api.RespJSON(r, data =>{
 
-            const name = document.getElementsByClassName('nickname__name')[0];
-            const email = document.getElementsByClassName('e-mail__name')[0];
+    api.getUser()
+        .then(response => {
+           if (response.status == 200) {
+               response.json()
+                   .then(json => {
+                       const name = document.getElementsByClassName('nickname__name')[0];
+                       const email = document.getElementsByClassName('e-mail__name')[0];
 
-            name.innerHTML = data.login;
-            email.innerHTML = data.email;
+                       name.innerHTML = json.login;
+                       email.innerHTML = json.email;
 
-            let loginButton = document.createElement('button');
-            loginButton.textContent = 'logout';
-            loginButton.onclick = ( event => {
-                event.preventDefault();
+                       let loginButton = document.createElement('button');
+                       loginButton.textContent = 'logout';
 
-                const api = new API();
-                api.post('/logout', null, null);
+                       loginButton.onclick = ( event => {
+                           event.preventDefault();
 
-
-            });
-
-            const loginPage = document.querySelector('.user-info');
-
-            loginPage.appendChild(loginButton);
-
-
-     })});
-
+                           const api = new API();
+                           api.logout();
+                       });
+                       const loginPage = document.querySelector('.user-info');
+                       loginPage.appendChild(loginButton);
+                   })
+           } else {
+               throw new Error('Error getting user data');
+           }
+        })
+        .catch(error => {
+            console.error(error);
+        });
 })();
