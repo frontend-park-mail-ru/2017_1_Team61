@@ -2,7 +2,10 @@
  * Created by tlakatlekutl on 07.03.17.
  */
 
-;(function () {
+/*eslint no-console: ["error", {allow: ["log", "error"]}]*/
+/*global Net:true, fetch*/
+
+(function () {
 
     class API {
 
@@ -51,7 +54,7 @@
             return this.net.post('/change-password', data)
                 .catch(error => {
                     console.error(error);
-                })
+                });
         }
         getLeaderBoard() {
             return this.net.get('/leaderboard')

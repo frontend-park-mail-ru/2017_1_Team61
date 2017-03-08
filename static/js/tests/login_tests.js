@@ -2,8 +2,11 @@
  * Created by tlakatlekutl on 05.03.17.
  */
 
+/*global describe, it, beforeAll, expect */
+/*global API:true, nickname:true, password:true*/
 
-describe("Проверка входа в систему", function() {
+
+describe('Проверка входа в систему', function() {
 
     const api = new API();
 
@@ -11,7 +14,7 @@ describe("Проверка входа в систему", function() {
         api.logout().then(done(true));
     });
 
-    it("Вход в систему пользователя 200", done => {
+    it('Вход в систему пользователя 200', done => {
         const data = {
             'password': password,
             'login': nickname
@@ -23,7 +26,7 @@ describe("Проверка входа в систему", function() {
             });
 
     });
-    it("Попытка входа, будучи авторизованным 403", done => {
+    it('Попытка входа, будучи авторизованным 403', done => {
         const data = {
             'password': password,
             'login': nickname
@@ -34,7 +37,7 @@ describe("Проверка входа в систему", function() {
                 done(true);
             });
     });
-    it("Logout после ошибки 200", done => {
+    it('Logout после ошибки 200', done => {
         api.logout()
             .then(response => {
                 expect(response.status).toBe(200);
@@ -42,7 +45,7 @@ describe("Проверка входа в систему", function() {
             });
     });
 
-    it("Вход с невалидными данными 400", done => {
+    it('Вход с невалидными данными 400', done => {
         const data = {
             'password': '',
             'login': nickname
@@ -53,7 +56,7 @@ describe("Проверка входа в систему", function() {
                 done(true);
             });
     });
-    it("Попытка входа с неправильной комбинацией 401", done => {
+    it('Попытка входа с неправильной комбинацией 401', done => {
         const data = {
             'password': password+'erwer',
             'login': nickname
@@ -65,7 +68,7 @@ describe("Проверка входа в систему", function() {
             });
 
     });
-    it("Попытка входа несуществующего пользователя 401", done => {
+    it('Попытка входа несуществующего пользователя 401', done => {
         const data = {
             'password': password,
             'login': nickname+'asfasf'

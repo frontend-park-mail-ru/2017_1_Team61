@@ -2,7 +2,11 @@
  * Created by tlakatlekutl on 06.03.17.
  */
 
-describe("Проверка смены пароля", function() {
+/*global describe, it, beforeAll, expect */
+/*global API:true, nickname:true, password:true*/
+/*global rs:true*/
+
+describe('Проверка смены пароля', function() {
 
     const api = new API();
 
@@ -10,7 +14,7 @@ describe("Проверка смены пароля", function() {
         api.logout().then(done(true));
     });
 
-    it("Вход в систему пользователя 200", done => {
+    it('Вход в систему пользователя 200', done => {
         const data = {
             'password': password,
             'login': nickname
@@ -22,7 +26,7 @@ describe("Проверка смены пароля", function() {
             });
     });
 
-    it("Попытка смены пароля с пустыми полями 400", done => {
+    it('Попытка смены пароля с пустыми полями 400', done => {
         const data = {
             'old-password': '',
             'password': ''
@@ -34,7 +38,7 @@ describe("Проверка смены пароля", function() {
             });
 
     });
-    it("Попытка смены пароля с неверным старым паролем 403", done => {
+    it('Попытка смены пароля с неверным старым паролем 403', done => {
         const data = {
             'old-password': password+'asd',
             'password': 'new_password'
@@ -46,7 +50,7 @@ describe("Проверка смены пароля", function() {
             });
 
     });
-    it("Смена пароля 200", done => {
+    it('Смена пароля 200', done => {
         const data = {
             'old-password': password,
             'password': rs.generate()
@@ -60,15 +64,15 @@ describe("Проверка смены пароля", function() {
 
     });
 
-    it("Выход из системы 200", done => {
+    it('Выход из системы 200', done => {
         api.logout()
             .then(response =>{
                 expect(response.status).toBe(200);
                 done(true);
-            })
+            });
     });
 
-    it("Вход с новым паролем 200", done => {
+    it('Вход с новым паролем 200', done => {
         const data = {
             'password': password,
             'login': nickname
@@ -77,7 +81,7 @@ describe("Проверка смены пароля", function() {
             .then(response => {
                 expect(response.status).toBe(200);
                 done(true);
-        });
+            });
     });
 
 

@@ -2,8 +2,11 @@
  * Created by tlakatlekutl on 05.03.17.
  */
 
+/*global describe, it, beforeAll, expect */
+/*global API:true, nickname:true, password:true, email:true */
 
-describe("Проверка регистрации", function() {
+
+describe('Проверка регистрации', function() {
 
     const api = new API();
 
@@ -11,7 +14,7 @@ describe("Проверка регистрации", function() {
         api.logout().then(done(true));
     });
 
-    it("Создание уникального пользователя 200", done => {
+    it('Создание уникального пользователя 200', done => {
         const data = {
             'email': email,
             'password': password,
@@ -24,7 +27,7 @@ describe("Проверка регистрации", function() {
             });
 
     });
-    it("Попытка регистрации, будучи авторизованным 403", done => {
+    it('Попытка регистрации, будучи авторизованным 403', done => {
         const data = {
             'email': email,
             'password': password,
@@ -38,24 +41,23 @@ describe("Проверка регистрации", function() {
 
     });
 
-    it("Logout после ошибки 200", done => {
-        //до
+    it('Logout после ошибки 200', done => {
         api.logout()
             .then(response => {
-                    expect(response.status).toBe(200);
-                    done(true);
-                });
+                expect(response.status).toBe(200);
+                done(true);
+            });
     });
 
 
-    it("Logout незарегистрированного пользователя 403", done => {
+    it('Logout незарегистрированного пользователя 403', done => {
         api.logout()
             .then(response => {
                 expect(response.status).toBe(403);
                 done(true);
             });
     });
-    it("Регистрация с невалидными данными 400", done => {
+    it('Регистрация с невалидными данными 400', done => {
         const data = {
             'email': email,
             'password': '',
@@ -67,7 +69,7 @@ describe("Проверка регистрации", function() {
                 done(true);
             });
     });
-    it("Попытка регистрации с существующем login 409", done => {
+    it('Попытка регистрации с существующем login 409', done => {
         const data = {
             'email': email,
             'password': password,
@@ -80,8 +82,6 @@ describe("Проверка регистрации", function() {
             });
 
     });
-
-
 });
 
 

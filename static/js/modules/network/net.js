@@ -2,31 +2,23 @@
  * Created by tlakatlekutl on 05.03.17.
  */
 
-;(function () {
+/*eslint no-console: ["error", {allow: ["log", "error"]}]*/
+/*global console:true, fetch*/
+
+(function () {
     'use strict';
 
     class Net {
 
-        constructor(
-            baseUrl = '',
-            headers = {}) {
+        constructor(baseUrl = '', headers = {}) {
+            if (Net.__instance) {
+                return Net.__instance;
+            }
 
-                if (Net.__instance) {
-                    return Net.__instance;
-                }
+            this._headers = headers;
+            this._baseUrl = baseUrl;
 
-                this._headers = headers;
-                this._baseUrl = baseUrl;
-
-                // this._fetchParams = {
-                //     method: '',
-                //     headers: this._headers,
-                //     mode: 'cors',
-                //     cache: 'default',
-                //     credentials: 'include'
-                // };
-
-                Net.__instance = this;
+            Net.__instance = this;
         }
 
         _getDefaultParams() {
@@ -72,7 +64,7 @@
             } else
                 postParams.body = null;
 
-            return this._fetchUrl(this._baseUrl + url, postParams);
+            return fetch(this._baseUrl + url, postParams);
         }
 
         get(url, onSucces) {
@@ -80,42 +72,11 @@
             getParams.method = 'GET';
             getParams.body = null;
 
-             return this._fetchUrl(this._baseUrl + url, getParams, onSucces);
+            return fetch(this._baseUrl + url, getParams, onSucces);
 
         }
 
-        _fetchUrl(url, params) {
-            return fetch(url, params);
-                // .then(response => {
-                //     console.log('from fetch');
-                //     return response.clone();
-                // })
-                // .catch(error => {
-                //     console.log(params);
-                //     console.log('Catch' + error);
-                // })
-        }
 
-        RespJSON(response, onSucces) {
-
-            if (!response)
-                throw new TypeError('response is null');
-            if (response.status == 200) {
-                response.json()
-                    .then(json => {
-                        if (onSucces) {
-                            if (typeof onSucces != 'function')
-                                throw new TypeError('onSucces is not a function');
-                            else
-                                onSucces(json);
-                        }
-                    })
-                    .catch(error => {
-                        console.error(error);
-                    })
-            }
-
-        }
         
         _checkObjectString(object) {
             if (!(object && ('' + object === '[object Object]'))) {

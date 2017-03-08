@@ -2,7 +2,10 @@
  * Created by tlakatlekutl on 06.03.17.
  */
 
-describe("Проверка текущего пользователя", function() {
+/*global describe, it, beforeAll, expect */
+/*global API:true, nickname:true, password:true, email:true */
+
+describe('Проверка текущего пользователя', function() {
 
     const api = new API();
 
@@ -10,27 +13,27 @@ describe("Проверка текущего пользователя", function(
         api.logout().then(done(true));
     });
 
-     it("Получение данных неавторизованного пользователя 403", done => {
+    it('Получение данных неавторизованного пользователя 403', done => {
         api.getUser()
             .then(response => {
                 expect(response.status).toBe(403);
                 done(true);
-            })
+            });
 
     });
-    it("Авторизация пользователя 200", done => {
+    it('Авторизация пользователя 200', done => {
         const data = {
             'password': password,
             'login': nickname
         };
         api.login(data)
             .then(response => {
-            expect(response.status).toBe(200);
-            done(true);
-        });
+                expect(response.status).toBe(200);
+                done(true);
+            });
 
     });
-    it("Получение данных авторизованного пользователя JSON==User", done => {
+    it('Получение данных авторизованного пользователя JSON==User', done => {
         const user = {
             'email': email,
             'login': nickname
