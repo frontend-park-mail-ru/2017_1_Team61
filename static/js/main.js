@@ -1,7 +1,11 @@
 /**
  * Created by sergey on 05.03.17.
  */
+
+/*eslint export */
 'use strict';
+
+
 
 (function () {
     const login_page = document.getElementById('login_page');
