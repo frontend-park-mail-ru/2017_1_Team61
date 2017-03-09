@@ -2,7 +2,7 @@
  * Created by sergey on 05.03.17.
  */
 
-/*eslint export*/
+/* global LoginForm:true, SignUpForm:true*/
 'use strict';
 
 const loginForm = new LoginForm();

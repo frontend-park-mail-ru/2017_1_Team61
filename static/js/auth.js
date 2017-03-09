@@ -10,7 +10,6 @@
   'use strict';
 
   function signup() {
-    // debugger;
       event.preventDefault();
 
       const form = document.getElementsByClassName('input-form')[0];
