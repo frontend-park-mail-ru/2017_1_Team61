@@ -1,13 +1,4 @@
-body {
-    background: -webkit-linear-gradient(top, #1B6990,#141C4C);
-    user-select: none;
-}
-
-a {
-    text-decoration: none;
-}
-
-.title {
+#rating_page .title {
     margin-top: 15px;
     margin-bottom: 15px;
 
@@ -17,7 +8,7 @@ a {
     color: black;
 }
 
-.return-on-main {
+#rating_page .return-on-main {
     width: 150px;
     height: 50px;
     margin-top: 20px;
@@ -33,7 +24,7 @@ a {
     color: black;
 }
 
-.selection-group {
+#rating_page .selection-group {
     width: 80%;
     margin-left: 10%;
     margin-top: 25px;
@@ -46,7 +37,7 @@ a {
     border-radius: 5em;
 }
 
-.selection-group__score, .selection-group__friend-duel, .selection-group__quickness {
+#rating_page .selection-group__score, .selection-group__friend-duel, .selection-group__quickness {
     width: 30%;
     padding: 1.2% 1% 1.2% 1%;
     margin-top: 4px;
@@ -54,7 +45,7 @@ a {
     display: inline-block;
 }
 
-.scrollable-list {
+#rating_page .scrollable-list {
     width: 100%;
     height: 400px;
     padding-left: 0px;
@@ -70,7 +61,7 @@ a {
     touchScrolling: true;
 }
 
-.record {
+#rating_page .record {
     width: 65%;
     margin-left: 17.5%;
     margin-bottom: 1%;
@@ -82,7 +73,7 @@ a {
     border-radius: 3px;
 }
 
-.record__number, .record__name, .record__score, .record__round {
+#rating_page .record__number, .record__name, .record__score, .record__round {
     width: 22%;
     padding-left: 1%;
     padding-right: 1%;
@@ -91,20 +82,20 @@ a {
     display: inline-block;
 }
 
-.record__number {
+#rating_page .record__number {
     width: 5%;
 }
 
-.selection-group__score:hover {
+#rating_page .selection-group__score:hover {
     background: #E0E0E0;
     border-radius: 5em 0 0 5em;
 }
 
-.selection-group__quickness:hover {
+#rating_page .selection-group__quickness:hover {
     background: #E0E0E0;
 }
 
-.selection-group__friend-duel:hover  {
+#rating_page .selection-group__friend-duel:hover  {
     border-radius: 0 5em 5em 0;
     background: #E0E0E0;
 }

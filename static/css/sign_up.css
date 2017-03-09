@@ -1,14 +1,4 @@
-body {
-    background: -webkit-linear-gradient(top, #14324A, #0F2439);
-    background-repeat: no-repeat;
-    user-select: none;
-}
-
-a {
-    text-decoration: none;
-}
-
-.title {
+#sign_up_page .title {
     margin-top: 90px;
     margin-bottom: 15px;
 
@@ -22,20 +12,20 @@ a {
     color: transparent;
 }
 
-.input-form {
+#sign_up_page .input-form {
     margin-top: 45px;
     margin-bottom: 100px;
     text-align: center;
 }
 
-.input-form__name {
+#sign_up_page .input-form__name {
     margin-bottom: 50px;
     font-family: Arial;
     font-size: 1.6em;
     color: white;
 }
 
-.input-repeat-block h3 {
+#sign_up_page .input-repeat-block h3 {
     margin-left: 38.1%;
     font-family: Arial;
     font-size: 1.1em;
@@ -43,7 +33,7 @@ a {
     text-align: left;
 }
 
-.input-block input, .repeat-block input {
+#sign_up_page .input-block input, .repeat-block input {
     height: 40px;
     width: 340px;
     padding-left: 10px;
@@ -56,7 +46,7 @@ a {
     font-size: 1.2em;
 }
 
-.input-nickname {
+#sign_up_page .input-nickname {
     margin-top: 40px;
     margin-bottom: 25px;
     font-family: Arial;
@@ -64,7 +54,7 @@ a {
     color: #00AEFF;
 }
 
-button {
+#sign_up_page button {
     height: 44px;
     width: 360px;
     border-style: none;
@@ -74,7 +64,7 @@ button {
     font-size: 1.2em;
 }
 
-.return-login-page button {
+#sign_up_page .return-login-page button {
     height: 44px;
     width: 120px;
     margin-top: 16px;
@@ -86,6 +76,6 @@ button {
     font-size: 1.2em;
 }
 
-button a {
+#sign_up_page button a {
     color: white;
 }

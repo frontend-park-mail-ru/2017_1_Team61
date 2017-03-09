@@ -1,5 +1,14 @@
+@import "login.css";
+@import "sign_up.css";
+@import "profile.css";
+@import "rating.css";
+@import "achievement.css";
+@import "game.css";
+@import "about.css";
+
 body {
     background: -webkit-linear-gradient(top, #1B6990, #141C4C);
+    background-repeat: no-repeat;
     user-select: none;
 }
 
@@ -7,7 +16,7 @@ a {
     text-decoration: none;
 }
 
-.title {
+#main_page .title {
     margin-top: 40px;
     margin-bottom: 15px;
 
@@ -17,7 +26,7 @@ a {
     color: deeppink;
 }
 
-.list {
+#main_page .list {
     padding: 0;
     margin: 0;
     list-style: none;
@@ -32,11 +41,11 @@ a {
     justify-content: space-around;
 }
 
-.list-down {
+#main_page .list-down {
     margin: 50px;
 }
 
-.list__item {
+#main_page .list__item {
     width: 200px;
     height: 150px;
     padding: 5px;
@@ -49,34 +58,34 @@ a {
     text-align: center;
 }
 
-.new-game {
+#main_page #game {
     width: 250px;
     height: 250px;
     margin: 40px;
     background: -webkit-linear-gradient(top left, #FDD835, #FFF59D, #FDD835);
     border: 12px outset #FFF59D;
-    border-radius: 5em;
+    border-radius: 140px;
 
     line-height: 250px;
 }
 
-.profile {
+#main_page #profile {
     background: -webkit-linear-gradient(top, #184177, #18A7B5, #184177);
     border: 6px outset #18A7B5;
 }
 
-.rating {
+#main_page #rating {
     background: -webkit-linear-gradient(top, #FB8C00, #FFCA28, #FB8C00);
     border: 6px outset #FFCA28;
 }
 
-.achievement {
-    font-size: 2em;
+#main_page #achievement {
     background: -webkit-linear-gradient(top, #004D40, #00897B, #004D40);
     border: 6px outset #00897B;
+    font-size: 32px;
 }
 
-.exit {
+#main_page #about {
     background: -webkit-linear-gradient(top, #424242, #757575, #424242);
     border: 6px outset #757575;
     color: white;

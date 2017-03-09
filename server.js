@@ -2,12 +2,11 @@
 'use strict';
 
 const express = require('express');
+const port = process.env.PORT || 3000;
 const app = express();
 
 app.use(express.static(__dirname + '/static'));
 
-const port = process.env.PORT || 3000;
-
 app.listen(port, function () {
-    console.log('Listen port: 3000!');
+    console.log("Listen port: " + port + " !");
 });
