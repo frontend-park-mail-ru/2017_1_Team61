@@ -24,7 +24,7 @@
                        let loginButton = document.createElement('button');
                        loginButton.textContent = 'logout';
 
-                       loginButton.onclick = ( event => {
+                       loginButton.onclick = (event => {
                            event.preventDefault();
 
                            const api = new API();
