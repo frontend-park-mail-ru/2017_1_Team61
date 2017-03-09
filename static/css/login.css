@@ -1,14 +1,4 @@
-body {
-    background: -webkit-linear-gradient(top, #1B6990, #141C4C);
-    background-repeat: no-repeat;
-    user-select: none;
-}
-
-a {
-    text-decoration: none;
-}
-
-.title {
+#login_page .title {
     margin-top: 90px;
     margin-bottom: 15px;
 
@@ -22,13 +12,13 @@ a {
     color: transparent;
 }
 
-.input-form {
+#login_page .input-form {
     margin-top: 65px;
     margin-bottom: 220px;
     text-align: center;
 }
 
-.input-block__e-mail {
+#login_page .input-block__e-mail {
     height: 40px;
     width: 340px;
     padding-left: 10px;
@@ -40,11 +30,11 @@ a {
     font-size: 1.2em;
 }
 
-.input-block {
+#login_page .input-block {
     margin-bottom: 24px;
 }
 
-.input-block__password {
+#login_page .input-block__password {
     height: 40px;
     width: 340px;
     padding-left: 10px;
@@ -56,7 +46,7 @@ a {
     font-size: 1.2em;
 }
 
-button {
+#login_page button {
     height: 44px;
     width: 360px;
     margin-top: 30px;
@@ -67,37 +57,34 @@ button {
     font-size: 1.2em;
 }
 
-button a {
+#login_page button a {
     color: white;
 }
 
-.help-links {
+#login_page .help-links {
     color: #00AEFF;
     list-style-type: none;
 }
 
-ul {
+#login_page ul {
     margin-top: 5px;
     padding: 20px;
     padding-top: 10px;
 }
 
-li a {
+#login_page li {
     font-size: 1.3em;
     color: #00AEFF;
     text-align: center;
-}
-
-li {
     margin-bottom: 16px;
 }
 
-li a:hover {
+#login_page li:hover {
     color: white;
     text-decoration: double;
 }
 
-hr {
+#login_page hr {
     margin-top: 24px;
     align: center;
     width: 360px;

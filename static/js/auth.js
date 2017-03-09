@@ -25,7 +25,7 @@
       api.signup(data)
         .then(response => {
             if (response.status == 200)
-                window.location.replace('/profile.html');
+                window.location.replace(''); //TODO fix it
         });
   }
 
@@ -44,7 +44,7 @@
       api.login(data)
         .then(response => {
             if (response.status == 200)
-                window.location.replace('/profile.html');
+                 window.location.replace(''); //TODO fix it
         });
   }
 

@@ -1,13 +1,4 @@
-body {
-    background: -webkit-linear-gradient(top, #1B6990,#141C4C);
-    user-select: none;
-}
-
-a {
-    text-decoration: none;
-}
-
-.title {
+#profile_page .title {
     margin-top: 15px;
     margin-bottom: 15px;
 
@@ -17,7 +8,7 @@ a {
     color: black;
 }
 
-.return-on-main {
+#profile_page .return-on-main {
     width: 150px;
     height: 50px;
     margin-top: 20px;
@@ -30,9 +21,28 @@ a {
     line-height: 50px;
     font-size: 1.5em;
     color: black;
+    display: inline-block;
 }
 
-.user-info {
+#profile_page #logout {
+    width: 250px;
+    height: 50px;
+    margin-top: 20px;
+    margin-left: 50%;
+    background: -webkit-linear-gradient(top, #424242, #757575, #424242);
+    border: 6px outset #757575;
+
+    text-align: center;
+    font-weight: bold;
+    line-height: 50px;
+    font-size: 1.5em;
+    color: white;
+    display: inline-block;
+
+}
+
+
+#profile_page .user-info {
     height: 700px;
     width: 70%;
     margin-top: 3%;
@@ -44,28 +54,28 @@ a {
     text-align: left;
 }
 
-.column {
+#profile_page .column {
     float: left;
     padding: 2%;
 }
 
-.column-left {
+#profile_page .column-left {
     width: 24%;
     text-align: -webkit-center;
 }
 
-.column-right {
+#profile_page .column-right {
     width: 68%;
 }
 
-.avatar img {
+#profile_page .avatar img {
     width: 90%;
     height: auto;
     border-radius: 50%;
     border: 0.5em solid rgba(239, 108, 0, 0.9);
 }
 
-.level {
+#profile_page .level {
     width: 45%;
     height: 20%;
     font-size: 200%;
@@ -75,33 +85,33 @@ a {
     border: 5px solid rgba(247, 127, 23, 0.9);
 }
 
-.nickname {
+#profile_page .nickname {
     display: inline;
     margin-top: 6px;
 }
 
-.nickname__label, .nickname__name {
+#profile_page .nickname__label, .nickname__name {
     display: inline-block;
     margin-top: 10px;
     margin-bottom: 10px;
     font-size: 1.8em;
 }
 
-.nickname__label {
+#profile_page .nickname__label {
     width: 25%;
 }
 
-.e-mail {
+#profile_page .e-mail {
     display: inline;
 }
 
-.e-mail__label, .e-mail__name {
+#profile_page .e-mail__label, .e-mail__name {
     display: inline-block;
     margin-top: 10px;
     margin-bottom: 10px;
     font-size: 1.8em;
 }
 
-.e-mail__label {
+#profile_page .e-mail__label {
     width: 25%;
 }

@@ -1,13 +1,4 @@
-body {
-    background: -webkit-linear-gradient(top, #1B6990,#141C4C);
-    user-select: none;
-}
-
-a {
-    text-decoration: none;
-}
-
-.title {
+#achievements_page .title {
     margin-top: 15px;
     margin-bottom: 15px;
 
@@ -17,7 +8,7 @@ a {
     color: black;
 }
 
-.return-on-main {
+#achievements_page .return-on-main {
     width: 150px;
     height: 50px;
     margin-top: 20px;
@@ -33,7 +24,7 @@ a {
     color: black;
 }
 
-.scrollable-list {
+#achievements_page .scrollable-list {
     width: 200px;
     height: 320px;
     margin: auto;
@@ -48,7 +39,7 @@ a {
     touchScrolling: true;
 }
 
-.scrollable-list__item {
+#achievements_page .scrollable-list__item {
     width: 150px;
     height: 150px;
     padding: 10px;
@@ -64,13 +55,13 @@ a {
     text-align: center;
 }
 
-.scrollable-list__item img {
+#achievements_page .scrollable-list__item img {
     user-select: none;
     width: 150px;
     height: 150px;
 }
 
-.scrollable-list-description {
+#achievements_page .scrollable-list-description {
     width: 40%;
     margin-bottom: 20%;
     height: 150px;
@@ -83,6 +74,6 @@ a {
     color: rgba(0,0,0,0.7);
 }
 
-.scrollable-list-description__item {
+#achievements_page .scrollable-list-description__item {
     display: none;
 }
