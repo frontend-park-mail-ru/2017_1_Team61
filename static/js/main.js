@@ -2,7 +2,7 @@
  * Created by sergey on 05.03.17.
  */
 
-/*eslint export */
+/*exported loginForm*/
 'use strict';
 
 

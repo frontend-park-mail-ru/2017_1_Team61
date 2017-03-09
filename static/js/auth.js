@@ -10,7 +10,6 @@
   'use strict';
 
   function signup() {
-    // debugger;
       event.preventDefault();
 
       const form = document.getElementsByClassName('input-form')[0];
@@ -44,7 +43,7 @@
       api.login(data)
         .then(response => {
             if (response.status == 200)
-                 window.location.replace(''); //TODO fix it
+                window.location.replace(''); //TODO fix it
         });
   }
 
