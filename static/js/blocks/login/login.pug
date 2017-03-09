@@ -1,0 +1,15 @@
+//  Created by sergey on 09.03.17.
+
+div.login_page
+    div.title FastBall
+    div.content
+        form.input-form(onsubmit="login()")
+            div.input-block.input-e-mail
+                input.input-block__e-mail(type="text" placeholder="E-mail вашей учетной записи")
+            div.input-block.input-password
+                input.input-block__password(type="password" placeholder="Ваш пароль")
+            div.button-submit
+                button(type="submit") Авторизация
+            ul.help-links
+                li#sign_up Создать учетную запись!
+                li#recovery_pass Не можете войти?

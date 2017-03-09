@@ -2,34 +2,42 @@
  * Created by tlakatlekutl on 02.03.17.
  */
 
-;(function () {
+/*eslint no-console: ["error", {allow: ["log", "error"]}]*/
+/*global API:true */
+
+(function () {
     'use strict';
-    const  xhr = new XMLHttpRequest();
-    xhr.withCredentials = true;
 
-    xhr.open('GET', 'http://fastball-backend.herokuapp.com/api/user', true);
-    //xhr.setRequestHeader('Content-Type', 'application/json');
+    const api = new API();
 
-    xhr.onload = function() {
-        const data = JSON.parse(this.responseText);
+    api.getUser()
+        .then(response => {
+            if (response.status == 200) {
+                response.json()
+                   .then(json => {
+                       const name = document.getElementsByClassName('nickname__name')[0];
+                       const email = document.getElementsByClassName('e-mail__name')[0];
 
-        if (xhr.status == 200) {
-            const name = document.getElementsByClassName('nickname__name')[0];
-            const email = document.getElementsByClassName('e-mail__name')[0];
+                       name.innerHTML = json.login;
+                       email.innerHTML = json.email;
 
-            name.innerHTML = data['login'];
-            email.innerHTML = data['email'];
-            console.log(data);
-        } else {
-            console.log(data['error']);
-        }
+                       let loginButton = document.createElement('button');
+                       loginButton.textContent = 'logout';
 
-    };
+                       loginButton.onclick = (event => {
+                           event.preventDefault();
 
-    xhr.onerror = function() {
-        alert( 'Ошибка ' + this.status );
-
-    };
-
-    xhr.send();
+                           const api = new API();
+                           api.logout();
+                       });
+                       const loginPage = document.querySelector('.user-info');
+                       loginPage.appendChild(loginButton);
+                   });
+            } else {
+                throw new Error('Error getting user data');
+            }
+        })
+        .catch(error => {
+            console.error(error);
+        });
 })();

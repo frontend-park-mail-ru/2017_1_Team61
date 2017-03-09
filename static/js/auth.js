@@ -2,109 +2,52 @@
  * Created by tlakatlekutl on 02.03.17.
  */
 
-// ;(function () {
-//     'use strict';
-//     const form = document.getElementsByClassName("input-form")[0];
-//
-//     console.log(form);
-//
-//     form.addEventListener('submit', function (event) {
-//         event.preventDefault();
-//         // console.log(form.elements[0].value);
-//         // const data = new FormData(form);
-//         const data = {
-//             'email': form.elements[0].value,
-//             'password': form.elements[2].value,
-//             'login': form.elements[4].value
-//         };
-//         console.log(JSON.stringify(data));
-//
-//         // var XHR = ("onload" in new XMLHttpRequest()) ? XMLHttpRequest : XDomainRequest;
-//         //
-//         const  xhr = new XMLHttpRequest();
-//
-//         xhr.open('POST', 'http://fastball-backend.herokuapp.com/api/signup', true);
-//         xhr.setRequestHeader("Content-Type", "application/json");
-//
-//         xhr.onload = function() {
-//             alert( this.responseText );
-//         };
-//
-//         xhr.onerror = function() {
-//             alert( 'Ошибка ' + this.status );
-//         };
-//
-//         xhr.send(JSON.stringify(data));
-//     });
-//
-//
-//     // console.log(form.elements.item(0).valueOf());
-// })();
+/*eslint no-console: ["error", {allow: ["log", "error"]}]*/
+/*exported signup, login*/
+/*global API:true */
 
- function signup() {
-        event.preventDefault();
-        //console.log(this);
-         //const data = new FormData(form);
-        const form = document.getElementsByClassName("input-form")[0];
-        const data = {
-            'email': form.elements[0].value,
-            'password': form.elements[2].value,
-            'login': form.elements[4].value
-        };
-        console.log(JSON.stringify(data));
 
-        // var XHR = ("onload" in new XMLHttpRequest()) ? XMLHttpRequest : XDomainRequest;
-        //
-        const  xhr = new XMLHttpRequest();
-        xhr.withCredentials = true;
+  'use strict';
 
-        xhr.open('POST', 'http://fastball-backend.herokuapp.com/api/signup', true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
+  function signup() {
+    // debugger;
+      event.preventDefault();
 
-        xhr.onload = function() {
-            window.location.replace('/profile.html');
-            // console.log(this.message);
-        };
+      const form = document.getElementsByClassName('input-form')[0];
+      const data = {
+          'email': form.elements[0].value,
+          'password': form.elements[2].value,
+          'login': form.elements[4].value
+      };
 
-        xhr.onerror = function() {
-            alert( 'Ошибка ' + this.status );
-        };
+      const api = new API();
 
-        xhr.send(JSON.stringify(data));
-       // return false;
-}
+      api.signup(data)
+        .then(response => {
+            if (response.status == 200)
+                window.location.replace(''); //TODO fix it
+        });
+  }
 
-function login() {
-    event.preventDefault();
-    //console.log(this);
-    //const data = new FormData(form);
-    const form = document.getElementsByClassName("input-form")[0];
-    const data = {
-        'login': form.elements[0].value,
-        'password': form.elements[1].value
-    };
-    console.log(JSON.stringify(data));
+  function login() {
+      event.preventDefault();
 
-    // var XHR = ("onload" in new XMLHttpRequest()) ? XMLHttpRequest : XDomainRequest;
-    //
-    const  xhr = new XMLHttpRequest();
-    xhr.withCredentials = true;
+      const form = document.getElementsByClassName('input-form')[0];
+      const data = {
+          'login': form.elements[0].value,
+          'password': form.elements[1].value
+      };
+      console.log(JSON.stringify(data));
 
-    xhr.open('POST', 'http://fastball-backend.herokuapp.com/api/login', true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
+      const api = new API();
 
-    xhr.onload = function() {
-        // alert(this.responseText);
-        debugger;
-        window.location.replace('/profile.html');
-    };
+      api.login(data)
+        .then(response => {
+            if (response.status == 200)
+                 window.location.replace(''); //TODO fix it
+        });
+  }
 
-    xhr.onerror = function() {
-        alert( 'Ошибка ' + this.status );
-    };
 
-    xhr.send(JSON.stringify(data));
-    // return false;
-}
 
 

@@ -1,4 +1,4 @@
-#login_page .title {
+.login_page .title {
     margin-top: 90px;
     margin-bottom: 15px;
 
@@ -12,13 +12,13 @@
     color: transparent;
 }
 
-#login_page .input-form {
+.login_page .input-form {
     margin-top: 65px;
     margin-bottom: 220px;
     text-align: center;
 }
 
-#login_page .input-block__e-mail {
+.login_page .input-block__e-mail {
     height: 40px;
     width: 340px;
     padding-left: 10px;
@@ -30,11 +30,11 @@
     font-size: 1.2em;
 }
 
-#login_page .input-block {
+.login_page .input-block {
     margin-bottom: 24px;
 }
 
-#login_page .input-block__password {
+.login_page .input-block__password {
     height: 40px;
     width: 340px;
     padding-left: 10px;
@@ -46,7 +46,7 @@
     font-size: 1.2em;
 }
 
-#login_page button {
+.login_page button {
     height: 44px;
     width: 360px;
     margin-top: 30px;
@@ -57,34 +57,34 @@
     font-size: 1.2em;
 }
 
-#login_page button a {
+.login_page button a {
     color: white;
 }
 
-#login_page .help-links {
+.login_page .help-links {
     color: #00AEFF;
     list-style-type: none;
 }
 
-#login_page ul {
+.login_page ul {
     margin-top: 5px;
     padding: 20px;
     padding-top: 10px;
 }
 
-#login_page li {
+.login_page li {
     font-size: 1.3em;
     color: #00AEFF;
     text-align: center;
     margin-bottom: 16px;
 }
 
-#login_page li:hover {
+.login_page li:hover {
     color: white;
     text-decoration: double;
 }
 
-#login_page hr {
+.login_page hr {
     margin-top: 24px;
     align: center;
     width: 360px;

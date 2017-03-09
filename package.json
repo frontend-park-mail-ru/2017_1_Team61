@@ -15,6 +15,7 @@
   "homepage": "https://github.com/XfortunaX/sample.git#readme",
   "dependencies": {
     "express": "^4.14.1",
-    "matter-js":""
+    "matter-js":"",
+    "randomstrings": ""
   }
 }
