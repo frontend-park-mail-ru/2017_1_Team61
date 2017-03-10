@@ -3,6 +3,7 @@
  */
 
 /*exported LeaderBoard*/
+/*global API:true*/
 
 (function () {
     'use strict';
@@ -14,14 +15,6 @@
             this.data = data || [];
         }
 
-        // set Data(value) {
-        //     this.data = value;
-        // }
-        //
-        // get Data() {
-        //     return this.data;
-        // }
-
         render() {
             let parent = document.createElement('div');
             parent.class = 'rating_page';
@@ -29,6 +22,23 @@
             parent.innerHTML = this.drawFunc({'data':this.data})|| 'error';
             document.body.appendChild(parent);
         }
+        _getData() {
+            const api = new API();
+            api.getLeaderBoard()
+                .then(response => {
+                    return response.json();
+                })
+                .then(json => {
+                    this.data = json;
+
+                    parent.innerHTML = this.drawFunc({'data':this.data})|| 'error';
+
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+
     }
     window.LeaderBoard = LeaderBoard;
 })();

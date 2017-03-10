@@ -1,7 +1,7 @@
 /**
  * Created by sergey on 09.03.17.
  */
-
+/*eslint no-console: ["error", {allow: ["log", "error"]}]*/
 /* global API:true */
 
 (function () {
@@ -74,6 +74,7 @@
                 this.errorField.class = 'login_page_error';
 
             }
+            errorf.innerHTML = error.message;
 
         }
 

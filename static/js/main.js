@@ -2,13 +2,16 @@
  * Created by sergey on 05.03.17.
  */
 
-/* global LoginForm:true, SignUpForm:true*/
+/*global LoginForm:true, SignUpForm:true*/
+/*global  LeaderBoard:true, API:true*/
+/*global  showUser*/
+/*global  return_on_main_achievements:true, return_on_main_about:true*/
+/*global  game:true, profile:true, about:true, return_on_main_profile:true*/
+/*global  sign_up:true, back_login:true,  rating:true, achievement:true*/
+/*eslint no-console: ["error", {allow: ["log", "error"]}]*/
+
 'use strict';
-// if (whomi()) {
-//     alert('login');
-// } else{
-//     alert('not login');
-// }
+
 
 const loginForm = new LoginForm();
 loginForm.render();
@@ -16,11 +19,12 @@ loginForm.render();
 const signUpForm = new SignUpForm();
 signUpForm.render();
 
+
 const login_page = document.getElementsByClassName('login_page')[0];
 const sign_up_page = document.getElementsByClassName('sign_up_page')[0];
 const main_page = document.getElementById('main_page');
 const profile_page = document.getElementById('profile_page');
-const rating_page = document.getElementById('rating_page');
+let rating_page;
 const achievements_page = document.getElementById('achievements_page');
 const game_page = document.getElementById('game_page');
 const about_page = document.getElementById('about_page');
@@ -28,59 +32,46 @@ const about_page = document.getElementById('about_page');
 login_page.hidden = true;
 sign_up_page.hidden = true;
 profile_page.hidden = true;
-rating_page.hidden = true;
+
 main_page.hidden = true;
 achievements_page.hidden = true;
 game_page.hidden = true;
 about_page.hidden = true;
 
 const api = new API();
-api.getUser()
-    .then(response=> {
-    if (response.status == 200) {
-    main_page.hidden = false;
-    response.json()
-        .then(json => {
-        const name = document.getElementsByClassName('nickname__name')[0];
-    const email = document.getElementsByClassName('e-mail__name')[0];
+api.getLeaderBoard()
+    .then(response => {
+        return response.json();
+    })
+    .then(json => {
+        const lb = new LeaderBoard(json);
+        lb.render();
+        rating_page = document.getElementById('rating_page');
+        rating_page.hidden = true;
+        document.querySelector('#return_on_main_rating').onclick = function () {
+            rating_page.hidden = true;
+            main_page.hidden = false;
+        };
 
-    name.innerHTML = json.login;
-    email.innerHTML = json.email;
+    })
+    .catch(error => {
+        console.error(error);
+    });
 
-    let logoutButton = document.querySelector('#logout');
 
-    logoutButton.onclick = (event => {
-            event.preventDefault();
-
-    const api = new API();
-    api.logout();
-});
-    // const loginPage = document.querySelector('.user-info');
-    // loginPage.appendChild(loginButton);
-    // console.log('aaaaaaaaaaaa');
-});
-} else {
-    throw new Error('Error getting user data');
-}
-})
-.catch(error => {
-    console.error(error);
-});
-} else if (response.status == 403) {
-    login_page.hidden = false;
-}
-})
+showUser();
 
 loginForm.onsubmit = function () {
     login_page.hidden = true;
     main_page.hidden = false;
-    whomi();
+    showUser();
 };
 
 signUpForm.onsubmit = function () {
     sign_up_page.hidden = true;
     main_page.hidden = false;
-    whomi();
+    showUser();
+
 };
 
 sign_up.onclick = function () {
@@ -123,20 +114,12 @@ return_on_main_profile.onclick = function () {
     main_page.hidden = false;
 };
 
-return_on_main_rating.onclick = function () {
-    rating_page.hidden = true;
-    main_page.hidden = false;
-};
 
 return_on_main_achievements.onclick = function () {
     achievements_page.hidden = true;
     main_page.hidden = false;
 };
 
-// return_on_main_game.onclick = function () {
-//     game_page.hidden = true;
-//     main_page.hidden = false;
-// };
 
 return_on_main_about.onclick = function () {
     about_page.hidden = true;
