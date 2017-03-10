@@ -4,14 +4,14 @@
 
 /* global LoginForm:true, SignUpForm:true*/
 'use strict';
+// if (whomi()) {
+//     alert('login');
+// } else{
+//     alert('not login');
+// }
 
 const loginForm = new LoginForm();
 loginForm.render();
-loginForm.onsubmit = () =>{alert('hurayy!!');};
-
-
-
-
 
 const signUpForm = new SignUpForm();
 signUpForm.render();
@@ -25,7 +25,7 @@ const achievements_page = document.getElementById('achievements_page');
 const game_page = document.getElementById('game_page');
 const about_page = document.getElementById('about_page');
 
-//login_page.hidden = true;
+login_page.hidden = true;
 sign_up_page.hidden = true;
 profile_page.hidden = true;
 rating_page.hidden = true;
@@ -33,6 +33,55 @@ main_page.hidden = true;
 achievements_page.hidden = true;
 game_page.hidden = true;
 about_page.hidden = true;
+
+const api = new API();
+api.getUser()
+    .then(response=> {
+    if (response.status == 200) {
+    main_page.hidden = false;
+    response.json()
+        .then(json => {
+        const name = document.getElementsByClassName('nickname__name')[0];
+    const email = document.getElementsByClassName('e-mail__name')[0];
+
+    name.innerHTML = json.login;
+    email.innerHTML = json.email;
+
+    let logoutButton = document.querySelector('#logout');
+
+    logoutButton.onclick = (event => {
+            event.preventDefault();
+
+    const api = new API();
+    api.logout();
+});
+    // const loginPage = document.querySelector('.user-info');
+    // loginPage.appendChild(loginButton);
+    // console.log('aaaaaaaaaaaa');
+});
+} else {
+    throw new Error('Error getting user data');
+}
+})
+.catch(error => {
+    console.error(error);
+});
+} else if (response.status == 403) {
+    login_page.hidden = false;
+}
+})
+
+loginForm.onsubmit = function () {
+    login_page.hidden = true;
+    main_page.hidden = false;
+    whomi();
+};
+
+signUpForm.onsubmit = function () {
+    sign_up_page.hidden = true;
+    main_page.hidden = false;
+    whomi();
+};
 
 sign_up.onclick = function () {
     login_page.hidden = true;
