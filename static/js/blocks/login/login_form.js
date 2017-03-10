@@ -37,7 +37,6 @@
         }
         _addEvents() {
             this.submitButton.addEventListener('click', (event)=>{this._login(event);});
-            // this.submitButton.addEventListener('click', this._login.bind(this));
         }
 
         _validate() {
@@ -49,14 +48,12 @@
         _login(event) {
             event.preventDefault();
             try {
-                console.log();
                 this._validate();
 
                 const data = {
                     'login': this.loginField.value,
                     'password': this.passwordField.value
                 };
-                console.log(JSON.stringify(data));
 
                 const api = new API();
 
@@ -69,6 +66,15 @@
                 console.log('hello from catch');
                 console.error(error);
             }
+        }
+        _renderError(error) { //TODO it doesnt work
+            let errorf = document.querySelector('.login_page_error');
+            if (!errorf) {
+                this.errorField = document.createElement('div');
+                this.errorField.class = 'login_page_error';
+
+            }
+
         }
 
     }
