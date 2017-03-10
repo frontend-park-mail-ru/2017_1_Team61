@@ -36,11 +36,12 @@
             this.submitButton = document.querySelector('.button-submit > button');
         }
         _addEvents() {
-            this.submitButton.addEventListener('click', this._login);
+            this.submitButton.addEventListener('click', (event)=>{this._login(event);});
+            // this.submitButton.addEventListener('click', this._login.bind(this));
         }
 
         _validate() {
-            if (this.loginField!='' && this.passwordField!='')
+            if (this.loginField.value!='' || this.passwordField.value!='')
                 return;
             throw new Error('No VALID FORM!!!!!!!');
         }
@@ -57,9 +58,9 @@
                 };
                 console.log(JSON.stringify(data));
 
-                this.api = new API();
+                const api = new API();
 
-                this.api.login(data)
+                api.login(data)
                     .then(response => {
                         if (response.status == 200)
                             this._onsubmitFunc();
