@@ -5,7 +5,7 @@
 /*eslint no-console: ["error", {allow: ["log", "error"]}]*/
 /*global API:true */
 
-(function () {
+function whomi() {
     'use strict';
 
     const api = new API();
@@ -21,17 +21,17 @@
                        name.innerHTML = json.login;
                        email.innerHTML = json.email;
 
-                       let loginButton = document.createElement('button');
-                       loginButton.textContent = 'logout';
+                       let logoutButton = document.querySelector('#logout');
 
-                       loginButton.onclick = (event => {
+                       logoutButton.onclick = (event => {
                            event.preventDefault();
 
                            const api = new API();
                            api.logout();
                        });
-                       const loginPage = document.querySelector('.user-info');
-                       loginPage.appendChild(loginButton);
+                       // const loginPage = document.querySelector('.user-info');
+                       // loginPage.appendChild(loginButton);
+                       // console.log('aaaaaaaaaaaa');
                    });
             } else {
                 throw new Error('Error getting user data');
@@ -40,4 +40,4 @@
         .catch(error => {
             console.error(error);
         });
-})();
+};
