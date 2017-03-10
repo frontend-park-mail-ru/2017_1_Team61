@@ -1,0 +1,93 @@
+@import "login.css";
+@import "sign_up.css";
+@import "profile.css";
+@import "rating.css";
+@import "achievement.css";
+@import "game.css";
+@import "about.css";
+
+body {
+    background: -webkit-linear-gradient(top, #1B6990, #141C4C);
+    background-repeat: no-repeat;
+    user-select: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+#main_page .title {
+    margin-top: 40px;
+    margin-bottom: 15px;
+
+    text-align: center;
+    font-size: 5em;
+    font-weight: bold;
+    color: deeppink;
+}
+
+#main_page .list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+
+    -webkit-flex-flow: row wrap;
+    justify-content: space-around;
+}
+
+#main_page .list-down {
+    margin: 50px;
+}
+
+#main_page .list__item {
+    width: 200px;
+    height: 150px;
+    padding: 5px;
+    margin-top: 10px;
+
+    line-height: 150px;
+    color: black;
+    font-weight: bold;
+    font-size: 2.5em;
+    text-align: center;
+}
+
+#main_page #game {
+    width: 250px;
+    height: 250px;
+    margin: 40px;
+    background: -webkit-linear-gradient(top left, #FDD835, #FFF59D, #FDD835);
+    border: 12px outset #FFF59D;
+    border-radius: 140px;
+
+    line-height: 250px;
+}
+
+#main_page #profile {
+    background: -webkit-linear-gradient(top, #184177, #18A7B5, #184177);
+    border: 6px outset #18A7B5;
+}
+
+#main_page #rating {
+    background: -webkit-linear-gradient(top, #FB8C00, #FFCA28, #FB8C00);
+    border: 6px outset #FFCA28;
+}
+
+#main_page #achievement {
+    background: -webkit-linear-gradient(top, #004D40, #00897B, #004D40);
+    border: 6px outset #00897B;
+    font-size: 32px;
+}
+
+#main_page #about {
+    background: -webkit-linear-gradient(top, #424242, #757575, #424242);
+    border: 6px outset #757575;
+    color: white;
+}
+

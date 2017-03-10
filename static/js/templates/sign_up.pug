@@ -1,0 +1,26 @@
+//   Created by sergey on 09.03.17.
+
+div.sign_up_page
+    div.return-on-main
+        button#back_login(type="submit") Назад
+    div.title FastBall
+    div.content
+        form.input-form(onsubmit="signup()")
+            div.input-form__name Создать учетную запись
+            div.input-repeat-block
+                h3 Введите E-mail
+                div.input-block.input-e-mail
+                    input.input-block__e-mail(type="text" placeholder="E-mail")
+                div.repeat-block.repeat-e-mail
+                    input.repeat-block__e-mail(type="text" placeholder="Подтвердить E-mail")
+            div.input-repeat-block
+                h3 Введите пароль
+                div.input-block.input-password
+                    input.input-block__password(type="password" placeholder="Пароль")
+                div.repeat-block.repeat-password
+                    input.repeat-block__password(type="password" placeholder="Подтвердить пароль")
+            div.input-block.input-nickname
+                h3 Введите имя
+                input.input-block__nickname(type="text" placeholder="Имя")
+            div.button-submit-account
+                button(type="submit") Создать учетную запись!

@@ -1,0 +1,81 @@
+.sign_up_page .title {
+    margin-top: 90px;
+    margin-bottom: 15px;
+
+    text-align: center;
+    font-size: 5em;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px,
+    -1px 1px 1px;
+    background: -webkit-linear-gradient(top, #F06292, #EC407A, #F06292);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.sign_up_page .input-form {
+    margin-top: 45px;
+    margin-bottom: 100px;
+    text-align: center;
+}
+
+.sign_up_page .input-form__name {
+    margin-bottom: 50px;
+    font-family: Arial;
+    font-size: 1.6em;
+    color: white;
+}
+
+.sign_up_page .input-repeat-block h3 {
+    margin-left: 38.1%;
+    font-family: Arial;
+    font-size: 1.1em;
+    color: #00AEFF;
+    text-align: left;
+}
+
+.sign_up_page .input-block input, .repeat-block input {
+    height: 40px;
+    width: 340px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-bottom: 16px;
+    border-radius: 2px;
+    border: 1px solid rgba(255,255,255,0.3);
+    background-color: rgba(0,0,0,0.5);
+    color: rgba(255,255,255,0.7);
+    font-size: 1.2em;
+}
+
+.sign_up_page .input-nickname {
+    margin-top: 40px;
+    margin-bottom: 25px;
+    font-family: Arial;
+    font-size: 1.1em;
+    color: #00AEFF;
+}
+
+.sign_up_page button {
+    height: 44px;
+    width: 360px;
+    border-style: none;
+    border-radius: 2px;
+    background: -webkit-linear-gradient(top, #03A9F4, #0288D1);
+    color: white;
+    font-size: 1.2em;
+}
+
+.sign_up_page .return-login-page button {
+    height: 44px;
+    width: 120px;
+    margin-top: 16px;
+    margin-left: 16px;
+    border-style: none;
+    border-radius: 2px;
+    background: -webkit-linear-gradient(top, #03A9F4, #0288D1);
+    color: white;
+    font-size: 1.2em;
+}
+
+.sign_up_page button a {
+    color: white;
+}
