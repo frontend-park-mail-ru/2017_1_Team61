@@ -7,6 +7,12 @@
 
 const loginForm = new LoginForm();
 loginForm.render();
+loginForm.onsubmit = () =>{alert('hurayy!!');};
+
+
+
+
+
 const signUpForm = new SignUpForm();
 signUpForm.render();
 
