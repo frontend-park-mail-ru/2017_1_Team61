@@ -75,7 +75,7 @@ describe('Проверка входа в систему', function() {
         };
         api.login(data)
             .then(response => {
-                expect(response.status).toBe(404);
+                expect(response.status).toBe(401);
                 done(true);
             });
     });
