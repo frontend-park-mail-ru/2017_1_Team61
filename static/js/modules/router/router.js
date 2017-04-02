@@ -10,29 +10,73 @@
       if (Router.instance) {
         return Router.instance;
       }
-
-      this.root = '/';
+      // this.root = '/';
       this.routes = [];
       this.history = window.history;
+      this.goto404 = () => { console.error('page not found'); };
       Router.instance = this;
     }
 
-    addRoute(re, handler) {
-      if (typeof handler !== 'function') {
-        throw new TypeError('handler is not a function');
+    addRoute(re, view) {
+      if (typeof view !== 'object') {
+        throw new TypeError('handler is not a view');
       }
-      this.routes.push({ re, handler });
+      this.routes.push({ re, view });
       return this;
     }
 
     checkPathExists(url) {
-      this.routes.findIndex(pattern => pattern.test(url));
-      return this;
+      return this.routes.findIndex(route => route.re.test(url));
     }
 
     navigate(url) {
-      this.routes.findIndex(pattern => pattern.test(url));
+      const i = this.checkPathExists(url);
+      // debugger;
+      if (i !== -1) {
+        if (this.routes[i].view.isModal) {
+          if (!this.currentView) {
+            this.routes[0].view.show();
+          }
+          this.currentView = this.routes[i].view;
+        } else {
+          if (this.currentView) {
+            this.currentView.hide();
+          }
+          this.currentView = this.routes[i].view;
+        }
+      } else {
+        if (this.currentView) {
+          this.currentView.hide();
+        }
+        this.currentView = this.goto404;
+      }
+      this.currentView.show();
+    }
+
+    go(url) {
+      this.history.pushState(null, '', url);
+      this.navigate(url);
+      this.currentUrl = url;
       return this;
+    }
+
+    set404(view) {
+      this.goto404 = view;
+      return this;
+    }
+
+    start() {
+      const url = window.location.href;
+      this.go(url);
+      setInterval(() => { this.checkUrlChanging(); }, 50);
+      return this;
+    }
+    checkUrlChanging() {
+      const url = window.location.href;
+      if (url !== this.currentUrl) {
+        this.navigate(url);
+        this.currentUrl = url;
+      }
     }
 
   }
