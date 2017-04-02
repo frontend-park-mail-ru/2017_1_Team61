@@ -10,7 +10,7 @@
   const preloaderView = new PreloaderView();
   const mainView = new MainView();
   const p404 = new Page404View();
-  const loginModalView = new LoginModal()
+  const loginModalView = new LoginModal();
 
   const api = new API();
 
@@ -54,15 +54,14 @@
           event.preventDefault();
           if (loginModalView.isValid()) {
             api.login(loginModalView.getData())
-              .then((response) => {
-                return new Promise((resolve)=>{
-                  if (response.status === 200) {
-                    resolve(response.json());
+              .then(response => new Promise((resolve) => {
+                if (response.status === 200) {
+                  resolve(response.json());
                 } else {
-                    loginModalView.showError();
-                }});
-              })
-              .then((json)=> {
+                  loginModalView.showError();
+                }
+              }))
+              .then((json) => {
                 UserProfile = json;
                 if (json.login) {
                   UserProfile.nickname = json.login;
@@ -70,6 +69,10 @@
                 }
                 router.go('/');
                 mainView.setContent(UserProfile);
+                paths.addPathToSinglePlayButton(() => { router.go('/game'); });
+                paths.addPathToMultiPlayButton(() => { router.go('/game'); });
+                paths.addPathToHelpLink(() => { router.go('/about'); });
+                paths.addPathToLeaderBoardButton(() => { router.go('/leaderboard'); });
                 paths.addPathToProfileLink(() => { router.go('/profile'); });
                 paths.addPathToLogoutLink(() => {
                   api.logout();
@@ -77,6 +80,10 @@
                   mainView.setContent(UserProfile);
                   paths.addPathToSignupLink(() => { router.go('/signup'); });
                   paths.addPathToLoginLink(() => { router.go('/login'); });
+                  paths.addPathToSinglePlayButton(() => { router.go('/game'); });
+                  paths.addPathToMultiPlayButton(() => { router.go('/game'); });
+                  paths.addPathToHelpLink(() => { router.go('/about'); });
+                  paths.addPathToLeaderBoardButton(() => { router.go('/leaderboard'); });
                 });
               });
           }
