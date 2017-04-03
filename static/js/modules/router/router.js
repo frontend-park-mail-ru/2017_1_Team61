@@ -1,9 +1,10 @@
 /**
  * Created by tlakatlekutl on 24.03.17.
  */
-
+/* global UserModel:true */
 
 (function routerFunc() {
+  const userModel = new UserModel();
   class Router {
     // singleton class Router
     constructor() {
@@ -66,10 +67,14 @@
     }
 
     start() {
-      const url = window.location.href;
-      this.go(url);
-      setInterval(() => { this.checkUrlChanging(); }, 50);
-      return this;
+      return new Promise((resolve) => {
+        userModel.getUserStatus()
+          .then(() => {
+            setInterval(() => { this.checkUrlChanging(); }, 50);
+            resolve();
+          });
+      })
+      ;
     }
     checkUrlChanging() {
       const url = window.location.href;

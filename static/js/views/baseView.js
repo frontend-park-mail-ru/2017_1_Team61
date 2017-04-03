@@ -14,16 +14,17 @@
       this.parent = parent;
       this.isModal = false;
     }
-
     render(data) {
       this.setContent(data);
-      this.parent.appendChild(this.node);
+      this.addElemToDOM();
       return this;
     }
     setContent(data) {
-      this.node.innerHTML = this.drawFunc({ user: data }) || 'error';
+      this.node.innerHTML = this.drawFunc(data);
     }
-
+    addElemToDOM() {
+      this.parent.appendChild(this.node);
+    }
     show() {
       this.node.hidden = false;
     }

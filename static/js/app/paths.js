@@ -6,7 +6,6 @@
   window.paths = {};
 
   window.paths.addPathToSinglePlayButton = (func) => {
-    document.querySelector('.btn-left').addEventListener('click', func);
   };
 
   window.paths.addPathToMultiPlayButton = (func) => {
@@ -31,7 +30,6 @@
     document.querySelector('.signup-link').addEventListener('click', func);
   };
   window.paths.addPathToSubmitLoginForm = (func) => {
-    document.querySelector('.login-submit-button').addEventListener('click', func);
   };
 
 

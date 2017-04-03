@@ -5,7 +5,7 @@
 /* eslint no-console: ["error", {allow: ["log", "error"]}]*/
 /* global Net:true, fetch*/
 
-(function api() {
+(function apiFunc() {
   class API {
 
     constructor(
