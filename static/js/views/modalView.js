@@ -32,12 +32,12 @@
       title.innerHTML = headerText;
       header.appendChild(title);
 
-      const bodyModal = document.createElement('div');
-      bodyModal.className = 'modal-body';
-      bodyModal.innerHTML = drawFunc() || 'error';
-      content.appendChild(bodyModal);
+      this.bodyModal = document.createElement('div');
+      this.bodyModal.className = 'modal-body';
+      content.appendChild(this.bodyModal);
     }
-    render() {
+    render(data) {
+      this.bodyModal.innerHTML = this.drawFunc(data);
       this.parent.appendChild(this.modal);
       return this;
 

@@ -49,10 +49,11 @@
             this.user.nickname = json.login;
             this.user.email = json.email;
             resolve(json);
+          })
+          .catch((err) => {
+            console.log(err);
+            resolve();
           });
-          // .catch((err) => {
-          //   resolve();
-          // });
       });
     }
     login(data) {
@@ -73,6 +74,31 @@
           })
           .catch((json) => {
             console.log(json);
+            error(json);
+          });
+      });
+    }
+    signup(data) {
+      return new Promise((done, error) => {
+        api.signup(data)
+          .then(response => new Promise((resolve, reject) => {
+            if (response.status === 200) {
+              resolve(response.json());
+            } else {
+              reject(response.json());
+            }
+          }))
+          .then((json) => {
+            this.user.isAuthorised = true;
+            this.user.nickname = json.login;
+            this.user.email = json.email;
+            done(json);
+          })
+          .catch((errorPromise) => {
+            return errorPromise;
+          })
+          .then((json)=> {
+            // console.log(json);
             error(json);
           });
       });

@@ -1,26 +1,13 @@
-//   Created by sergey on 09.03.17.
+.danger.danger-signup
+    p <strong>Ошибка:</strong>
+.signup-modal
+    form
+        label(for="signup-nickname-input") Nickname
+        input(type="text" id="signup-nickname-input" placeholder="Your nickname.." required="true").signup-nickname-input
+        label(for="signup-password-input") Password
+        input(type="password" id="signup-password-input" placeholder="Your password.." required="true").signup-password-input
+        input(type="password" id="signup-password-repeat" placeholder="Repeat password.." required="true").signup-password-repeat
+        label(for="signup-email-input") E-mail
+        input(type="email" id="signup-email-input" placeholder="Your email.." required="true").signup-email-input
+        input(type="submit" value="Signup and play!").signup-submit-button
 
-div.sign_up_page
-    div.return-on-main
-        button#back_login(type="submit") Назад
-    div.title FastBall
-    div.content
-        form.input-form(onsubmit="signup()")
-            div.input-form__name Создать учетную запись
-            div.input-repeat-block
-                h3 Введите E-mail
-                div.input-block.input-e-mail
-                    input.input-block__e-mail(type="text" placeholder="E-mail")
-                div.repeat-block.repeat-e-mail
-                    input.repeat-block__e-mail(type="text" placeholder="Подтвердить E-mail")
-            div.input-repeat-block
-                h3 Введите пароль
-                div.input-block.input-password
-                    input.input-block__password(type="password" placeholder="Пароль")
-                div.repeat-block.repeat-password
-                    input.repeat-block__password(type="password" placeholder="Подтвердить пароль")
-            div.input-block.input-nickname
-                h3 Введите имя
-                input.input-block__nickname(type="text" placeholder="Имя")
-            div.button-submit-account
-                button(type="submit") Создать учетную запись!

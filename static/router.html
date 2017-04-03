@@ -3,21 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <title>TestRouter</title>
-    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/leaderboard.css">
 </head>
 <body>
 
 <h3>Using CSS to style an HTML Form</h3>
 
-<div class="danger">
-    <p><strong>Ошибка:</strong> неверный логин или пароль</p>
-</div>
-<div class="login-modal">
-    <label for="login-input">Nickname</label>
-    <input type="text" id="login-input" placeholder="Your nickname..">
-    <label for="password-input">Password</label>
-    <input type="password" id="password-input" name="lastname" placeholder="Your password..">
-    <input type="submit" value="Enter the game">
+
+<div class="leaderboard-modal" style="overflow-y:auto;">
+    <table class="leaderboard-table">
+        <tr>
+            <th>Место</th>
+            <th>Nickname</th>
+            <th>Счет</th>
+        </tr>
+        <tr>
+            <td>Jill</td>
+            <td>Smith</td>
+            <td>50</td>
+        </tr>
+        <tr>
+            <td>Eve</td>
+            <td>Jackson</td>
+            <td>94</td>
+        </tr>
+        <tr>
+            <td>Adam</td>
+            <td>Johnson</td>
+            <td>67</td>
+        </tr>
+    </table>
 </div>
 
 </body>
