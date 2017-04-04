@@ -8,6 +8,7 @@
 /* global LeaderBoardModal:true */
 /* global ProfileModalView:true */
 /* global AboutModalView:true */
+/* global GameView:true */
 
 (function mainFunc() {
   // views
@@ -19,6 +20,7 @@
   const leaderBoardModal = new LeaderBoardModal();
   const profileModalView = new ProfileModalView();
   const aboutModalView = new AboutModalView();
+  const gameView = new GameView();
 
   // init router
   const router = new Router();
@@ -28,6 +30,7 @@
     .addRoute(/leaderboard$/, leaderBoardModal)
     .addRoute(/profile$/, profileModalView)
     .addRoute(/about$/, aboutModalView)
+    .addRoute(/game$/, gameView)
     .set404(p404);
 
   // global user profile

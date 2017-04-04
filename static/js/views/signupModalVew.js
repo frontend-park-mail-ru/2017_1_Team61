@@ -23,7 +23,10 @@
         if (this.isValid()) {
           this.errorField.style.display = 'none';
           userModel.signup(this.getFormData())
-            .then(() => { router.go('/'); })
+            .then(() => {
+              router.go('/');
+              this.destruct();
+            })
             .catch((error) => { this.showError(error.error); });
         }
       });

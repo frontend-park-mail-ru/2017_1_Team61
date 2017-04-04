@@ -25,6 +25,9 @@
     addElemToDOM() {
       this.parent.appendChild(this.node);
     }
+    destruct() {
+      this.parent.removeChild(this.node);
+    }
     show() {
       this.node.hidden = false;
     }

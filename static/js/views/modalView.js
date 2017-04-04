@@ -46,6 +46,7 @@
 
     }
     destruct() {
+      this.alreadyInDOM = false;
       this.parent.removeChild(this.modal);
     }
     onClose(func) {

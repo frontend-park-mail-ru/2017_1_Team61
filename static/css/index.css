@@ -1,13 +1,7 @@
 @import "modal.css";
 @import "login.css";
 @import "leaderboard.css";
-
-/*@import "sign_up.css";*/
-/*@import "profile.css";*/
-/*@import "rating.css";*/
-/*@import "achievement.css";*/
-/*@import "game.css";*/
-/*@import "about.css";*/
+@import "game.css";
 
 .main-page {
     /*background-color: #00b8d4;*/

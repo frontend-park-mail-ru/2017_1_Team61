@@ -21,7 +21,10 @@
         if (this.isValid()) {
           event.preventDefault();
           userModel.login(this.getFormData())
-            .then(() => { router.go('/'); })
+            .then(() => {
+              router.go('/');
+              this.destruct();
+            })
             .catch(() => { this.showError(); });
         }
       });

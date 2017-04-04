@@ -17,7 +17,12 @@
     }
     show() {
       if (userModel.isAuthorised()) {
-        super.show({ user: userModel.getData() });
+        if (!this.alreadyInDOM) {
+          this.alreadyInDOM = true;
+          this.parent.appendChild(this.modal);
+        }
+        this.bodyModal.innerHTML = this.drawFunc({ user: userModel.getData() });
+        this.modal.style.display = 'block';
       } else {
         router.go('/');
       }

@@ -1,0 +1,15 @@
+.game-header {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+}
+.score-player2 {
+    align-self: center;
+    justify-self: flex-end;
+    margin-left: 20px;
+}
+.score-player1 {
+    align-self: flex-start;
+    position: relative;
+    margin-left: 20px;
+}
