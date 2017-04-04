@@ -28,6 +28,13 @@
         }
       });
     }
+    show() {
+      if (!userModel.isAuthorised()) {
+        super.show();
+      } else {
+        router.go('/');
+      }
+    }
     showError(errorText) {
       this.errorField.innerHTML = errorText;
       this.errorField.style.display = 'block';

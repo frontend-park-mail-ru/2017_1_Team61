@@ -7,10 +7,10 @@ th, td {
     text-align: left;
     padding: 8px;
 }
-th {
+.leaderboard-table th {
     border-bottom: 3px solid black;
 }
 
-tr:nth-child(even){
+.leaderboard-table tr:nth-child(even){
     background-color: #f2f2f2;
 }

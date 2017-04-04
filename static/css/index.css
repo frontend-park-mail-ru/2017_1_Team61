@@ -23,6 +23,7 @@
 
 .start-game-buttons {
     background-color: white;
+    display: flex;
     /*align-self: center;*/
 }
 .button {
@@ -42,20 +43,21 @@
 .btn-left {
     background-color: #4CAF50;
     border-radius: 50px 0 0 50px;
+    flex-grow: 1;
 }
-.btn-left:hover ~ .btn-right{
-    width: 200px;
-    z-index: 2;
+.btn-left:hover{
+    /*width: 200px;*/
+    flex-grow: 2;
 }
 
 .btn-right {
     background-color: orange;
     border-radius: 0 50px 50px 0;
+    flex-grow: 1;
 }
 
-.btn-right:hover ~ .btn-left {
-    width: 200px;
-    z-index: 2;
+.btn-right:hover {
+    flex-grow: 2;
 }
 
 .main-page-leaderboard {

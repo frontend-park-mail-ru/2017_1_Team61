@@ -6,7 +6,7 @@
 /* global API:true, Router:true*/
 
 
-(function loginModalWindowFunc() {
+(function leaderboardModalWindowFunc() {
   const api = new API();
   const router = new Router();
 
@@ -17,17 +17,17 @@
     }
     render() {
       api.getLeaderBoard()
-        .then((response)=>{
+        .then((response) => {
           if (response.status === 200) {
             return response.json();
           }
           throw new Error('error getting leaderboard');
         })
-        .then((json)=>{
+        .then((json) => {
           console.log(json);
           super.render({ data: json.users });
         })
-        .catch((err)=>{
+        .catch((err) => {
           console.log(err);
         });
     }

@@ -11,6 +11,8 @@
       this.isModal = true;
       this.parent = parent;
       this.drawFunc = drawFunc;
+      this.alreadyInDOM = false;
+
       this.modal = document.createElement('div');
       this.modal.className = 'modal';
 
@@ -37,10 +39,14 @@
       content.appendChild(this.bodyModal);
     }
     render(data) {
+      this.alreadyInDOM = true;
       this.bodyModal.innerHTML = this.drawFunc(data);
       this.parent.appendChild(this.modal);
       return this;
 
+    }
+    destruct() {
+      this.parent.removeChild(this.modal);
     }
     onClose(func) {
       this.close.addEventListener('click', func);
@@ -49,7 +55,10 @@
       });
       return this;
     }
-    show() {
+    show(data) {
+      if (!this.alreadyInDOM) {
+        this.render(data);
+      }
       this.modal.style.display = 'block';
     }
     hide() {

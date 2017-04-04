@@ -36,6 +36,7 @@
       document.querySelector('.btn-left').addEventListener('click', () => { router.go('/game'); });
       document.querySelector('.btn-right').addEventListener('click', () => { router.go('/game'); });
       document.querySelector('.leaderboard-button').addEventListener('click', () => { router.go('/leaderboard'); });
+      document.querySelector('.footer-help-link').addEventListener('click', () => { router.go('/about'); });
 
       if (this.data.authorised) {
         document.querySelector('.profile-link').addEventListener('click', () => {

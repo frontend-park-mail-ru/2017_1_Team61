@@ -6,6 +6,8 @@
 /* global LoginModal:true, UserModel:true */
 /* global SignupModal:true */
 /* global LeaderBoardModal:true */
+/* global ProfileModalView:true */
+/* global AboutModalView:true */
 
 (function mainFunc() {
   // views
@@ -15,6 +17,8 @@
   const loginModalView = new LoginModal();
   const signupModalView = new SignupModal();
   const leaderBoardModal = new LeaderBoardModal();
+  const profileModalView = new ProfileModalView();
+  const aboutModalView = new AboutModalView();
 
   // init router
   const router = new Router();
@@ -22,14 +26,15 @@
     .addRoute(/login$/, loginModalView)
     .addRoute(/signup$/, signupModalView)
     .addRoute(/leaderboard$/, leaderBoardModal)
+    .addRoute(/profile$/, profileModalView)
+    .addRoute(/about$/, aboutModalView)
     .set404(p404);
 
   // global user profile
   const userModel = new UserModel();
 
-  loginModalView.render();
-  signupModalView.render();
   leaderBoardModal.render();
+  aboutModalView.render();
 
   router.start()
     .then(() => {

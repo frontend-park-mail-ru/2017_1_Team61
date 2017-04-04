@@ -26,6 +26,13 @@
         }
       });
     }
+    show() {
+      if (!userModel.isAuthorised()) {
+        super.show();
+      } else {
+        router.go('/');
+      }
+    }
     showError() {
       this.errorField.style.display = 'block';
     }
