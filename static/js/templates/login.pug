@@ -1,15 +1,9 @@
-//  Created by sergey on 09.03.17.
-
-div.login_page
-    div.title FastBall
-    div.content
-        form.input-form(onsubmit="login()")
-            div.input-block.input-e-mail
-                input.input-block__e-mail(type="text" placeholder="E-mail вашей учетной записи")
-            div.input-block.input-password
-                input.input-block__password(type="password" placeholder="Ваш пароль")
-            div.button-submit
-                button(type="submit") Авторизация
-            ul.help-links
-                li#sign_up Создать учетную запись!
-                li#recovery_pass Не можете войти?
+.danger
+    p <strong>Ошибка:</strong> неверный логин или пароль
+.login-modal
+    form
+        label(for="login-input") Nickname
+        input(type="text" id="login-input" placeholder="Your nickname.." required="true").login-nickname-input
+        label(for="password-input") Password
+        input(type="password" id="password-input" placeholder="Your password.." required="true").login-password-input
+        input(type="submit" value="Enter the game").login-submit-button

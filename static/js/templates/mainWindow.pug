@@ -1,0 +1,19 @@
+//
+   Created by tlakatlekutl on 27.03.17.
+
+.main-page
+    .user-state
+        if user.authorised
+            a.dropdown-link #{user.nickname} \/
+            .dropdown-content
+                a.profile-link Profile
+                a.logout-link Logout
+        else
+            a.login-link Login
+            a.signup-link Sign up
+    .main-page-center
+        .start-game-buttons
+            button.button.btn-left Single
+            button.button.btn-right Multi
+        .main-page-leaderboard
+            button.leaderboard-button Leaderboard
