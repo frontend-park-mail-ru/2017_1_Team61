@@ -2,7 +2,6 @@
  * Created by tlakatlekutl on 07.03.17.
  */
 
-/* eslint no-console: ["error", {allow: ["log", "error"]}]*/
 /* global Net:true, fetch*/
 
 (function apiFunc() {

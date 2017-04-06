@@ -2,17 +2,21 @@
  * Created by tlakatlekutl on 31.03.17.
  */
 
-/* global BaseView:true */
+/* global Router:true */
 
 
 (function ModalViewFunc() {
+  const router = new Router();
   class ModalView {
     constructor(headerText, drawFunc, parent = document.querySelector('main')) {
       this.isModal = true;
       this.parent = parent;
       this.drawFunc = drawFunc;
       this.alreadyInDOM = false;
-
+      this.headerText = headerText;
+      // this.generateBase();
+    }
+    generateBase() {
       this.modal = document.createElement('div');
       this.modal.className = 'modal';
 
@@ -31,7 +35,7 @@
 
       const title = document.createElement('h2');
       title.className = 'modal-header-title';
-      title.innerHTML = headerText;
+      title.innerHTML = this.headerText;
       header.appendChild(title);
 
       this.bodyModal = document.createElement('div');
@@ -40,10 +44,11 @@
     }
     render(data) {
       this.alreadyInDOM = true;
+      this.generateBase();
+      this.onClose(() => { router.go('/'); });
       this.bodyModal.innerHTML = this.drawFunc(data);
       this.parent.appendChild(this.modal);
       return this;
-
     }
     destruct() {
       this.alreadyInDOM = false;

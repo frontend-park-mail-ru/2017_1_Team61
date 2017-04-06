@@ -12,7 +12,6 @@
   class LoginModal extends ModalView {
     constructor() {
       super('Login', loginTemplate);
-      super.onClose(() => { router.go('/'); });
     }
     render() {
       super.render();
@@ -32,12 +31,16 @@
     show() {
       if (!userModel.isAuthorised()) {
         super.show();
+        this.hideError();
       } else {
         router.go('/');
       }
     }
     showError() {
       this.errorField.style.display = 'block';
+    }
+    hideError() {
+      this.errorField.style.display = 'none';
     }
     isValid() {
       this.nickname = document.querySelector('.login-nickname-input').value;

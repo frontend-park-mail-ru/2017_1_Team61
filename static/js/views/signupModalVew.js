@@ -13,7 +13,6 @@
   class SignupModal extends ModalView {
     constructor() {
       super('Signup', signupTemplate);
-      super.onClose(() => { router.go('/'); });
     }
     render() {
       super.render();
@@ -34,6 +33,7 @@
     show() {
       if (!userModel.isAuthorised()) {
         super.show();
+        this.hideError();
       } else {
         router.go('/');
       }
@@ -41,6 +41,9 @@
     showError(errorText) {
       this.errorField.innerHTML = errorText;
       this.errorField.style.display = 'block';
+    }
+    hideError() {
+      this.errorField.style.display = 'none';
     }
     isValid() {
       this.nickname = document.querySelector('.signup-nickname-input').value;

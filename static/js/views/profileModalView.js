@@ -13,13 +13,12 @@
   class ProfileModalView extends ModalView {
     constructor() {
       super('Profile', profileTemplate);
-      super.onClose(() => { router.go('/'); });
     }
     show() {
       if (userModel.isAuthorised()) {
         if (!this.alreadyInDOM) {
           this.alreadyInDOM = true;
-          this.parent.appendChild(this.modal);
+          this.render({ user: userModel.getData() });
         }
         this.bodyModal.innerHTML = this.drawFunc({ user: userModel.getData() });
         this.modal.style.display = 'block';

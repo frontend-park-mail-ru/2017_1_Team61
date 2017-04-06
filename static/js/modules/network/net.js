@@ -2,7 +2,6 @@
  * Created by tlakatlekutl on 05.03.17.
  */
 
-/* eslint no-console: ["error", {allow: ["log", "error"]}]*/
 /* global console:true, fetch*/
 
 (function NetFunction() {

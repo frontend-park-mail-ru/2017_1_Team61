@@ -3,17 +3,15 @@
  */
 
 /* global ModalView:true, leaderboardTemplate */
-/* global API:true, Router:true*/
+/* global API:true */
 
 
 (function leaderboardModalWindowFunc() {
   const api = new API();
-  const router = new Router();
 
   class LeaderBoardModal extends ModalView {
     constructor() {
       super('Leaderboard', leaderboardTemplate);
-      super.onClose(() => { router.go('/'); });
     }
     render() {
       api.getLeaderBoard()
