@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tests</title>
+</head>
+<body>
+
+
+    <link rel="shortcut icon" type="image/png" href="js/modules/jasmine/lib/jasmine-2.5.2/jasmine_favicon.png">
+    <link rel="stylesheet" type="text/css" href="js/modules/jasmine/lib/jasmine-2.5.2/jasmine.css">
+
+    <script type="text/javascript" src="js/modules/jasmine/lib/jasmine-2.5.2/jasmine.js"></script>
+    <script type="text/javascript" src="js/modules/jasmine/lib/jasmine-2.5.2/jasmine-html.js"></script>
+    <script type="text/javascript" src="js/modules/jasmine/lib/jasmine-2.5.2/boot.js"></script>
+
+    <!--include modules-->
+    <script src="js/tests/api/randomstring/randstring.js"></script>
+    <script src="js/modules/network/net.js"></script>
+    <script src="js/modules/api/api.js"></script>
+
+    <script>
+        window.nickname = rs.generate({
+            length: 12,
+            charset: 'alphabetic'
+        });
+
+        window.password = rs.generate();
+        window.email = rs.generate({length: 8}) + '@fastball.com';
+    </script>
+
+    <!--tests here-->
+    <script src="js/tests/api/sign_up_tests.js"></script>
+    <script src="js/tests/api/get_user_tests.js"></script>
+    <script src="js/tests/api/login_tests.js"></script>
+    <script src="js/tests/api/change_password.js"></script>
+    <script src="js/tests/api/leaderbord_tests.js"></script>
+</body>
+</html>

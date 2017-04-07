@@ -1,0 +1,16 @@
+.leaderboard-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td {
+    text-align: left;
+    padding: 8px;
+}
+.leaderboard-table th {
+    border-bottom: 3px solid black;
+}
+
+.leaderboard-table tr:nth-child(even){
+    background-color: #f2f2f2;
+}

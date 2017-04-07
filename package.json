@@ -1,0 +1,26 @@
+{
+  "name": "sample",
+  "version": "1.0.0",
+  "description": "Sample",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/XfortunaX/sample.git"
+  },
+  "keywords": [],
+  "author": "",
+  "homepage": "https://github.com/XfortunaX/sample.git#readme",
+  "dependencies": {
+    "express": "^4.14.1",
+    "matter-js": "",
+    "randomstrings": ""
+  },
+  "devDependencies": {
+    "eslint": "^3.17.1",
+    "eslint-config-airbnb-base": "^11.1.1",
+    "eslint-plugin-import": "^2.2.0"
+  }
+}

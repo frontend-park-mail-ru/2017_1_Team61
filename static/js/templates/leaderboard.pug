@@ -1,0 +1,12 @@
+
+div(style="overflow-y:auto;").leaderboard-modal
+    table.leaderboard-table
+        tr
+            th Место
+            th Nickname
+            th Счет
+        each user, index in data
+            tr
+                td=index
+                td=user.login
+                td=user.rating

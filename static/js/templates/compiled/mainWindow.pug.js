@@ -1,0 +1,73 @@
+function pug_escape(e){var a=""+e,t=pug_match_html.exec(a);if(!t)return e;var r,c,n,s="";for(r=t.index,c=0;r<a.length;r++){switch(a.charCodeAt(r)){case 34:n="&quot;";break;case 38:n="&amp;";break;case 60:n="&lt;";break;case 62:n="&gt;";break;default:continue}c!==r&&(s+=a.substring(c,r)),c=r+1,s+=n}return c!==r?s+a.substring(c,r):s}
+var pug_match_html=/["&<>]/;
+function pug_rethrow(n,e,r,t){if(!(n instanceof Error))throw n;if(!("undefined"==typeof window&&e||t))throw n.message+=" on line "+r,n;try{t=t||require("fs").readFileSync(e,"utf8")}catch(e){pug_rethrow(n,null,r)}var i=3,a=t.split("\n"),o=Math.max(r-i,0),h=Math.min(a.length,r+i),i=a.slice(o,h).map(function(n,e){var t=e+o+1;return(t==r?"  > ":"    ")+t+"| "+n}).join("\n");throw n.path=e,n.message=(e||"Pug")+":"+r+"\n"+i+"\n\n"+n.message,n}function mainWindowTemplate(locals) {var pug_html = "", pug_mixins = {}, pug_interp;var pug_debug_filename, pug_debug_line;try {var pug_debug_sources = {"mainWindow.pug":"\u002F\u002F\n   Created by tlakatlekutl on 27.03.17.\n\n.main-page\n    .user-state\n        if user.authorised\n            a.dropdown-link #{user.nickname} \\\u002F\n            .dropdown-content\n                a.profile-link Profile\n                a.logout-link Logout\n        else\n            a.login-link Login\n            a.signup-link Sign up\n    .name-game FastBall\n    .main-page-center\n        .start-game-buttons\n            button.button.btn-left Single\n            button.button.btn-right Multi\n        .main-page-leaderboard\n            button.leaderboard-button Leaderboard\nfooter.main-page-footer\n    a.footer-help-link help"};
+;var locals_for_with = (locals || {});(function (user) {;pug_debug_line = 1;pug_debug_filename = "mainWindow.pug";
+pug_html = pug_html + "\u003C!--";
+;pug_debug_line = 2;
+pug_html = pug_html + "Created by tlakatlekutl on 27.03.17.";
+;pug_debug_line = 3;
+pug_html = pug_html + "\n";
+;pug_debug_line = 3;
+pug_html = pug_html + "--\u003E";
+;pug_debug_line = 4;pug_debug_filename = "mainWindow.pug";
+pug_html = pug_html + "\u003Cdiv class=\"main-page\"\u003E";
+;pug_debug_line = 5;pug_debug_filename = "mainWindow.pug";
+pug_html = pug_html + "\u003Cdiv class=\"user-state\"\u003E";
+;pug_debug_line = 6;pug_debug_filename = "mainWindow.pug";
+if (user.authorised) {
+;pug_debug_line = 7;pug_debug_filename = "mainWindow.pug";
+pug_html = pug_html + "\u003Ca class=\"dropdown-link\"\u003E";
+;pug_debug_line = 7;pug_debug_filename = "mainWindow.pug";
+pug_html = pug_html + (pug_escape(null == (pug_interp = user.nickname) ? "" : pug_interp));
+;pug_debug_line = 7;pug_debug_filename = "mainWindow.pug";
+pug_html = pug_html + " \\\u002F\u003C\u002Fa\u003E";
+;pug_debug_line = 8;pug_debug_filename = "mainWindow.pug";
+pug_html = pug_html + "\u003Cdiv class=\"dropdown-content\"\u003E";
+;pug_debug_line = 9;pug_debug_filename = "mainWindow.pug";
+pug_html = pug_html + "\u003Ca class=\"profile-link\"\u003E";
+;pug_debug_line = 9;pug_debug_filename = "mainWindow.pug";
+pug_html = pug_html + "Profile\u003C\u002Fa\u003E";
+;pug_debug_line = 10;pug_debug_filename = "mainWindow.pug";
+pug_html = pug_html + "\u003Ca class=\"logout-link\"\u003E";
+;pug_debug_line = 10;pug_debug_filename = "mainWindow.pug";
+pug_html = pug_html + "Logout\u003C\u002Fa\u003E\u003C\u002Fdiv\u003E";
+}
+else {
+;pug_debug_line = 12;pug_debug_filename = "mainWindow.pug";
+pug_html = pug_html + "\u003Ca class=\"login-link\"\u003E";
+;pug_debug_line = 12;pug_debug_filename = "mainWindow.pug";
+pug_html = pug_html + "Login\u003C\u002Fa\u003E";
+;pug_debug_line = 13;pug_debug_filename = "mainWindow.pug";
+pug_html = pug_html + "\u003Ca class=\"signup-link\"\u003E";
+;pug_debug_line = 13;pug_debug_filename = "mainWindow.pug";
+pug_html = pug_html + "Sign up\u003C\u002Fa\u003E";
+}
+pug_html = pug_html + "\u003C\u002Fdiv\u003E";
+;pug_debug_line = 14;pug_debug_filename = "mainWindow.pug";
+pug_html = pug_html + "\u003Cdiv class=\"name-game\"\u003E";
+;pug_debug_line = 14;pug_debug_filename = "mainWindow.pug";
+pug_html = pug_html + "FastBall\u003C\u002Fdiv\u003E";
+;pug_debug_line = 15;pug_debug_filename = "mainWindow.pug";
+pug_html = pug_html + "\u003Cdiv class=\"main-page-center\"\u003E";
+;pug_debug_line = 16;pug_debug_filename = "mainWindow.pug";
+pug_html = pug_html + "\u003Cdiv class=\"start-game-buttons\"\u003E";
+;pug_debug_line = 17;pug_debug_filename = "mainWindow.pug";
+pug_html = pug_html + "\u003Cbutton class=\"button btn-left\"\u003E";
+;pug_debug_line = 17;pug_debug_filename = "mainWindow.pug";
+pug_html = pug_html + "Single\u003C\u002Fbutton\u003E";
+;pug_debug_line = 18;pug_debug_filename = "mainWindow.pug";
+pug_html = pug_html + "\u003Cbutton class=\"button btn-right\"\u003E";
+;pug_debug_line = 18;pug_debug_filename = "mainWindow.pug";
+pug_html = pug_html + "Multi\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E";
+;pug_debug_line = 19;pug_debug_filename = "mainWindow.pug";
+pug_html = pug_html + "\u003Cdiv class=\"main-page-leaderboard\"\u003E";
+;pug_debug_line = 20;pug_debug_filename = "mainWindow.pug";
+pug_html = pug_html + "\u003Cbutton class=\"leaderboard-button\"\u003E";
+;pug_debug_line = 20;pug_debug_filename = "mainWindow.pug";
+pug_html = pug_html + "Leaderboard\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";
+;pug_debug_line = 21;pug_debug_filename = "mainWindow.pug";
+pug_html = pug_html + "\u003Cfooter class=\"main-page-footer\"\u003E";
+;pug_debug_line = 22;pug_debug_filename = "mainWindow.pug";
+pug_html = pug_html + "\u003Ca class=\"footer-help-link\"\u003E";
+;pug_debug_line = 22;pug_debug_filename = "mainWindow.pug";
+pug_html = pug_html + "help\u003C\u002Fa\u003E\u003C\u002Ffooter\u003E";}.call(this,"user" in locals_for_with?locals_for_with.user:typeof user!=="undefined"?user:undefined));} catch (err) {pug_rethrow(err, pug_debug_filename, pug_debug_line, pug_debug_sources[pug_debug_filename]);};return pug_html;}
