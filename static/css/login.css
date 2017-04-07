@@ -1,91 +1,42 @@
-.login_page .title {
-    margin-top: 90px;
-    margin-bottom: 15px;
-
-    text-align: center;
-    font-size: 5em;
-    font-weight: bold;
-    text-shadow: 1px 1px 1px,
-                -1px 1px 1px;
-    background: -webkit-linear-gradient(top, #F06292, #EC407A, #F06292);
-    -webkit-background-clip: text;
-    color: transparent;
+input, select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
 }
 
-.login_page .input-form {
-    margin-top: 65px;
-    margin-bottom: 220px;
-    text-align: center;
-}
-
-.login_page .input-block__e-mail {
-    height: 40px;
-    width: 340px;
-    padding-left: 10px;
-    padding-right: 10px;
-    border-radius: 2px;
-    border: 1px solid rgba(255,255,255,0.3);
-    background-color: rgba(0,0,0,0.5);
-    color: rgba(255,255,255,0.7);
-    font-size: 1.2em;
-}
-
-.login_page .input-block {
-    margin-bottom: 24px;
-}
-
-.login_page .input-block__password {
-    height: 40px;
-    width: 340px;
-    padding-left: 10px;
-    padding-right: 10px;
-    border-radius: 2px;
-    border: 1px solid rgba(255,255,255,0.3);
-    background-color: rgba(0,0,0,0.5);
-    color: rgba(255,255,255,0.7);
-    font-size: 1.2em;
-}
-
-.login_page button {
-    height: 44px;
-    width: 360px;
-    margin-top: 30px;
-    border-radius: 2px;
-    border-style: none;
-    background: -webkit-linear-gradient(top, #03A9F4, #0288D1);
+input[type=submit] {
+    width: 100%;
+    background-color: #4CAF50;
     color: white;
-    font-size: 1.2em;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
-.login_page button a {
-    color: white;
+input[type=submit]:hover {
+    background-color: #45a049;
 }
 
-.login_page .help-links {
-    color: #00AEFF;
-    list-style-type: none;
-}
-
-.login_page ul {
-    margin-top: 5px;
+.login-modal {
+    border-radius: 5px;
+    background-color: #f2f2f2;
     padding: 20px;
-    padding-top: 10px;
 }
 
-.login_page li {
-    font-size: 1.3em;
-    color: #00AEFF;
-    text-align: center;
-    margin-bottom: 16px;
+.input-error {
+    color: red;
 }
-
-.login_page li:hover {
-    color: white;
-    text-decoration: double;
-}
-
-.login_page hr {
-    margin-top: 24px;
-    align: center;
-    width: 360px;
+.danger {
+    display: none;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    padding: 4px 12px;
+    background-color: #ffdddd;
+    border-left: 6px solid #f44336;
 }

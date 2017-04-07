@@ -2,185 +2,64 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="css/preloader.css">
     <title>FastBall</title>
 </head>
 <body>
 
-<!--<div id="sign_up_page">-->
-<!--</div>-->
-
-<!--<div cla="login_page">-->
-<!--</div>-->
-
-<div id="main_page">
-    <main>
-        <div class="title">FastBall</div>
-
-        <div class="content">
-            <div class="menu">
-                <ul class="list list-up">
-                    <li id="rating"  class="list__item rating">Рейтинг</li>
-                    <li id="achievement"  class="list__item achievement">Достижения</li>
-                </ul>
-
-                <ul class="list list-down">
-                    <li id="profile" class="list__item profile">Профиль</li>
-                    <li id="game" class="list__item new-game">Новая игра</li>
-                    <li id="about" class="list__item about">Об игре</li>
-                </ul>
-            </div>
-        </div>
-
-        <!--<audio src="/sounds/start.mp3" autoplay="autoplay"></audio>-->
-    </main>
+<div class="preloader-page">
+    <h1>Loading...</h1>
 </div>
 
-<div id="profile_page">
-    <main>
-        <div id="return_on_main_profile" class="return-on-main">На главную</div>
-        <div id="logout">Смена пользователя</div>
+<link rel="stylesheet" href="css/index.css">
 
-        <div class="title">Профиль</div>
+<main>
 
-        <div class="content">
-            <div class="user-info">
-                <div class="column column-left">
-                    <div class="avatar">
-                        <img src="images/avatar.png">
-                    </div>
-                    <div class="level">10</div>
-                </div>
-                <div class="column column-right">
-                    <div class="nickname">
-                        <h4 class="nickname__label">Имя: </h4>
-                        <h4 class="nickname__name">Fortuna</h4>
-                    </div>
-                    <br />
-                    <div class="e-mail">
-                        <h4 class="e-mail__label">E-mail: </h4>
-                        <h4 class="e-mail__name">fastball@mail.com</h4>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-</div>
+</main>
 
 
-
-<div id="achievements_page">
-    <main>
-        <div id="return_on_main_achievements" class="return-on-main">На главную</div>
-
-        <div class="title">Достижения</div>
-
-        <div class="content">
-            <ul class="scrollable-list" id="scroll_list_achievements">
-                <li class="scrollable-list__item"><img src="images/achievement_1.png"
-                                                       ondrag="return false" ondragdrop="return false" ondragstart="return false"></li>
-                <li class="scrollable-list__item"><img src="images/achievement_2.png"
-                                                       ondrag="return false" ondragdrop="return false" ondragstart="return false"></li>
-                <li class="scrollable-list__item"><img src="images/achievement_3.png"
-                                                       ondrag="return false" ondragdrop="return false" ondragstart="return false"></li>
-                <li class="scrollable-list__item"><img src="images/achievement_4.png"
-                                                       ondrag="return false" ondragdrop="return false" ondragstart="return false"></li>
-                <li class="scrollable-list__item"><img src="images/achievement_5.png"
-                                                       ondrag="return false" ondragdrop="return false" ondragstart="return false"></li>
-                <li class="scrollable-list__item"><img src="images/achievement_6.png"
-                                                       ondrag="return false" ondragdrop="return false" ondragstart="return false"></li>
-                <li class="scrollable-list__item"><img src="images/achievement_7.png"
-                                                       ondrag="return false" ondragdrop="return false" ondragstart="return false"></li>
-                <li class="scrollable-list__item"><img src="images/achievement_8.png"
-                                                       ondrag="return false" ondragdrop="return false" ondragstart="return false"></li>
-            </ul>
-            <div class="scrollable-list-description" id="scroll_list_description">
-                <div class="scrollable-list-description__item">
-                    <h3>Какое-то интересное и увлекательное описание достижения 1</h3>
-                </div>
-                <div class="scrollable-list-description__item">
-                    <h3>Какое-то интересное и увлекательное описание достижения 2</h3>
-                </div>
-                <div class="scrollable-list-description__item">
-                    <h3>Какое-то интересное и увлекательное описание достижения 3</h3>
-                </div>
-                <div class="scrollable-list-description__item">
-                    <h3>Какое-то интересное и увлекательное описание достижения 4</h3>
-                </div>
-                <div class="scrollable-list-description__item">
-                    <h3>Какое-то интересное и увлекательное описание достижения 5</h3>
-                </div>
-                <div class="scrollable-list-description__item">
-                    <h3>Какое-то интересное и увлекательное описание достижения 6</h3>
-                </div>
-                <div class="scrollable-list-description__item">
-                    <h3>Какое-то интересное и увлекательное описание достижения 7</h3>
-                </div>
-                <div class="scrollable-list-description__item">
-                    <h3>Какое-то интересное и увлекательное описание достижения 8</h3>
-                </div>
-            </div>
-        </div>
-    </main>
-</div>
-
-<div id="game_page">
-
-</div>
-
-<div id="about_page">
-    <main>
-        <div id="return_on_main_about" class="return-on-main">На главную</div>
-
-        <div class="title">Об игре</div>
-
-        <div class="content">
-            <div class="game-info">
-                <div class="game-info__title">
-                    <h1>Правила игры</h1>
-                </div>
-                <div class="game-info__description">
-                    <h3>Игровой процесс: игроки управляют платформой, которая может передвигаться только в
-                        горизонтальном направлении и отбивают шарик, чтобы он не пересек линию ворот.
-                    </h3>
-                    <h3>Цель игры: забить шарик в зону противника
-                    </h3>
-                    <h3>Особенности: шарик может иметь разные цвета. Отбить шарик
-                        можно только влатформой того же цвета
-                    </h3>
-                </div>
-            </div>
-            <div class="develop-info">
-                <div class="develop-info__title">
-                    <h1>Разработчики</h1>
-                </div>
-                <div class="develop-info__description">
-                    <h3>Буклин Сергей - Фронтенд
-                    </h3>
-                    <h3>Якубов Алексей - Фронтенд
-                    </h3>
-                    <h3>Буторин Сергей - Бекэнд
-                    </h3>
-                </div>
-            </div>
-        </div>
-    </main>
-</div>
-
+<!--scripts-->
 
 <script src="js/modules/network/net.js"></script>
 <script src="js/modules/api/api.js"></script>
-<script src="js/templates/compiled/login.pug.js"></script>
-<script src="js/blocks/login/login_form.js"></script>
-<script src="js/templates/compiled/sign_up.pug.js"></script>
-<script src="js/blocks/sign_up/sign_up_form.js"></script>
-<script src="js/templates/compiled/leaderboard.pug.js"></script>
-<script src="js/blocks/leaderboard/leaderboard.js"></script>
 
-<script src="js/showUser.js"></script>
+<script src="js/models/userModel.js"></script>
+
+<script src="js/modules/router/router.js"></script>
+
+<script src="js/modules/threeJS/three.min.js"></script>
+<script src="js/modules/threeJS/Detector.js"></script>
+<script src="js/modules/threeJS/CanvasRenderer.js"></script>
+<script src="js/modules/threeJS/Projector.js"></script>
+<script src="js/modules/threeJS/KeyboardState.js"></script>
+<script src="js/modules/threeJS/OrbitControls.js"></script>
+
+<script src="js/modules/game/game.js"></script>
+
+
+<script src="js/templates/compiled/baseModal.pug.js"></script>
+<script src="js/templates/compiled/login.pug.js"></script>
+<script src="js/templates/compiled/sign_up.pug.js"></script>
+<script src="js/templates/compiled/leaderboard.pug.js"></script>
+<script src="js/templates/compiled/mainWindow.pug.js"></script>
+<script src="js/templates/compiled/profile.pug.js"></script>
+<script src="js/templates/compiled/about.pug.js"></script>
+<script src="js/templates/compiled/gameTemplate.pug.js"></script>
+
+<script src="js/views/baseView.js"></script>
+<script src="js/views/preloaderView.js"></script>
+<script src="js/views/mainWindowView.js"></script>
+<script src="js/views/page404view.js"></script>
+<script src="js/views/modalView.js"></script>
+<script src="js/views/loginModalView.js"></script>
+<script src="js/views/signupModalVew.js"></script>
+<script src="js/views/leaderBoardModalView.js"></script>
+<script src="js/views/profileModalView.js"></script>
+<script src="js/views/aboutModalVIew.js"></script>
+<script src="js/views/gameView.js"></script>
+
 
 <script src="js/main.js"></script>
-<script src="js/achievement.js"></script>
 
 </body>
 </html>
