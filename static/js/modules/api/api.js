@@ -9,7 +9,7 @@
   class API {
 
     constructor(
-      baseUrl = 'https://fastball-backend.herokuapp.com/api',
+      baseUrl = 'http://62.109.3.208:8082/api',
       headers = { 'content-type': 'application/json; charset=utf-8' }) {
       if (API.instance) {
         return API.instance;

@@ -204,10 +204,10 @@
     camera.position.y = 12;
     camera.position.z = 22;
     camera.lookAt(ground.position);
-    // let controls = new THREE.OrbitControls( camera, renderer.domElement );
+    let controls = new THREE.OrbitControls( camera, renderer.domElement );
 
     const render = function () {
-      //   controls.update();
+      controls.update();
       time++;
       requestAnimationFrame(render);
 
