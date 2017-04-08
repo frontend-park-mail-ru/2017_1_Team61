@@ -279,11 +279,11 @@
       if (flagMoveBall === true) {
         ballCollision();
         if(botActive === true) {
-          if(platformEnemy.position.x > ball.position.x) {
+          if(platformEnemy.position.x - ball.position.x > 0.2) {
               if (platformEnemy.position.x - platformEnemydes.x / 2 > borderLeft.position.x + borderLeftdes.x / 2) {
                   platformEnemy.translateX(-0.2);
               }
-          } else if (platformEnemy.position.x < ball.position.x) {
+          } else if (platformEnemy.position.x - ball.position.x < -0.2) {
               if (platformEnemy.position.x + platformEnemydes.x / 2 < borderRight.position.x - borderRightdes.x / 2) {
                   platformEnemy.translateX(0.2);
               }
