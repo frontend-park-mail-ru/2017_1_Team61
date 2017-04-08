@@ -7,6 +7,7 @@
 (function gameFunc() {
   const startGameFunc = () => {
     let time = 0;
+    let botActive = false;
 
     let scoreMy = 0;
     let scoreEnemy = 0;
@@ -257,6 +258,14 @@
         }
       }
 
+      if (keyboard2.down('B')) {
+        if(botActive === true) {
+            botActive = false;
+        } else {
+            botActive = true;
+        }
+      }
+
       if (keyboard2.down('space')) {
         if (flagMoveBall === false) {
           flagMoveBall = true;
@@ -269,6 +278,17 @@
 
       if (flagMoveBall === true) {
         ballCollision();
+        if(botActive === true) {
+          if(platformEnemy.position.x > ball.position.x) {
+              if (platformEnemy.position.x - platformEnemydes.x / 2 > borderLeft.position.x + borderLeftdes.x / 2) {
+                  platformEnemy.translateX(-0.2);
+              }
+          } else if (platformEnemy.position.x < ball.position.x) {
+              if (platformEnemy.position.x + platformEnemydes.x / 2 < borderRight.position.x - borderRightdes.x / 2) {
+                  platformEnemy.translateX(0.2);
+              }
+          }
+        }
       }
 
       ball.translateX(vectorMoveBall[0]);
