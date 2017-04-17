@@ -42,8 +42,9 @@
 }
 
 .button:hover {
-    border: 6px solid darkcyan;
-    width: 300px;
+    /*border: 6px solid darkcyan;*/
+    width: 280px;
+    height: 90px;
 }
 
 /*.btn-left:hover {*/
