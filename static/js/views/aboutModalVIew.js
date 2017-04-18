@@ -2,14 +2,13 @@
  * Created by tlakatlekutl on 04.04.17.
  */
 
-/* global ModalView:true, aboutTemplate */
+import ModalView from './modalView';
 
+import template from '../templates/about.pug';
 
-(function aboutModalWindowFunc() {
-  class AboutModalView extends ModalView {
-    constructor() {
-      super('About', aboutTemplate);
-    }
+export default class AboutModalView extends ModalView {
+  constructor() {
+    super('About', template);
   }
-  this.AboutModalView = AboutModalView;
-}());
+}
+

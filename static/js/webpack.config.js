@@ -11,4 +11,17 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
   },
   watch: true,
+  node: {
+    fs: 'empty',
+  },
+  // devtool: 'source-map',
+  devtool: 'eval',
+  module: {
+    loaders: [
+      {
+        test: /\.pug$/,
+        loader: 'pug-loader',
+      },
+    ],
+  },
 };
