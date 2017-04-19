@@ -12,8 +12,9 @@ import SignupModal from './views/signupModalVew';
 import LeaderBoardModal from './views/leaderBoardModalView';
 import ProfileModalView from './views/profileModalView';
 import AboutModalView from './views/aboutModalVIew';
-import GameView from './views/gameView';
+// import GameView from './views/gameView';
 import Page404View from './views/page404view';
+import MpView from './views/mpGameView';
 
 // views
 const preloaderView = new PreloaderView();
@@ -24,7 +25,8 @@ const signupModalView = new SignupModal();
 const leaderBoardModal = new LeaderBoardModal();
 const profileModalView = new ProfileModalView();
 const aboutModalView = new AboutModalView();
-const gameView = new GameView();
+const mpView = new MpView();
+// const gameView = new GameView();
 
 // init router
 const router = new Router();
@@ -34,7 +36,8 @@ router.addRoute(/\/$/, mainView)
   .addRoute(/leaderboard$/, leaderBoardModal)
   .addRoute(/profile$/, profileModalView)
   .addRoute(/about$/, aboutModalView)
-  .addRoute(/game$/, gameView)
+  .addRoute(/mp/, mpView)
+  // .addRoute(/game$/, gameView)
   .set404(p404);
 
 // global user profile
