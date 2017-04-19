@@ -12,8 +12,8 @@ export default class MpGameView extends BaseView {
   }
   addEventListeners() {
     const x = document.querySelector('.result');
-    document.querySelector('.goleft').addEventListener('click', ()=> {x.innerHTML = 'left'});
-    document.querySelector('.goright').addEventListener('click', ()=> {x.innerHTML = 'right'});
+    document.querySelector('.goleft').addEventListener('click', () => { x.innerHTML = 'left'; });
+    document.querySelector('.goright').addEventListener('click', () => { x.innerHTML = 'right'; });
   }
 }
 

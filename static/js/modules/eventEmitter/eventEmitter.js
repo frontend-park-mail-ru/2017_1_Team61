@@ -3,5 +3,14 @@
  */
 
 export default class EventEmitter {
+  constructor() {
+    if (EventEmitter.instance) {
+      return EventEmitter.instance;
+    }
 
+    EventEmitter.instance = this;
+  }
+  on(event, listener) {
+
+  }
 }

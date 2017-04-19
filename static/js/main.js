@@ -2,6 +2,8 @@
  * Created by tlakatlekutl on 31.03.17.
  */
 
+import css from '../css/index.css';
+
 import UserModel from './models/userModel';
 import Router from './modules/router/router';
 
