@@ -10,12 +10,12 @@ module.exports = {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
   },
-  watch: true,
+  // watch: true,
   node: {
     fs: 'empty',
   },
   // devtool: 'source-map',
-  devtool: 'eval',
+  // devtool: 'eval',
   module: {
     rules: [
       {
