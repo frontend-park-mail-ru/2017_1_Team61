@@ -28,4 +28,8 @@ export default class Game {
         }
     }
 
+    setStateGame(message) {
+      this.games.setStateGame(JSON.parse(message));
+    }
+
 }

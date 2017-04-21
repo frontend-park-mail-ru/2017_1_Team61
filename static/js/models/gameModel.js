@@ -25,6 +25,6 @@ export default class GameModel {
   }
 
   sendButton(button) {
-    this.transport.send('com.aerohockey.mechanics.base.ClientSnap', button);
+    this.transport.send('com.aerohockey.mechanics.base.ClientSnap', JSON.stringify(button));
   }
 }

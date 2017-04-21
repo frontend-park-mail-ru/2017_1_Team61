@@ -8,9 +8,11 @@ import { Barrier } from './barrier';
 import { Ground } from './ground';
 import GameModel from '../../models/gameModel';
 import EvenEmitter from '../eventEmitter/eventEmitter';
+import UserModel from '../../models/userModel';
 
 const gm = new GameModel();
 const ee = new EvenEmitter();
+const us = new UserModel();
 
 export default class MultiStrategy {
 
@@ -116,8 +118,21 @@ export default class MultiStrategy {
     }
   }
 
-  getStateGame(state) {
+  setStateGame(state) {
+    console.log(us.getData());
     this.state = state;
+    this.pos = {
+      x: (this.state.players[1].platform.x - 240) / 30,
+      y: this.platformMy.getPosition().y,
+      z: this.platformMy.getPosition().z
+    };
+    this.platformMy.setPosition(this.pos);
+    this.pos = {
+      x: (this.state.players[0].platform.x - 240) / 30,
+      y: this.platformEnemy.getPosition().y,
+      z: this.platformEnemy.getPosition().z
+    };
+    this.platformEnemy.setPosition(this.pos);
         // this.platformMy.setPosition(state.platformMyPosition);
         // this.platformEnemy.setPosition(state.platformEnemyPosition);
         // this.ball.setPosition(state.ballPosition);

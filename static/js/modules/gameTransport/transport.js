@@ -29,16 +29,16 @@ export default class Transport {
     const messageText = event.data;
     const message = JSON.parse(messageText);
     if (message.type === 'com.aerohockey.mechanics.base.ServerSnap') {
-      ee.emit(message.type, messageText);
+      ee.emit(message.type, message);
     }
     else {
-      console.log(message);
+      //console.log(message);
       ee.emit('print', messageText);
     }
   }
 
   send(type, content) {
-		console.log(JSON.stringify({ type, content }));
+		//console.log(JSON.stringify({ type, content }));
     this.ws.send(JSON.stringify({ type, content }));
 		// this.ws.send(JSON.stringify({
 			// type: 'com.aerohockey.mechanics.requests.JoinGame$Request',

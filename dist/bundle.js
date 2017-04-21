@@ -332,105 +332,6 @@ function pug_rethrow(err, filename, lineno, str){
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__models_userModel__ = __webpack_require__(2);
-/**
-* Created by tlakatlekutl on 24.03.17.
-*/
-
-
-
-const userModel = new __WEBPACK_IMPORTED_MODULE_0__models_userModel__["a" /* default */]();
-
-class Router {
-  // singleton class Router
-  constructor() {
-    if (Router.instance) {
-      return Router.instance;
-    }
-    // this.root = '/';
-    this.routes = [];
-    this.history = window.history;
-    this.goto404 = () => { console.error('page not found'); };
-    Router.instance = this;
-  }
-
-  addRoute(re, view) {
-    if (typeof view !== 'object') {
-      throw new TypeError('handler is not a view');
-    }
-    this.routes.push({ re, view });
-    return this;
-  }
-
-  checkPathExists(url) {
-    return this.routes.findIndex(route => route.re.test(url));
-  }
-
-  navigate(url) {
-    const i = this.checkPathExists(url);
-    // debugger;
-    if (i !== -1) {
-      if (this.routes[i].view.isModal) {
-        if (!this.currentView) {
-          this.routes[0].view.show();
-        }
-        this.currentView = this.routes[i].view;
-      } else {
-        if (this.currentView) {
-          this.currentView.hide();
-        }
-        this.currentView = this.routes[i].view;
-      }
-    } else {
-      if (this.currentView) {
-        this.currentView.hide();
-      }
-      this.currentView = this.goto404;
-    }
-    this.currentView.show();
-  }
-
-  go(url) {
-    this.history.pushState(null, '', url);
-    this.navigate(url);
-    this.currentUrl = url;
-    return this;
-  }
-
-  set404(view) {
-    this.goto404 = view;
-    return this;
-  }
-
-  start() {
-    return new Promise((resolve) => {
-      userModel.getUserStatus()
-        .then(() => {
-          setInterval(() => { this.checkUrlChanging(); }, 50);
-          resolve();
-        });
-    })
-    ;
-  }
-  checkUrlChanging() {
-    const url = window.location.href;
-    if (url !== this.currentUrl) {
-      this.navigate(url);
-      this.currentUrl = url;
-    }
-  }
-
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = Router;
-
-
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_api_api__ = __webpack_require__(9);
 /**
 * Created by tlakatlekutl on 07.03.17.
@@ -543,6 +444,105 @@ class UserModel {
 
 
 /***/ }),
+/* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__models_userModel__ = __webpack_require__(1);
+/**
+* Created by tlakatlekutl on 24.03.17.
+*/
+
+
+
+const userModel = new __WEBPACK_IMPORTED_MODULE_0__models_userModel__["a" /* default */]();
+
+class Router {
+  // singleton class Router
+  constructor() {
+    if (Router.instance) {
+      return Router.instance;
+    }
+    // this.root = '/';
+    this.routes = [];
+    this.history = window.history;
+    this.goto404 = () => { console.error('page not found'); };
+    Router.instance = this;
+  }
+
+  addRoute(re, view) {
+    if (typeof view !== 'object') {
+      throw new TypeError('handler is not a view');
+    }
+    this.routes.push({ re, view });
+    return this;
+  }
+
+  checkPathExists(url) {
+    return this.routes.findIndex(route => route.re.test(url));
+  }
+
+  navigate(url) {
+    const i = this.checkPathExists(url);
+    // debugger;
+    if (i !== -1) {
+      if (this.routes[i].view.isModal) {
+        if (!this.currentView) {
+          this.routes[0].view.show();
+        }
+        this.currentView = this.routes[i].view;
+      } else {
+        if (this.currentView) {
+          this.currentView.hide();
+        }
+        this.currentView = this.routes[i].view;
+      }
+    } else {
+      if (this.currentView) {
+        this.currentView.hide();
+      }
+      this.currentView = this.goto404;
+    }
+    this.currentView.show();
+  }
+
+  go(url) {
+    this.history.pushState(null, '', url);
+    this.navigate(url);
+    this.currentUrl = url;
+    return this;
+  }
+
+  set404(view) {
+    this.goto404 = view;
+    return this;
+  }
+
+  start() {
+    return new Promise((resolve) => {
+      userModel.getUserStatus()
+        .then(() => {
+          setInterval(() => { this.checkUrlChanging(); }, 50);
+          resolve();
+        });
+    })
+    ;
+  }
+  checkUrlChanging() {
+    const url = window.location.href;
+    if (url !== this.currentUrl) {
+      this.navigate(url);
+      this.currentUrl = url;
+    }
+  }
+
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Router;
+
+
+
+
+/***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -629,7 +629,7 @@ function toComment(sourceMap) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_router_router__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_router_router__ = __webpack_require__(2);
 /**
 * Created by tlakatlekutl on 31.03.17.
 */
@@ -858,7 +858,7 @@ class GameModel {
   }
 
   sendButton(button) {
-    this.transport.send('com.aerohockey.mechanics.base.ClientSnap', button);
+    this.transport.send('com.aerohockey.mechanics.base.ClientSnap', JSON.stringify(button));
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = GameModel;
@@ -1184,6 +1184,10 @@ class Game {
         }
     }
 
+    setStateGame(message) {
+      this.games.setStateGame(JSON.parse(message));
+    }
+
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Game;
 
@@ -1246,7 +1250,7 @@ class AboutModalView extends __WEBPACK_IMPORTED_MODULE_0__modalView__["a" /* def
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_router_router__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_router_router__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__baseView__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_gameTemplate_pug__ = __webpack_require__(36);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_gameTemplate_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__templates_gameTemplate_pug__);
@@ -1351,8 +1355,8 @@ class LeaderBoardModal extends __WEBPACK_IMPORTED_MODULE_1__modalView__["a" /* d
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modalView__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_userModel__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_userModel__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_login_pug__ = __webpack_require__(38);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_login_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__templates_login_pug__);
 /**
@@ -1429,8 +1433,8 @@ class LoginModal extends __WEBPACK_IMPORTED_MODULE_0__modalView__["a" /* default
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__baseView__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_userModel__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_userModel__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_mainWindow_pug__ = __webpack_require__(39);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_mainWindow_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__templates_mainWindow_pug__);
 /**
@@ -1526,20 +1530,41 @@ const ee = new __WEBPACK_IMPORTED_MODULE_3__modules_eventEmitter_eventEmitter__[
 class MpGameView extends __WEBPACK_IMPORTED_MODULE_0__baseView__["a" /* default */] {
   constructor() {
     super(['multiplayer-game-view'], __WEBPACK_IMPORTED_MODULE_1__templates_mp_pug___default.a);
-    this.render();
+    // this.render();
     ee.on('com.aerohockey.mechanics.base.ServerSnap', (message) => {
-      this.x.innerHTML = message;
+      this.x.innerHTML = JSON.stringify(message.content);
+      this.game.setStateGame(message.content);
     });
     ee.on('print', (message) => {
       this.x.innerHTML = message;
     });
     ee.on('alert', (msg) => { alert(msg); });
-    this.game = new __WEBPACK_IMPORTED_MODULE_4__modules_game_play__["a" /* default */]('multi');
-    this.game.gameProcess();
+    this.alreadyInDOM = false;
   }
   render() {
     super.render();
+    this.node.innerHTML = this.drawFunc();
+    this.parent.appendChild(this.node);
     this.addEventListeners();
+    this.game = new __WEBPACK_IMPORTED_MODULE_4__modules_game_play__["a" /* default */]('multi');
+    this.game.gameProcess();
+  }
+  show() {
+    if (!this.alreadyInDOM) {
+      this.render();
+      this.alreadyInDOM = true;
+    }
+    const game = document.querySelector('canvas');
+    game.hidden = false;
+    this.node.hidden = false;
+  }
+  hide() {
+    if (this.alreadyInDOM) {
+      // super.destruct();
+      const game = document.querySelector('canvas');
+      game.hidden = true;
+    }
+    super.hide();
   }
   addEventListeners() {
     this.x = document.querySelector('.result');
@@ -1612,8 +1637,8 @@ class PreloaderView {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modalView__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_userModel__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_userModel__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_profile_pug__ = __webpack_require__(41);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_profile_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__templates_profile_pug__);
 /**
@@ -1658,8 +1683,8 @@ class ProfileModalView extends __WEBPACK_IMPORTED_MODULE_0__modalView__["a" /* d
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modalView__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_userModel__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_userModel__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_sign_up_pug__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_sign_up_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__templates_sign_up_pug__);
 /**
@@ -4372,8 +4397,8 @@ module.exports = g;
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_index_css__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_index_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__css_index_css__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_userModel__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_userModel__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__views_preloaderView__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__views_mainWindowView__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__views_loginModalView__ = __webpack_require__(19);
@@ -4501,6 +4526,7 @@ class Bot {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ground__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__models_gameModel__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__eventEmitter_eventEmitter__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__models_userModel__ = __webpack_require__(1);
 /**
  * Created by sergey on 21.04.17.
  */
@@ -4512,8 +4538,10 @@ class Bot {
 
 
 
+
 const gm = new __WEBPACK_IMPORTED_MODULE_4__models_gameModel__["a" /* default */]();
 const ee = new __WEBPACK_IMPORTED_MODULE_5__eventEmitter_eventEmitter__["a" /* default */]();
+const us = new __WEBPACK_IMPORTED_MODULE_6__models_userModel__["a" /* default */]();
 
 class MultiStrategy {
 
@@ -4619,8 +4647,21 @@ class MultiStrategy {
     }
   }
 
-  getStateGame(state) {
+  setStateGame(state) {
+    console.log(us.getData());
     this.state = state;
+    this.pos = {
+      x: (this.state.players[1].platform.x - 240) / 30,
+      y: this.platformMy.getPosition().y,
+      z: this.platformMy.getPosition().z
+    };
+    this.platformMy.setPosition(this.pos);
+    this.pos = {
+      x: (this.state.players[0].platform.x - 240) / 30,
+      y: this.platformEnemy.getPosition().y,
+      z: this.platformEnemy.getPosition().z
+    };
+    this.platformEnemy.setPosition(this.pos);
         // this.platformMy.setPosition(state.platformMyPosition);
         // this.platformEnemy.setPosition(state.platformEnemyPosition);
         // this.ball.setPosition(state.ballPosition);
@@ -5011,16 +5052,16 @@ class Transport {
     const messageText = event.data;
     const message = JSON.parse(messageText);
     if (message.type === 'com.aerohockey.mechanics.base.ServerSnap') {
-      ee.emit(message.type, messageText);
+      ee.emit(message.type, message);
     }
     else {
-      console.log(message);
+      //console.log(message);
       ee.emit('print', messageText);
     }
   }
 
   send(type, content) {
-		console.log(JSON.stringify({ type, content }));
+		//console.log(JSON.stringify({ type, content }));
     this.ws.send(JSON.stringify({ type, content }));
 		// this.ws.send(JSON.stringify({
 			// type: 'com.aerohockey.mechanics.requests.JoinGame$Request',

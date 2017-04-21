@@ -13,20 +13,41 @@ const ee = new EvenEmitter();
 export default class MpGameView extends BaseView {
   constructor() {
     super(['multiplayer-game-view'], template);
-    this.render();
+    // this.render();
     ee.on('com.aerohockey.mechanics.base.ServerSnap', (message) => {
-      this.x.innerHTML = message;
+      this.x.innerHTML = JSON.stringify(message.content);
+      this.game.setStateGame(message.content);
     });
     ee.on('print', (message) => {
       this.x.innerHTML = message;
     });
     ee.on('alert', (msg) => { alert(msg); });
-    this.game = new Game('multi');
-    this.game.gameProcess();
+    this.alreadyInDOM = false;
   }
   render() {
     super.render();
+    this.node.innerHTML = this.drawFunc();
+    this.parent.appendChild(this.node);
     this.addEventListeners();
+    this.game = new Game('multi');
+    this.game.gameProcess();
+  }
+  show() {
+    if (!this.alreadyInDOM) {
+      this.render();
+      this.alreadyInDOM = true;
+    }
+    const game = document.querySelector('canvas');
+    game.hidden = false;
+    this.node.hidden = false;
+  }
+  hide() {
+    if (this.alreadyInDOM) {
+      // super.destruct();
+      const game = document.querySelector('canvas');
+      game.hidden = true;
+    }
+    super.hide();
   }
   addEventListeners() {
     this.x = document.querySelector('.result');
