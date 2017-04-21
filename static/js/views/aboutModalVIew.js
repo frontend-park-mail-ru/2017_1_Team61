@@ -2,17 +2,13 @@
  * Created by tlakatlekutl on 04.04.17.
  */
 
-/* global ModalView:true, aboutTemplate */
-/* global Router:true */
+import ModalView from './modalView';
 
+import template from '../templates/about.pug';
 
-(function aboutModalWindowFunc() {
-  const router = new Router();
-  class AboutModalView extends ModalView {
-    constructor() {
-      super('About', aboutTemplate);
-      super.onClose(() => { router.go('/'); });
-    }
+export default class AboutModalView extends ModalView {
+  constructor() {
+    super('About', template);
   }
-  this.AboutModalView = AboutModalView;
-}());
+}
+

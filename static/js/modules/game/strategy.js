@@ -6,8 +6,9 @@ import {Platform} from './platform';
 import {Ball} from './ball';
 import {Barrier} from './barrier';
 import {Ground} from './ground';
+import {Bot} from './bot';
 
-class SingleStrategy {
+export default class SingleStrategy {
 
     constructor() {
 
@@ -19,8 +20,8 @@ class SingleStrategy {
         this.spotLight.position.set( 0, 40, 40 );
         this.scene.add(this.spotLight);
 
-        this.x = window.innerWidth * 0.97;
-        this.y = window.innerHeight * 0.8;
+        this.y = window.innerHeight * 0.6;
+        this.x = this.y * 2.1;
 
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(this.x, this.y);
@@ -62,6 +63,11 @@ class SingleStrategy {
         this.ball = new Ball(0, this.pos, this.radius);
         this.scene.add(this.ball.getModel());
 
+        this.pos.x = this.platformEnemy.getPosition().x;
+        this.pos.y = this.platformEnemy.getPosition().y;
+        this.pos.z = this.platformEnemy.getPosition().z;
+        this.bot = new Bot(this.pos);
+
 
         this.pointViewG = new THREE.SphereGeometry(0, 0, 0);
         this.pointViewM = new THREE.MeshNormalMaterial({ color: 0xffff00 });
@@ -70,9 +76,11 @@ class SingleStrategy {
         this.scene.add(this.pointView);
 
         this.camera.position.x = 0;
-        this.camera.position.y = 12;
-        this.camera.position.z = 22;
-        this.camera.lookAt(this.ground.getPosition());
+        this.camera.position.y = 8;
+        this.camera.position.z = 20;
+        this.look = this.ground.getPosition();
+        this.look.y -= 3;
+        this.camera.lookAt(this.look);
     }
 
     render () {
@@ -85,6 +93,10 @@ class SingleStrategy {
 
         if (this.keyboard2.pressed('right')) {
             this.control('right');
+        }
+
+        if (this.keyboard2.down('B')) {
+            this.control('B');
         }
 
         if (this.keyboard2.down('space')) {
@@ -174,7 +186,7 @@ class SingleStrategy {
                     z: this.platformMy.getPosition().z
                 };
                 this.platformMy.setPosition(this.pos);
-                if(this.ball.getMove() === false) {
+                if(this.ball.getMove() === false && this.ball.getSide() === 0) {
                     if(this.ball.getPosition().x > this.platformMy.getPosition().x + this.platformMy.getSize().width / 2) {
                         this.pos = {
                             x: this.platformMy.getPosition().x + this.platformMy.getSize().width / 2,
@@ -194,7 +206,7 @@ class SingleStrategy {
                     z: this.platformMy.getPosition().z
                 };
                 this.platformMy.setPosition(this.pos);
-                if(this.ball.getMove() === false) {
+                if(this.ball.getMove() === false && this.ball.getSide() === 0) {
                     if(this.ball.getPosition().x < this.platformMy.getPosition().x - this.platformMy.getSize().width / 2) {
                         this.pos = {
                             x: this.platformMy.getPosition().x - this.platformMy.getSize().width / 2,
@@ -205,14 +217,21 @@ class SingleStrategy {
                     }
                 }
             }
+        } else if (button === 'B') {
+            this.bot.setState(true);
         } else if (button === 'space') {
             if (this.ball.getMove() === false) {
                 this.ball.setMove(true);
-                //this.vectorLength = 0.2;
                 this.vector = {x: 0, y: 0, z: 0};
-                this.vector.x = (this.ball.getPosition().x - this.platformMy.getPosition().x) / 13;
-                this.vector.y = 0;
-                this.vector.z = -(this.platformMy.getPosition().z + 2 - this.ball.getPosition().z) / 13;
+                if(this.ball.getSide() === 0) {
+                    this.vector.x = (this.ball.getPosition().x - this.platformMy.getPosition().x) / 13;
+                    this.vector.y = 0;
+                    this.vector.z = -(this.platformMy.getPosition().z + 2 - this.ball.getPosition().z) / 13;
+                } else {
+                    this.vector.x = (this.ball.getPosition().x - this.platformEnemy.getPosition().x) / 13;
+                    this.vector.y = 0;
+                    this.vector.z = -(this.platformEnemy.getPosition().z - 2 - this.ball.getPosition().z) / 13;
+                }
                 this.ball.setVectorMove(this.vector);
             }
         }
@@ -220,70 +239,90 @@ class SingleStrategy {
 
     checkMove () {
         if(this.ball.getMove() === true) {
+            if(this.ball.getPosition().x - this.ball.getSize() < this.borderLeft.getPosition().x + this.borderLeft.getSize().width / 2 ||
+                this.ball.getPosition().x + this.ball.getSize() > this.borderRight.getPosition().x - this.borderRight.getSize().width / 2) {
+                this.vector.x = -this.ball.getVectorMove().x;
+                this.vector.y = this.ball.getVectorMove().y;
+                this.vector.z = this.ball.getVectorMove().z;
+                this.ball.setVectorMove(this.vector);
+            } else if (this.ball.getPosition().x >= this.platformMy.getPosition().x - this.platformMy.getSize().width / 2 &&
+                this.ball.getPosition().x <= this.platformMy.getPosition().x + this.platformMy.getSize().width / 2 &&
+                this.ball.getPosition().z + this.ball.getSize() >= this.platformMy.getPosition().z - this.platformMy.getSize().height / 2) {
+                this.vector.x = (this.ball.getPosition().x - this.platformMy.getPosition().x) / 13;
+                this.vector.y = 0;
+                this.vector.z = -(this.platformMy.getPosition().z + 2 - this.ball.getPosition().z) / 13;
+                this.ball.setVectorMove(this.vector);
+            } else if (this.ball.getPosition().x >= this.platformEnemy.getPosition().x - this.platformEnemy.getSize().width / 2 &&
+                this.ball.getPosition().x <= this.platformEnemy.getPosition().x + this.platformEnemy.getSize().width / 2 &&
+                this.ball.getPosition().z - this.ball.getSize() <= this.platformEnemy.getPosition().z + this.platformEnemy.getSize().height / 2) {
+                this.vector.x = (this.ball.getPosition().x - this.platformEnemy.getPosition().x) / 13;
+                this.vector.y = 0;
+                this.vector.z = -(this.platformEnemy.getPosition().z - 2 - this.ball.getPosition().z) / 13;
+                this.ball.setVectorMove(this.vector);
+            }
+            if (this.ball.getPosition().z > this.ground.getGoalMy()) {
+                this.ball.setSide(0);
+                this.ball.setMove(false);
+                this.pos = {
+                    x: this.ground.getPosition().x,
+                    y: this.platformMy.getPosition().y,
+                    z: this.platformMy.getPosition().z
+                };
+                this.platformMy.setPosition(this.pos);
+                this.pos = {
+                    x: this.platformMy.getPosition().x,
+                    y: this.ball.getPosition().y,
+                    z: this.platformMy.getPosition().z - this.platformMy.getSize().height / 2 - this.ball.getSize()
+                };
+                this.vector.x = 0;
+                this.vector.y = 0;
+                this.vector.z = 0;
+                this.ball.setVectorMove(this.vector);
+                this.ball.setPosition(this.pos);
+            } else if (this.ball.getPosition().z < this.ground.getGoalEnemy()) {
+                this.ball.setSide(1);
+                this.ball.setMove(false);
+                this.pos = {
+                    x: this.ground.getPosition().x,
+                    y: this.platformEnemy.getPosition().y,
+                    z: this.platformEnemy.getPosition().z
+                };
+                this.platformEnemy.setPosition(this.pos);
+                this.pos = {
+                    x: this.platformEnemy.getPosition().x,
+                    y: this.ball.getPosition().y,
+                    z: this.platformEnemy.getPosition().z + this.platformEnemy.getSize().height / 2 + this.ball.getSize()
+                };
+                this.vector.x = 0;
+                this.vector.y = 0;
+                this.vector.z = 0;
+                this.ball.setVectorMove(this.vector);
+                this.ball.setPosition(this.pos);
+            }
             this.pos = {
                 x: this.ball.getPosition().x + this.ball.getVectorMove().x,
                 y: this.ball.getPosition().y + this.ball.getVectorMove().y,
                 z: this.ball.getPosition().z + this.ball.getVectorMove().z
             };
             this.ball.setPosition(this.pos);
+            if(this.bot.getState() === true) {
+                this.enemyMove = this.bot.getBehavior(this.ball.getPosition());
+                this.pos = {
+                    x: this.platformEnemy.getPosition().x + this.enemyMove.xd,
+                    y: this.platformEnemy.getPosition().y + this.enemyMove.yd,
+                    z: this.platformEnemy.getPosition().z + this.enemyMove.zd
+                };
+                if(this.enemyMove.xd > 0 && this.pos.x + this.platformEnemy.getSize().width / 2 < this.borderRight.getPosition().x -
+                    this.borderRight.getSize().width / 2) {
+                    this.platformEnemy.setPosition(this.pos);
+                    this.bot.setPosition(this.platformEnemy.getPosition());
+                } else if (this.enemyMove.xd < 0 && this.pos.x - this.platformEnemy.getSize().width / 2 > this.borderLeft.getPosition().x +
+                    this.borderLeft.getSize().width / 2) {
+                    this.platformEnemy.setPosition(this.pos);
+                    this.bot.setPosition(this.platformEnemy.getPosition());
+                }
+            }
         }
     }
-
-    // function ballCollision() {
-    // if (ball.position.x >= platformMy.position.x - platformMydes.x / 2 &&
-    //     ball.position.x <= platformMy.position.x + platformMydes.x / 2 &&
-    //     ball.position.z + ballDes.r >= platformMy.position.z - platformMydes.z / 2) {
-    //     vectorMoveBall[0] = (ball.position.x - platformMy.position.x) / 13;
-    //     vectorMoveBall[1] = 0;
-    //     vectorMoveBall[2] = -((vectorLength ** 2 - vectorMoveBall[0] ** 2) ** 0.5);
-    //     for (let i = 0; i < time / 400; i++) {
-    //         vectorMoveBall[0] *= 1.1;
-    //         vectorMoveBall[2] *= 1.1;
-    //     }
-    // } else if (ball.position.x >= platformEnemy.position.x - platformEnemydes.x / 2 &&
-    //     ball.position.x <= platformEnemy.position.x + platformEnemydes.x / 2 &&
-    //     ball.position.z - ballDes.r <= platformEnemy.position.z + platformEnemydes.z / 2) {
-    //     vectorMoveBall[0] = (ball.position.x - platformEnemy.position.x) / 13;
-    //     vectorMoveBall[1] = 0;
-    //     vectorMoveBall[2] = ((vectorLength ** 2 - vectorMoveBall[0] ** 2) ** 0.5);
-    //     for (let i = 0; i < time / 400; i++) {
-    //         vectorMoveBall[0] *= 1.1;
-    //         vectorMoveBall[2] *= 1.1;
-    //     }
-    // } else if (ball.position.x - ballDes.r <= borderLeft.position.x + borderLeftdes.x / 2) {
-    //     ball.position.x = borderLeft.position.x + borderLeftdes.x / 2 + ballDes.r;
-    //     vectorMoveBall[0] = -vectorMoveBall[0];
-    // } else if (ball.position.x + ballDes.r >= borderRight.position.x - borderRightdes.x / 2) {
-    //     ball.position.x = borderRight.position.x - borderRightdes.x / 2 - ballDes.r;
-    //     vectorMoveBall[0] = -vectorMoveBall[0];
-    // }
-    //
-    // if (ball.position.z > platformMy.position.z) {
-    //     flagMoveBall = false;
-    //     flagOwn = 1;
-    //     ball.position.set(0, 1, 14);
-    //     platformMy.position.set(0, 1, 15);
-    //     vectorMoveBall[0] = 0;
-    //     vectorMoveBall[1] = 0;
-    //     vectorMoveBall[2] = 0;
-    //     scoreEnemy += 10;
-    //     time = 0;
-    // } else if (ball.position.z < platformEnemy.position.z) {
-    //     flagMoveBall = false;
-    //     flagOwn = 2;
-    //     ball.position.set(0, 1, 2);
-    //     platformEnemy.position.set(0, 1, 1);
-    //     vectorMoveBall[0] = 0;
-    //     vectorMoveBall[1] = 0;
-    //     vectorMoveBall[2] = 0;
-    //     scoreMy += 10;
-    //     time = 0;
-    // }
-    // }
-    // };
 }
-
-const Game = new SingleStrategy();
-
-Game.animationScene();
 

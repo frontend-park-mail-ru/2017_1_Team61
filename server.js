@@ -4,7 +4,7 @@ const port = process.env.PORT || 3000;
 const app = express();
 
 // app.use(express.logger());
-app.use(express.static(`${__dirname}/static/`));
+app.use(express.static(`${__dirname}`));
 
 app.get('/tests', (req, res) => {
   res.sendFile(`${__dirname}/static/tests.html`);
