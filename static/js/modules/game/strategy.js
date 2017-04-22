@@ -7,10 +7,27 @@ import {Ball} from './ball';
 import {Barrier} from './barrier';
 import {Ground} from './ground';
 import {Bot} from './bot';
+import Player from './player';
 
 export default class SingleStrategy {
 
     constructor() {
+
+        this.player1 = new Player('Player1', 0, 42);
+        this.player2 = new Player('Player2', 0, 36);
+
+        this.nick1 = document.querySelector('.player1 .player_nickname');
+        this.nick1.innerHTML = this.player1.getNickname();
+        this.nick2 = document.querySelector('.player2 .player_nickname');
+        this.nick2.innerHTML = this.player2.getNickname();
+        this.rat1 = document.querySelector('.player1 .player_rating_score');
+        this.rat1.innerHTML = this.player1.getRating();
+        this.rat2 = document.querySelector('.player2 .player_rating_score');
+        this.rat2.innerHTML = this.player2.getRating();
+        this.score1 = document.querySelector('.player1_score');
+        this.score1.innerHTML = this.player1.getScore();
+        this.score2 = document.querySelector('.player2_score');
+        this.score2.innerHTML = this.player2.getScore();
 
         this.scene = new THREE.Scene();
         this.clock = new THREE.Clock();
@@ -105,68 +122,6 @@ export default class SingleStrategy {
 
         this.checkMove();
 
-        //
-        // if (keyboard2.pressed('A')) {
-        //     if (platformEnemy.position.x - platformEnemydes.x / 2 > borderLeft.position.x + borderLeftdes.x / 2) {
-        //         platformEnemy.translateX(-0.2);
-        //         if (flagMoveBall === false && flagOwn === 2) {
-        //             if (ball.position.x >= platformEnemy.position.x + platformEnemydes.x / 2) {
-        //                 ball.translateX(-0.2);
-        //             }
-        //         }
-        //     }
-        // }
-        //
-        // if (keyboard2.pressed('D')) {
-        //     if (platformEnemy.position.x + platformEnemydes.x / 2 < borderRight.position.x - borderRightdes.x / 2) {
-        //         platformEnemy.translateX(0.2);
-        //         if (flagMoveBall === false && flagOwn === 2) {
-        //             if (ball.position.x <= platformEnemy.position.x - platformEnemydes.x / 2) {
-        //                 ball.translateX(0.2);
-        //             }
-        //         }
-        //     }
-        // }
-        //
-        // if (keyboard2.down('B')) {
-        //     if(botActive === true) {
-        //         botActive = false;
-        //     } else {
-        //         botActive = true;
-        //     }
-        // }
-        //
-        // if (keyboard2.down('space')) {
-        //     if (flagMoveBall === false) {
-        //         flagMoveBall = true;
-        //         vectorMoveBall[0] = (ball.position.x - platformMy.position.x) / 13;
-        //         vectorMoveBall[1] = 0;
-        //         vectorMoveBall[2] = -((vectorLength ** 2 - vectorMoveBall[0] ** 2) ** 0.5);
-        //         time = 0;
-        //     }
-        // }
-        //
-        // if (flagMoveBall === true) {
-        //     ballCollision();
-        //     if(botActive === true) {
-        //         if(platformEnemy.position.x - ball.position.x > 0.2) {
-        //             if (platformEnemy.position.x - platformEnemydes.x / 2 > borderLeft.position.x + borderLeftdes.x / 2) {
-        //                 platformEnemy.translateX(-0.2);
-        //             }
-        //         } else if (platformEnemy.position.x - ball.position.x < -0.2) {
-        //             if (platformEnemy.position.x + platformEnemydes.x / 2 < borderRight.position.x - borderRightdes.x / 2) {
-        //                 platformEnemy.translateX(0.2);
-        //             }
-        //         }
-        //     }
-        // }
-        //
-        // ball.translateX(vectorMoveBall[0]);
-        // ball.translateY(vectorMoveBall[1]);
-        // ball.translateZ(vectorMoveBall[2]);
-        //
-        // document.getElementsByClassName('score-player1__score')[0].innerHTML = scoreMy;
-        // document.getElementsByClassName('score-player2__score')[0].innerHTML = scoreEnemy;
         this.renderer.render(this.scene, this.camera);
     }
 
@@ -279,6 +234,8 @@ export default class SingleStrategy {
                 this.vector.z = 0;
                 this.ball.setVectorMove(this.vector);
                 this.ball.setPosition(this.pos);
+                this.player2.setScore(this.player2.getScore() + 1);
+                this.score2.innerHTML = this.player2.getScore();
             } else if (this.ball.getPosition().z < this.ground.getGoalEnemy()) {
                 this.ball.setSide(1);
                 this.ball.setMove(false);
@@ -298,6 +255,8 @@ export default class SingleStrategy {
                 this.vector.z = 0;
                 this.ball.setVectorMove(this.vector);
                 this.ball.setPosition(this.pos);
+                this.player1.setScore(this.player1.getScore() + 1);
+                this.score1.innerHTML = this.player1.getScore();
             }
             this.pos = {
                 x: this.ball.getPosition().x + this.ball.getVectorMove().x,

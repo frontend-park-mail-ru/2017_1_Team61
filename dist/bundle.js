@@ -301,7 +301,7 @@ function pug_rethrow(err, filename, lineno, str){
     throw err;
   }
   try {
-    str = str || __webpack_require__(53).readFileSync(filename, 'utf8')
+    str = str || __webpack_require__(54).readFileSync(filename, 'utf8')
   } catch (ex) {
     pug_rethrow(err, null, lineno)
   }
@@ -830,7 +830,7 @@ class EventEmitter {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_gameTransport_transport__ = __webpack_require__(51);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_gameTransport_transport__ = __webpack_require__(52);
 /**
  * Created by tlakatlekutl on 19.04.17.
  */
@@ -870,7 +870,7 @@ class GameModel {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__network_net__ = __webpack_require__(52);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__network_net__ = __webpack_require__(53);
 /**
 * Created by tlakatlekutl on 07.03.17.
 */
@@ -1152,7 +1152,7 @@ class Platform extends __WEBPACK_IMPORTED_MODULE_0__object__["a" /* GameObject *
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategy__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategy__ = __webpack_require__(51);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__multi__ = __webpack_require__(49);
 /**
  * Created by sergey on 21.04.17.
@@ -3702,7 +3702,7 @@ exports = module.exports = __webpack_require__(3)(undefined);
 
 
 // module
-exports.push([module.i, ".game-header {\n    display: flex;\n    width: 100%;\n    flex-direction: row;\n}\n\n", ""]);
+exports.push([module.i, ".game-header {\n    display: flex;\n    width: 100%;\n    flex-direction: row;\n    padding-top: 20px;\n    margin-bottom: 45px;\n}\n\n.game-back-link {\n    padding-left: 20px;\n    font-size: 28px;\n}\n\n.player1, .player2, .score {\n    text-align: center;\n    width: 20%;\n}\n\n.score {\n    padding-top: 30px;\n}\n\n.player1 {\n    padding-left: 10%;\n}\n\n.player1_score, .separate, .player2_score {\n    display: inline-block;\n    font-size: 64px;\n    padding-left: 5px;\n    padding-right: 5px;\n}\n\n.player_rating_score, .player_rating {\n    display: inline-block;\n}\n\n.player_rating_score {\n    font-size: 32px;\n    margin-left: 12px;\n}\n\n.player_nickname {\n    font-size: 52px;\n    padding-top: 20px;\n    padding-bottom: 20px;\n}\n\n.player_rating {\n    font-size: 24px;\n}\n\ncanvas {\n    margin-left: 16%;\n}", ""]);
 
 // exports
 
@@ -3882,7 +3882,7 @@ module.exports = template;
 
 var pug = __webpack_require__(0);
 
-function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"game-header\"\u003E\u003Cdiv class=\"game-back-link\"\u003E\u003Ch1\u003E\u003C Back\u003C\u002Fh1\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"player\"\u003E\u003Cdiv class=\"player_nickname\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"player_rating\"\u003EРейтинг:\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"score\"\u003E\u003Cdiv class=\"player1_score\"\u003E0\u003C\u002Fdiv\u003E\u003Cdiv class=\"separate\"\u003E:\u003C\u002Fdiv\u003E\u003Cdiv class=\"player2_score\"\u003E0\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"player\"\u003E\u003Cdiv class=\"player_nickname\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"player_rating\"\u003EРейтинг:\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"game-header\"\u003E\u003Cdiv class=\"game-back-link\"\u003E\u003C Back\u003C\u002Fdiv\u003E\u003Cdiv class=\"player1\"\u003E\u003Cdiv class=\"player_nickname\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"player_rating\"\u003EРейтинг:\u003C\u002Fdiv\u003E\u003Cdiv class=\"player_rating_score\"\u003E0\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"score\"\u003E\u003Cdiv class=\"player1_score\"\u003E0\u003C\u002Fdiv\u003E\u003Cdiv class=\"separate\"\u003E:\u003C\u002Fdiv\u003E\u003Cdiv class=\"player2_score\"\u003E0\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"player2\"\u003E\u003Cdiv class=\"player_nickname\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"player_rating\"\u003EРейтинг:\u003C\u002Fdiv\u003E\u003Cdiv class=\"player_rating_score\"\u003E0\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
 module.exports = template;
 
 /***/ }),
@@ -4678,11 +4678,47 @@ class MultiStrategy {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/**
+ * Created by sergey on 22.04.17.
+ */
+
+class Player {
+  constructor(nickname, score, rating) {
+    this.nickname = nickname;
+    this.score = score;
+    this.rating = rating;
+  }
+
+  getNickname() {
+    return this.nickname;
+  }
+
+  getScore() {
+    return this.score;
+  }
+
+  setScore(score) {
+    this.score = score;
+  }
+
+  getRating() {
+    return this.rating;
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Player;
+
+
+/***/ }),
+/* 51 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ball__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__barrier__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ground__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__bot__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__player__ = __webpack_require__(50);
 /**
  * Created by sergey on 15.04.17.
  */
@@ -4693,9 +4729,26 @@ class MultiStrategy {
 
 
 
+
 class SingleStrategy {
 
     constructor() {
+
+        this.player1 = new __WEBPACK_IMPORTED_MODULE_5__player__["a" /* default */]('Player1', 0, 42);
+        this.player2 = new __WEBPACK_IMPORTED_MODULE_5__player__["a" /* default */]('Player2', 0, 36);
+
+        this.nick1 = document.querySelector('.player1 .player_nickname');
+        this.nick1.innerHTML = this.player1.getNickname();
+        this.nick2 = document.querySelector('.player2 .player_nickname');
+        this.nick2.innerHTML = this.player2.getNickname();
+        this.rat1 = document.querySelector('.player1 .player_rating_score');
+        this.rat1.innerHTML = this.player1.getRating();
+        this.rat2 = document.querySelector('.player2 .player_rating_score');
+        this.rat2.innerHTML = this.player2.getRating();
+        this.score1 = document.querySelector('.player1_score');
+        this.score1.innerHTML = this.player1.getScore();
+        this.score2 = document.querySelector('.player2_score');
+        this.score2.innerHTML = this.player2.getScore();
 
         this.scene = new THREE.Scene();
         this.clock = new THREE.Clock();
@@ -4790,68 +4843,6 @@ class SingleStrategy {
 
         this.checkMove();
 
-        //
-        // if (keyboard2.pressed('A')) {
-        //     if (platformEnemy.position.x - platformEnemydes.x / 2 > borderLeft.position.x + borderLeftdes.x / 2) {
-        //         platformEnemy.translateX(-0.2);
-        //         if (flagMoveBall === false && flagOwn === 2) {
-        //             if (ball.position.x >= platformEnemy.position.x + platformEnemydes.x / 2) {
-        //                 ball.translateX(-0.2);
-        //             }
-        //         }
-        //     }
-        // }
-        //
-        // if (keyboard2.pressed('D')) {
-        //     if (platformEnemy.position.x + platformEnemydes.x / 2 < borderRight.position.x - borderRightdes.x / 2) {
-        //         platformEnemy.translateX(0.2);
-        //         if (flagMoveBall === false && flagOwn === 2) {
-        //             if (ball.position.x <= platformEnemy.position.x - platformEnemydes.x / 2) {
-        //                 ball.translateX(0.2);
-        //             }
-        //         }
-        //     }
-        // }
-        //
-        // if (keyboard2.down('B')) {
-        //     if(botActive === true) {
-        //         botActive = false;
-        //     } else {
-        //         botActive = true;
-        //     }
-        // }
-        //
-        // if (keyboard2.down('space')) {
-        //     if (flagMoveBall === false) {
-        //         flagMoveBall = true;
-        //         vectorMoveBall[0] = (ball.position.x - platformMy.position.x) / 13;
-        //         vectorMoveBall[1] = 0;
-        //         vectorMoveBall[2] = -((vectorLength ** 2 - vectorMoveBall[0] ** 2) ** 0.5);
-        //         time = 0;
-        //     }
-        // }
-        //
-        // if (flagMoveBall === true) {
-        //     ballCollision();
-        //     if(botActive === true) {
-        //         if(platformEnemy.position.x - ball.position.x > 0.2) {
-        //             if (platformEnemy.position.x - platformEnemydes.x / 2 > borderLeft.position.x + borderLeftdes.x / 2) {
-        //                 platformEnemy.translateX(-0.2);
-        //             }
-        //         } else if (platformEnemy.position.x - ball.position.x < -0.2) {
-        //             if (platformEnemy.position.x + platformEnemydes.x / 2 < borderRight.position.x - borderRightdes.x / 2) {
-        //                 platformEnemy.translateX(0.2);
-        //             }
-        //         }
-        //     }
-        // }
-        //
-        // ball.translateX(vectorMoveBall[0]);
-        // ball.translateY(vectorMoveBall[1]);
-        // ball.translateZ(vectorMoveBall[2]);
-        //
-        // document.getElementsByClassName('score-player1__score')[0].innerHTML = scoreMy;
-        // document.getElementsByClassName('score-player2__score')[0].innerHTML = scoreEnemy;
         this.renderer.render(this.scene, this.camera);
     }
 
@@ -4964,6 +4955,8 @@ class SingleStrategy {
                 this.vector.z = 0;
                 this.ball.setVectorMove(this.vector);
                 this.ball.setPosition(this.pos);
+                this.player2.setScore(this.player2.getScore() + 1);
+                this.score2.innerHTML = this.player2.getScore();
             } else if (this.ball.getPosition().z < this.ground.getGoalEnemy()) {
                 this.ball.setSide(1);
                 this.ball.setMove(false);
@@ -4983,6 +4976,8 @@ class SingleStrategy {
                 this.vector.z = 0;
                 this.ball.setVectorMove(this.vector);
                 this.ball.setPosition(this.pos);
+                this.player1.setScore(this.player1.getScore() + 1);
+                this.score1.innerHTML = this.player1.getScore();
             }
             this.pos = {
                 x: this.ball.getPosition().x + this.ball.getVectorMove().x,
@@ -5016,7 +5011,7 @@ class SingleStrategy {
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5076,7 +5071,7 @@ class Transport {
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5170,7 +5165,7 @@ class Net {
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
