@@ -4658,6 +4658,12 @@ class MultiStrategy {
         z: this.platformEnemy.getPosition().z
       };
       this.platformEnemy.setPosition(this.pos);
+      this.pos = {
+        x: this.state.ballCoords.x,
+        y: this.ball.getPosition().y,
+        z: this.state.ballCoords.y
+      };
+      this.ball.setPosition(this.pos);
     } else {
       this.pos = {
         x: this.state.players[1].platform.x,
@@ -4671,14 +4677,13 @@ class MultiStrategy {
         z: this.platformEnemy.getPosition().z
       };
       this.platformEnemy.setPosition(this.pos);
+      this.pos = {
+        x: this.state.ballCoords.x,
+        y: this.ball.getPosition().y,
+        z: this.ground.getSize().depth - this.state.ballCoords.y
+      };
+      this.ball.setPosition(this.pos);
     }
-    this.platformEnemy.setPosition(this.pos);
-    this.pos = {
-      x: this.state.ballCoords.x,
-      y: this.ball.getPosition().y,
-      z: this.state.ballCoords.y
-    };
-    this.ball.setPosition(this.pos);
   }
 
 
