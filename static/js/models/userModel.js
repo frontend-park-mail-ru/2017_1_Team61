@@ -48,6 +48,7 @@ export default class UserModel {
           this.user.isAuthorised = true;
           this.user.nickname = json.login;
           this.user.email = json.email;
+          this.user.id = json.id;
           resolve(json);
         })
         .catch((err) => {

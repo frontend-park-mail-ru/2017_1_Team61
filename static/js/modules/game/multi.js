@@ -112,19 +112,36 @@ export default class MultiStrategy {
   }
 
   setStateGame(state) {
-    console.log(state);
+    console.log(us);
     this.state = state;
-    this.pos = {
-      x: this.state.players[1].platform.x - 80,
-      y: this.platformMy.getPosition().y,
-      z: this.platformMy.getPosition().z
-    };
-    this.platformMy.setPosition(this.pos);
-    this.pos = {
-      x: this.state.players[0].platform.x - 80,
-      y: this.platformEnemy.getPosition().y,
-      z: this.platformEnemy.getPosition().z
-    };
+
+    if(us.getData().id === this.state.players[0].userId) {
+      this.pos = {
+        x: this.state.players[0].platform.x,
+        y: this.platformMy.getPosition().y,
+        z: this.platformMy.getPosition().z
+      };
+      this.platformMy.setPosition(this.pos);
+      this.pos = {
+        x: this.state.players[1].platform.x,
+        y: this.platformEnemy.getPosition().y,
+        z: this.platformEnemy.getPosition().z
+      };
+      this.platformEnemy.setPosition(this.pos);
+    } else {
+      this.pos = {
+        x: this.state.players[1].platform.x,
+        y: this.platformMy.getPosition().y,
+        z: this.platformMy.getPosition().z
+      };
+      this.platformMy.setPosition(this.pos);
+      this.pos = {
+        x: this.state.players[0].platform.x,
+        y: this.platformEnemy.getPosition().y,
+        z: this.platformEnemy.getPosition().z
+      };
+      this.platformEnemy.setPosition(this.pos);
+    }
     this.platformEnemy.setPosition(this.pos);
     this.pos = {
       x: this.state.ballCoords.x,
