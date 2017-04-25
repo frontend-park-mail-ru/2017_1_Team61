@@ -28,6 +28,14 @@ export default class Game {
         }
     }
 
+    stop() {
+      this.games.stop();
+    }
+
+    resume() {
+      this.games.resume();
+    }
+
     setStateGame(message) {
       this.games.setStateGame(JSON.parse(message));
     }

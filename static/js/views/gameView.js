@@ -19,7 +19,8 @@ export default class GameView extends BaseView {
     this.node.innerHTML = this.drawFunc();
     this.parent.appendChild(this.node);
     document.querySelector('.game-back-link').addEventListener('click', () => {
-      router.go('/');
+      this.game.stop();
+      router.go('/concede');
     });
     this.game = new Game('single');
     this.game.gameProcess();
