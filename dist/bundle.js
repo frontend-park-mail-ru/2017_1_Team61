@@ -4661,7 +4661,7 @@ class MultiStrategy {
       this.pos = {
         x: this.state.ballCoords.x,
         y: this.ball.getPosition().y,
-        z: this.state.ballCoords.y
+        z: this.ground.getSize().depth - this.state.ballCoords.y
       };
       this.ball.setPosition(this.pos);
     } else {
@@ -4680,7 +4680,7 @@ class MultiStrategy {
       this.pos = {
         x: this.state.ballCoords.x,
         y: this.ball.getPosition().y,
-        z: this.ground.getSize().depth - this.state.ballCoords.y
+        z: this.state.ballCoords.y
       };
       this.ball.setPosition(this.pos);
     }
