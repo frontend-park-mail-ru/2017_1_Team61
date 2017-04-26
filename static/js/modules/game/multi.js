@@ -103,8 +103,17 @@ export default class MultiStrategy {
   control(button) {
     this.controller = 1;
     if (button === 'left') {
-      gm.sendButton('left');
+      if(us.getData().id === this.state.players[0].userId) {
+        gm.sendButton('left');
+      } else {
+        gm.sendButton('right');
+      }
     } else if (button === 'right') {
+      // if(us.getData().id === this.state.players[1].userId) {
+      //   gm.sendButton('right');
+      // } else {
+      //   gm.sendButton('left');
+      // }
       gm.sendButton('right');
     } else if (button === 'space') {
       gm.sendButton('space');

@@ -20,7 +20,16 @@ export default class ConcedeModal extends ModalView {
       router.go('/');
     });
     document.querySelector('.choose__no').addEventListener('click', () => {
-      this.hide();
+      router.go('/game');
     });
+    this.onClose(() => { router.go('/game'); });
+  }
+
+  onClose(func) {
+    this.close.addEventListener('click', func);
+    this.close.addEventListener('click', () => {
+      this.modal.style.display = 'none';
+    });
+    return this;
   }
 }

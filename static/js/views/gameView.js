@@ -26,6 +26,9 @@ export default class GameView extends BaseView {
     this.game.gameProcess();
   }
   show() {
+    if (this.game) {
+      this.game.resume();
+    }
     if (!this.alreadyInDOM) {
       this.render();
       this.alreadyInDOM = true;

@@ -102,28 +102,37 @@ export default class SingleStrategy {
   }
 
   render() {
+
     this.keyboard2.update();
 
     if (this.keyboard2.pressed('left')) {
-      this.control('left');
+      console.log("left");
+      if(this.play === true) {
+        this.control('left');
+      }
     }
 
     if (this.keyboard2.pressed('right')) {
-      this.control('right');
+      if(this.play === true) {
+        this.control('right');
+      }
     }
 
     if (this.keyboard2.down('B')) {
-      this.control('B');
+      if(this.play === true) {
+        this.control('B');
+      }
     }
 
     if (this.keyboard2.down('space')) {
-      this.control('space');
+      if(this.play === true) {
+        this.control('space');
+      }
     }
 
     this.checkMove();
 
     this.renderer.render(this.scene, this.camera);
-
   }
 
   animationScene() {
@@ -288,12 +297,14 @@ export default class SingleStrategy {
   }
 
   stop() {
-    console.log("stop");
     this.play = false;
+    this.keyboard2.destroy();
   }
 
   resume() {
     this.play = true;
+    this.keyboard2 = new KeyboardState();
   }
+
 }
 

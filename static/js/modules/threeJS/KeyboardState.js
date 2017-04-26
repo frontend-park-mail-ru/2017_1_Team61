@@ -109,4 +109,10 @@ KeyboardState.prototype.debug = function()
 	console.log(list);
 }
 
+KeyboardState.prototype.destroy	= function()
+{
+  document.removeEventListener("keydown", KeyboardState.onKeyDown, false);
+  document.removeEventListener("keyup", KeyboardState.onKeyUp, false);
+}
+
 ///////////////////////////////////////////////////////////////////////////////

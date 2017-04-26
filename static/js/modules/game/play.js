@@ -34,6 +34,7 @@ export default class Game {
 
     resume() {
       this.games.resume();
+      this.gameProcess();
     }
 
     setStateGame(message) {
