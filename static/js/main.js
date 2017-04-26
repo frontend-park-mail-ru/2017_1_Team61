@@ -18,6 +18,7 @@ import GameView from './views/gameView';
 import Page404View from './views/page404view';
 import MpView from './views/mpGameView';
 import ConcedeModal from './views/concedeModalView';
+import ConcedeMpModal from './views/concedeMpModalView';
 
 // views
 const preloaderView = new PreloaderView();
@@ -31,6 +32,7 @@ const aboutModalView = new AboutModalView();
 const mpView = new MpView();
 const gameView = new GameView();
 const concedeModalView = new ConcedeModal();
+const concedeMpModalView = new ConcedeMpModal();
 
 // init router
 const router = new Router();
@@ -43,6 +45,7 @@ router.addRoute(/\/$/, mainView)
   .addRoute(/mp/, mpView)
   .addRoute(/game$/, gameView)
   .addRoute(/concede$/, concedeModalView)
+  .addRoute(/concedemp$/, concedeMpModalView)
   .set404(p404);
 
 // global user profile

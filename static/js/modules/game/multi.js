@@ -9,6 +9,7 @@ import { Ground } from './ground';
 import GameModel from '../../models/gameModel';
 import EvenEmitter from '../eventEmitter/eventEmitter';
 import UserModel from '../../models/userModel';
+import Player from './player';
 
 const gm = new GameModel();
 const ee = new EvenEmitter();
@@ -17,6 +18,16 @@ const us = new UserModel();
 export default class MultiStrategy {
 
   constructor() {
+
+    this.play = true;
+
+    this.player1 = new Player(us.getData().nickname, 0, us.getData().rating);
+
+    this.nick1 = document.querySelector('.player1 .player_nickname');
+    this.nick1.innerHTML = this.player1.getNickname();
+    this.rat1 = document.querySelector('.player1 .player_rating_score');
+    this.rat1.innerHTML = this.player1.getRating();
+
     this.scene = new THREE.Scene();
     this.clock = new THREE.Clock();
     this.keyboard2 = new KeyboardState();
@@ -97,7 +108,9 @@ export default class MultiStrategy {
   animationScene() {
     this.render();
 
-    window.requestAnimationFrame(this.animationScene.bind(this));
+    if(this.play === true) {
+      window.requestAnimationFrame(this.animationScene.bind(this));
+    }
   }
 
   control(button) {
@@ -112,8 +125,35 @@ export default class MultiStrategy {
   }
 
   setStateGame(state) {
-    console.log(us);
+    // console.log(us);
     this.state = state;
+
+    if(us.getData().id === this.state.players[0].userId) {
+      if(this.player2 === undefined) {
+        this.player2 = new Player(this.state.players[1].userId, 0, 0);
+        this.nick2 = document.querySelector('.player2 .player_nickname');
+        this.nick2.innerHTML = this.player2.getNickname();
+        this.rat2 = document.querySelector('.player2 .player_rating_score');
+        this.rat2.innerHTML = this.player2.getRating();
+      }
+      this.player1.setScore(this.state.players[0].score);
+      this.player2.setScore(this.state.players[1].score);
+    } else {
+      if(this.player2 === undefined) {
+        this.player2 = new Player(this.state.players[0].userId, 0, 0);
+        this.nick2 = document.querySelector('.player2 .player_nickname');
+        this.nick2.innerHTML = this.player2.getNickname();
+        this.rat2 = document.querySelector('.player2 .player_rating_score');
+        this.rat2.innerHTML = this.player2.getRating();
+      }
+      this.player1.setScore(this.state.players[1].score);
+      this.player2.setScore(this.state.players[0].score);
+    }
+
+    this.score1 = document.querySelector('.player1_score');
+    this.score1.innerHTML = this.player1.getScore();
+    this.score2 = document.querySelector('.player2_score');
+    this.score2.innerHTML = this.player2.getScore();
 
     if(us.getData().id === this.state.players[0].userId) {
       this.pos = {
@@ -156,5 +196,13 @@ export default class MultiStrategy {
     }
   }
 
+  stop() {
+    this.play = false;
+    this.keyboard2.destroy();
+  }
 
+  resume() {
+    this.play = true;
+    this.keyboard2 = new KeyboardState();
+  }
 }

@@ -1,6 +1,8 @@
 /**
  * Created by tlakatlekutl on 27.03.17.
  */
+
+import Router from '../modules/router/router';
 import BaseView from './baseView';
 import template from '../templates/mp.pug';
 import GameModel from '../models/gameModel';
@@ -9,6 +11,7 @@ import Game from '../modules/game/play';
 
 const gm = new GameModel();
 const ee = new EvenEmitter();
+const router = new Router();
 
 export default class MpGameView extends BaseView {
   constructor() {
@@ -29,10 +32,18 @@ export default class MpGameView extends BaseView {
     this.node.innerHTML = this.drawFunc();
     this.parent.appendChild(this.node);
     this.addEventListeners();
+    document.querySelector('.game-back-link').addEventListener('click', () => {
+      this.game.stop();
+      router.go('/concedemp');
+    });
     this.game = new Game('multi');
     this.game.gameProcess();
   }
   show() {
+    if (this.game) {
+      this.game.resume();
+    }
+
     if (!this.alreadyInDOM) {
       this.render();
       this.alreadyInDOM = true;

@@ -49,6 +49,7 @@ export default class UserModel {
           this.user.nickname = json.login;
           this.user.email = json.email;
           this.user.id = json.id;
+          this.user.rating = json.rating;
           resolve(json);
         })
         .catch((err) => {

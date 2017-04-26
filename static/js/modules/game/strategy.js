@@ -106,28 +106,19 @@ export default class SingleStrategy {
     this.keyboard2.update();
 
     if (this.keyboard2.pressed('left')) {
-      console.log("left");
-      if(this.play === true) {
-        this.control('left');
-      }
+      this.control('left');
     }
 
     if (this.keyboard2.pressed('right')) {
-      if(this.play === true) {
-        this.control('right');
-      }
+      this.control('right');
     }
 
     if (this.keyboard2.down('B')) {
-      if(this.play === true) {
-        this.control('B');
-      }
+      this.control('B');
     }
 
     if (this.keyboard2.down('space')) {
-      if(this.play === true) {
-        this.control('space');
-      }
+      this.control('space');
     }
 
     this.checkMove();
