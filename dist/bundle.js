@@ -1487,6 +1487,7 @@ class Game {
 
     resume() {
       this.games.resume();
+      this.gameProcess();
     }
 
     setStateGame(message) {
@@ -1583,8 +1584,17 @@ class ConcedeModal extends __WEBPACK_IMPORTED_MODULE_1__modalView__["a" /* defau
       router.go('/');
     });
     document.querySelector('.choose__no').addEventListener('click', () => {
-      this.hide();
+      router.go('/game');
     });
+    this.onClose(() => { router.go('/game'); });
+  }
+
+  onClose(func) {
+    this.close.addEventListener('click', func);
+    this.close.addEventListener('click', () => {
+      this.modal.style.display = 'none';
+    });
+    return this;
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = ConcedeModal;
@@ -1628,6 +1638,9 @@ class GameView extends __WEBPACK_IMPORTED_MODULE_1__baseView__["a" /* default */
     this.game.gameProcess();
   }
   show() {
+    if (this.game) {
+      this.game.resume();
+    }
     if (!this.alreadyInDOM) {
       this.render();
       this.alreadyInDOM = true;
@@ -4763,7 +4776,7 @@ class MultiStrategy {
       this.pos = {
         x: this.state.ballCoords.x,
         y: this.ball.getPosition().y,
-        z: this.ground.getSize().depth - this.state.ballCoords.y
+        z: this.state.ballCoords.y
       };
       this.ball.setPosition(this.pos);
     } else {
@@ -4944,28 +4957,37 @@ class SingleStrategy {
   }
 
   render() {
+
     this.keyboard2.update();
 
     if (this.keyboard2.pressed('left')) {
-      this.control('left');
+      console.log("left");
+      if(this.play === true) {
+        this.control('left');
+      }
     }
 
     if (this.keyboard2.pressed('right')) {
-      this.control('right');
+      if(this.play === true) {
+        this.control('right');
+      }
     }
 
     if (this.keyboard2.down('B')) {
-      this.control('B');
+      if(this.play === true) {
+        this.control('B');
+      }
     }
 
     if (this.keyboard2.down('space')) {
-      this.control('space');
+      if(this.play === true) {
+        this.control('space');
+      }
     }
 
     this.checkMove();
 
     this.renderer.render(this.scene, this.camera);
-
   }
 
   animationScene() {
@@ -5130,13 +5152,15 @@ class SingleStrategy {
   }
 
   stop() {
-    console.log("stop");
     this.play = false;
+    this.keyboard2.destroy();
   }
 
   resume() {
     this.play = true;
+    this.keyboard2 = new KeyboardState();
   }
+
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = SingleStrategy;
 

@@ -103,17 +103,8 @@ export default class MultiStrategy {
   control(button) {
     this.controller = 1;
     if (button === 'left') {
-      if(us.getData().id === this.state.players[0].userId) {
-        gm.sendButton('left');
-      } else {
-        gm.sendButton('right');
-      }
+      gm.sendButton('left');
     } else if (button === 'right') {
-      // if(us.getData().id === this.state.players[1].userId) {
-      //   gm.sendButton('right');
-      // } else {
-      //   gm.sendButton('left');
-      // }
       gm.sendButton('right');
     } else if (button === 'space') {
       gm.sendButton('space');
@@ -140,7 +131,7 @@ export default class MultiStrategy {
       this.pos = {
         x: this.state.ballCoords.x,
         y: this.ball.getPosition().y,
-        z: this.ground.getSize().depth - this.state.ballCoords.y
+        z: this.state.ballCoords.y
       };
       this.ball.setPosition(this.pos);
     } else {
