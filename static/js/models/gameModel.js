@@ -24,9 +24,9 @@ export default class GameModel {
     this.transport.send('com.aerohockey.mechanics.requests.JoinGame$Request', '{}');
   }
 
-  sendButton(button) {
+  sendButton(button, frameTime) {
     // let oldFrameTime =
     console.log(JSON.stringify(button));
-    this.transport.send('com.aerohockey.mechanics.base.ClientSnap', JSON.stringify(button));
+    this.transport.send('com.aerohockey.mechanics.base.ClientSnap', JSON.stringify({button, frameTime}));
   }
 }

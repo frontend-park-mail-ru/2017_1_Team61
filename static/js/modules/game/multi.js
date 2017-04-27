@@ -130,17 +130,18 @@ export default class MultiStrategy {
     if(this.pres === 0) {
       this.pres = 1;
       this.del = 0;
+      this.timeLast = (new Date).getTime();
     } else {
       this.time = (new Date).getTime();
       this.del = this.time - this.timeLast;
     }
     this.timeLast = (new Date).getTime();
     if (button === 'left') {
-      this.send = { button: 'left', frameTime: this.del };
-      gm.sendButton(this.send);
+      // this.send = { button: 'left', frameTime: this.del };
+      gm.sendButton(this.send, this.del);
     } else if (button === 'right') {
-      this.send = { button: 'right', frameTime: this.del };
-      gm.sendButton(this.send);
+      // this.send = { button: 'right', frameTime: this.del };
+      gm.sendButton(this.send, this.del);
     } else if (button === 'space') {
       gm.sendButton('space');
     }
