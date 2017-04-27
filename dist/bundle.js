@@ -4790,9 +4790,9 @@ class MultiStrategy {
   constructor() {
 
     this.play = true;
-    this.time = 0;
+    this.time = (new Date).getTime();
     this.pres = 0;
-    this.timeLast = 0;
+    this.timeLast = (new Date).getTime();
 
     this.player1 = new __WEBPACK_IMPORTED_MODULE_7__player__["a" /* default */](us.getData().nickname, 0, us.getData().rating);
 
@@ -4888,10 +4888,9 @@ class MultiStrategy {
 
   animationScene() {
     this.render();
-    this.time ++;
+    this.time = (new Date).getTime();
 
     if(this.play === true) {
-
       window.requestAnimationFrame(this.animationScene.bind(this));
     }
   }
@@ -4899,17 +4898,16 @@ class MultiStrategy {
   control(button) {
     this.controller = 1;
     if(this.pres === 0) {
-      this.time = 0;
-      this.timeLast = 0;
       this.pres = 1;
+      this.del = 0;
     } else {
+      this.time = (new Date).getTime();
       this.del = this.time - this.timeLast;
     }
-    this.timeLast = this.time;
+    this.timeLast = (new Date).getTime();
     if (button === 'left') {
       this.send = { button: 'left', frameTime: this.del };
       gm.sendButton(this.send);
-      // console.log(this.del);
     } else if (button === 'right') {
       this.send = { button: 'right', frameTime: this.del };
       gm.sendButton(this.send);
