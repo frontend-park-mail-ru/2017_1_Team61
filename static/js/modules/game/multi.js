@@ -20,6 +20,9 @@ export default class MultiStrategy {
   constructor() {
 
     this.play = true;
+    this.time = 0;
+    this.pres = 0;
+    this.timeLast = 0;
 
     this.player1 = new Player(us.getData().nickname, 0, us.getData().rating);
 
@@ -88,16 +91,26 @@ export default class MultiStrategy {
   render() {
     this.keyboard2.update();
 
+    this.pres = 0;
+
     if (this.keyboard2.pressed('left')) {
+      this.pres = 1;
       this.control('left');
     }
 
     if (this.keyboard2.pressed('right')) {
+      this.pres = 1;
       this.control('right');
     }
 
     if (this.keyboard2.down('space')) {
+      this.pres = 1;
       this.control('space');
+    }
+
+    if(this.pres === 0) {
+      this.time = 0;
+      this.timeLast = 0;
     }
 
     this.renderer.render(this.scene, this.camera);
@@ -105,18 +118,31 @@ export default class MultiStrategy {
 
   animationScene() {
     this.render();
+    this.time ++;
 
     if(this.play === true) {
+
       window.requestAnimationFrame(this.animationScene.bind(this));
     }
   }
 
   control(button) {
     this.controller = 1;
+    if(this.pres === 0) {
+      this.time = 0;
+      this.timeLast = 0;
+      this.pres = 1;
+    } else {
+      this.del = this.time - this.timeLast;
+    }
+    this.timeLast = this.time;
     if (button === 'left') {
-      gm.sendButton('left');
+      this.send = { button: 'left', frameTime: this.del };
+      gm.sendButton(this.send);
+      // console.log(this.del);
     } else if (button === 'right') {
-      gm.sendButton('right');
+      this.send = { button: 'right', frameTime: this.del };
+      gm.sendButton(this.send);
     } else if (button === 'space') {
       gm.sendButton('space');
     }

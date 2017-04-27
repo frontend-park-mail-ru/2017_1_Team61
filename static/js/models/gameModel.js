@@ -26,6 +26,7 @@ export default class GameModel {
 
   sendButton(button) {
     // let oldFrameTime =
+    console.log(JSON.stringify(button));
     this.transport.send('com.aerohockey.mechanics.base.ClientSnap', JSON.stringify(button));
   }
 }
