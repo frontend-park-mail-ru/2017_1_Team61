@@ -1190,10 +1190,10 @@ class GameModel {
     this.transport.send('com.aerohockey.mechanics.requests.JoinGame$Request', '{}');
   }
 
-  sendButton(button) {
+  sendButton(button, frameTime) {
     // let oldFrameTime =
     console.log(JSON.stringify(button));
-    this.transport.send('com.aerohockey.mechanics.base.ClientSnap', JSON.stringify(button));
+    this.transport.send('com.aerohockey.mechanics.base.ClientSnap', JSON.stringify({button, frameTime}));
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = GameModel;
@@ -4864,23 +4864,15 @@ class MultiStrategy {
     this.pres = 0;
 
     if (this.keyboard2.pressed('left')) {
-      this.pres = 1;
       this.control('left');
     }
 
     if (this.keyboard2.pressed('right')) {
-      this.pres = 1;
       this.control('right');
     }
 
     if (this.keyboard2.down('space')) {
-      this.pres = 1;
       this.control('space');
-    }
-
-    if(this.pres === 0) {
-      this.time = 0;
-      this.timeLast = 0;
     }
 
     this.renderer.render(this.scene, this.camera);
@@ -4899,18 +4891,21 @@ class MultiStrategy {
     this.controller = 1;
     if(this.pres === 0) {
       this.pres = 1;
-      this.del = 0;
+      this.del = 20;
     } else {
       this.time = (new Date).getTime();
       this.del = this.time - this.timeLast;
     }
     this.timeLast = (new Date).getTime();
+    if(this.del > 100) {
+      this.del = 20;
+    }
     if (button === 'left') {
-      this.send = { button: 'left', frameTime: this.del };
-      gm.sendButton(this.send);
+      // this.send = { button: 'left', frameTime: this.del };
+      gm.sendButton('left', this.del);
     } else if (button === 'right') {
-      this.send = { button: 'right', frameTime: this.del };
-      gm.sendButton(this.send);
+      // this.send = { button: 'right', frameTime: this.del };
+      gm.sendButton('right', this.del);
     } else if (button === 'space') {
       gm.sendButton('space');
     }
