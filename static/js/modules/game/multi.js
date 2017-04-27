@@ -127,6 +127,9 @@ export default class MultiStrategy {
       this.del = this.time - this.timeLast;
     }
     this.timeLast = (new Date).getTime();
+    if(this.del > 100) {
+      this.del = 20;
+    }
     if (button === 'left') {
       // this.send = { button: 'left', frameTime: this.del };
       gm.sendButton('left', this.del);
