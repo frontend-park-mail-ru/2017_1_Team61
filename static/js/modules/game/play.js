@@ -41,4 +41,8 @@ export default class Game {
       this.games.setStateGame(JSON.parse(message));
     }
 
+    setOpponent(message) {
+      this.games.setOpponent(JSON.parse(message));
+    }
+
 }

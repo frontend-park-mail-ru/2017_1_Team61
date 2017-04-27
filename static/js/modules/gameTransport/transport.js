@@ -28,13 +28,13 @@ export default class Transport {
   handleMessage(event) {
     const messageText = event.data;
     const message = JSON.parse(messageText);
-    if (message.type === 'com.aerohockey.mechanics.base.ServerSnap') {
-      ee.emit(message.type, message);
-    }
-    else {
-      //console.log(message);
-      ee.emit('print', messageText);
-    }
+    // if (message.type === 'com.aerohockey.mechanics.base.ServerSnap') {
+    ee.emit(message.type, message);
+    // }
+    // else {
+    //   //console.log(message);
+    //   ee.emit('print', messageText);
+    // }
   }
 
   send(type, content) {

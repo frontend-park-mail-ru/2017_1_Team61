@@ -7,8 +7,10 @@ import css from '../../css/concede.css';
 import ModalView from './modalView';
 import Router from '../modules/router/router';
 import template from '../templates/concede.pug';
+import EvenEmitter from '../modules/eventEmitter/eventEmitter';
 
 const router = new Router();
+const ee = new EvenEmitter();
 
 export default class ConcedeModal extends ModalView {
   constructor() {
@@ -17,6 +19,7 @@ export default class ConcedeModal extends ModalView {
   render() {
     super.render();
     document.querySelector('.choose__yes').addEventListener('click', () => {
+      ee.emit('destroyGame');
       router.go('/');
     });
     document.querySelector('.choose__no').addEventListener('click', () => {

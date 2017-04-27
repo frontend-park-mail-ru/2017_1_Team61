@@ -21,6 +21,10 @@ export default class MpGameView extends BaseView {
       this.x.innerHTML = JSON.stringify(message.content);
       this.game.setStateGame(message.content);
     });
+    ee.on('com.aerohockey.mechanics.requests.StartGame$Request', (message) => {
+      this.x.innerHTML = JSON.stringify(message.content);
+      this.game.setOpponent(message.content);
+    });
     ee.on('print', (message) => {
       this.x.innerHTML = message;
     });

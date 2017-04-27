@@ -5,10 +5,12 @@
 import Router from '../modules/router/router';
 import BaseView from './baseView';
 import template from '../templates/gameTemplate.pug';
+import EvenEmitter from '../modules/eventEmitter/eventEmitter';
 
 import Game from '../modules/game/play';
 
 const router = new Router();
+const ee = new EvenEmitter();
 
 export default class GameView extends BaseView {
   constructor() {
@@ -22,26 +24,32 @@ export default class GameView extends BaseView {
       this.game.stop();
       router.go('/concede');
     });
-    this.game = new Game('single');
-    this.game.gameProcess();
+    ee.on('destroyGame', ()=> {
+      delete this.game;
+      const game = document.querySelector('canvas');
+      document.body.removeChild(game);
+    });
   }
   show() {
-    if (this.game) {
-      this.game.resume();
-    }
     if (!this.alreadyInDOM) {
       this.render();
       this.alreadyInDOM = true;
     }
-    const game = document.querySelector('canvas');
-    game.hidden = false;
+    if (this.game) {
+      this.game.resume();
+    } else {
+      this.game = new Game('single');
+      this.game.gameProcess();
+    }
+    // const game = document.querySelector('canvas');
+    // game.hidden = false;
     this.node.hidden = false;
   }
   hide() {
     if (this.alreadyInDOM) {
       // super.destruct();
-      const game = document.querySelector('canvas');
-      game.hidden = true;
+      // const game = document.querySelector('canvas');
+      // game.hidden = true;
     }
     super.hide();
   }

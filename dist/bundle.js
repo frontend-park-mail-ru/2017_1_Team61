@@ -714,6 +714,51 @@ function toComment(sourceMap) {
 
 "use strict";
 /**
+ * Created by tlakatlekutl on 19.04.17.
+ */
+
+class EventEmitter {
+  constructor() {
+    if (EventEmitter.instance) {
+      return EventEmitter.instance;
+    }
+    this.events = [];
+
+    EventEmitter.instance = this;
+  }
+  on(event, listener) {
+    if (typeof listener !== 'function') {
+      throw new TypeError('listener is not a function');
+    }
+    this.events.push({ event, listener });
+  }
+  emit(name, payload = null) {
+    const handler = this.events.find((x) => { if (x.event === name) { return x; } });
+    if (handler) {
+      handler.listener(payload);
+    } else {
+      throw new Error(`Cant emit no event ${name}`);
+    }
+  }
+  off(name) {
+    const i = this.events.findIndex((x) => { if (x.event === name) { return x; } });
+    if (i !== -1) {
+      delete this.events[i];
+    } else {
+      throw new Error(`Cant delete no event ${name}`);
+    }
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = EventEmitter;
+
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/**
  * Created by sergey on 15.04.17.
  */
 class GameObject {
@@ -737,7 +782,7 @@ class GameObject {
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -779,51 +824,6 @@ class BaseView {
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = BaseView;
 
-
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/**
- * Created by tlakatlekutl on 19.04.17.
- */
-
-class EventEmitter {
-  constructor() {
-    if (EventEmitter.instance) {
-      return EventEmitter.instance;
-    }
-    this.events = [];
-
-    EventEmitter.instance = this;
-  }
-  on(event, listener) {
-    if (typeof listener !== 'function') {
-      throw new TypeError('listener is not a function');
-    }
-    this.events.push({ event, listener });
-  }
-  emit(name, payload = null) {
-    const handler = this.events.find((x) => { if (x.event === name) { return x; } });
-    if (handler) {
-      handler.listener(payload);
-    } else {
-      throw new Error(`Cant emit no event ${name}`);
-    }
-  }
-  off(name) {
-    const i = this.events.findIndex((x) => { if (x.event === name) { return x; } });
-    if (i !== -1) {
-      delete this.events[i];
-    } else {
-      throw new Error(`Cant delete no event ${name}`);
-    }
-  }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = EventEmitter;
 
 
 
@@ -1191,6 +1191,7 @@ class GameModel {
   }
 
   sendButton(button) {
+    // let oldFrameTime =
     this.transport.send('com.aerohockey.mechanics.base.ClientSnap', JSON.stringify(button));
   }
 }
@@ -1274,7 +1275,7 @@ class API {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object__ = __webpack_require__(6);
 /**
  * Created by sergey on 15.04.17.
  */
@@ -1342,7 +1343,7 @@ class Ball extends __WEBPACK_IMPORTED_MODULE_0__object__["a" /* GameObject */] {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object__ = __webpack_require__(6);
 /**
  * Created by sergey on 15.04.17.
  */
@@ -1388,7 +1389,7 @@ class Barrier extends __WEBPACK_IMPORTED_MODULE_0__object__["a" /* GameObject */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object__ = __webpack_require__(6);
 /**
  * Created by sergey on 15.04.17.
  */
@@ -1435,7 +1436,7 @@ class Ground extends __WEBPACK_IMPORTED_MODULE_0__object__["a" /* GameObject */]
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object__ = __webpack_require__(6);
 /**
  * Created by sergey on 15.04.17.
  */
@@ -1528,6 +1529,10 @@ class Game {
 
     setStateGame(message) {
       this.games.setStateGame(JSON.parse(message));
+    }
+
+    setOpponent(message) {
+      this.games.setOpponent(JSON.parse(message));
     }
 
 }
@@ -1633,6 +1638,7 @@ class AboutModalView extends __WEBPACK_IMPORTED_MODULE_0__modalView__["a" /* def
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_concede_pug__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_concede_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__templates_concede_pug__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__ = __webpack_require__(5);
 /**
  * Created by sergey on 25.04.17.
  */
@@ -1643,7 +1649,9 @@ class AboutModalView extends __WEBPACK_IMPORTED_MODULE_0__modalView__["a" /* def
 
 
 
+
 const router = new __WEBPACK_IMPORTED_MODULE_2__modules_router_router__["a" /* default */]();
+const ee = new __WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__["a" /* default */]();
 
 class ConcedeModal extends __WEBPACK_IMPORTED_MODULE_1__modalView__["a" /* default */] {
   constructor() {
@@ -1652,6 +1660,7 @@ class ConcedeModal extends __WEBPACK_IMPORTED_MODULE_1__modalView__["a" /* defau
   render() {
     super.render();
     document.querySelector('.choose__yes').addEventListener('click', () => {
+      ee.emit('destroyGame');
       router.go('/');
     });
     document.querySelector('.choose__no').addEventListener('click', () => {
@@ -1726,10 +1735,11 @@ class ConcedeMpModal extends __WEBPACK_IMPORTED_MODULE_1__modalView__["a" /* def
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_router_router__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__baseView__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__baseView__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_gameTemplate_pug__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_gameTemplate_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__templates_gameTemplate_pug__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__modules_game_play__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__modules_eventEmitter_eventEmitter__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__modules_game_play__ = __webpack_require__(17);
 /**
 * Created by tlakatlekutl on 04.04.17.
 */
@@ -1740,7 +1750,9 @@ class ConcedeMpModal extends __WEBPACK_IMPORTED_MODULE_1__modalView__["a" /* def
 
 
 
+
 const router = new __WEBPACK_IMPORTED_MODULE_0__modules_router_router__["a" /* default */]();
+const ee = new __WEBPACK_IMPORTED_MODULE_3__modules_eventEmitter_eventEmitter__["a" /* default */]();
 
 class GameView extends __WEBPACK_IMPORTED_MODULE_1__baseView__["a" /* default */] {
   constructor() {
@@ -1754,26 +1766,32 @@ class GameView extends __WEBPACK_IMPORTED_MODULE_1__baseView__["a" /* default */
       this.game.stop();
       router.go('/concede');
     });
-    this.game = new __WEBPACK_IMPORTED_MODULE_3__modules_game_play__["a" /* default */]('single');
-    this.game.gameProcess();
+    ee.on('destroyGame', ()=> {
+      delete this.game;
+      const game = document.querySelector('canvas');
+      document.body.removeChild(game);
+    });
   }
   show() {
-    if (this.game) {
-      this.game.resume();
-    }
     if (!this.alreadyInDOM) {
       this.render();
       this.alreadyInDOM = true;
     }
-    const game = document.querySelector('canvas');
-    game.hidden = false;
+    if (this.game) {
+      this.game.resume();
+    } else {
+      this.game = new __WEBPACK_IMPORTED_MODULE_4__modules_game_play__["a" /* default */]('single');
+      this.game.gameProcess();
+    }
+    // const game = document.querySelector('canvas');
+    // game.hidden = false;
     this.node.hidden = false;
   }
   hide() {
     if (this.alreadyInDOM) {
       // super.destruct();
-      const game = document.querySelector('canvas');
-      game.hidden = true;
+      // const game = document.querySelector('canvas');
+      // game.hidden = true;
     }
     super.hide();
   }
@@ -1911,7 +1929,7 @@ class LoginModal extends __WEBPACK_IMPORTED_MODULE_0__modalView__["a" /* default
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__baseView__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__baseView__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_userModel__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_mainWindow_pug__ = __webpack_require__(46);
@@ -1989,11 +2007,11 @@ class MainView extends __WEBPACK_IMPORTED_MODULE_0__baseView__["a" /* default */
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_router_router__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__baseView__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__baseView__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_mp_pug__ = __webpack_require__(47);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_mp_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__templates_mp_pug__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__models_gameModel__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__modules_game_play__ = __webpack_require__(17);
 /**
  * Created by tlakatlekutl on 27.03.17.
@@ -2017,6 +2035,10 @@ class MpGameView extends __WEBPACK_IMPORTED_MODULE_1__baseView__["a" /* default 
     ee.on('com.aerohockey.mechanics.base.ServerSnap', (message) => {
       this.x.innerHTML = JSON.stringify(message.content);
       this.game.setStateGame(message.content);
+    });
+    ee.on('com.aerohockey.mechanics.requests.StartGame$Request', (message) => {
+      this.x.innerHTML = JSON.stringify(message.content);
+      this.game.setOpponent(message.content);
     });
     ee.on('print', (message) => {
       this.x.innerHTML = message;
@@ -2079,7 +2101,7 @@ class MpGameView extends __WEBPACK_IMPORTED_MODULE_1__baseView__["a" /* default 
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__baseView__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__baseView__ = __webpack_require__(7);
 /**
  * Created by tlakatlekutl on 27.03.17.
  */
@@ -4742,7 +4764,7 @@ class Bot {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__barrier__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ground__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__models_gameModel__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__eventEmitter_eventEmitter__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__eventEmitter_eventEmitter__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__models_userModel__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__player__ = __webpack_require__(18);
 /**
@@ -4847,8 +4869,6 @@ class MultiStrategy {
       this.control('space');
     }
 
-        // document.getElementsByClassName('score-player1__score')[0].innerHTML = scoreMy;
-       // document.getElementsByClassName('score-player2__score')[0].innerHTML = scoreEnemy;
     this.renderer.render(this.scene, this.camera);
   }
 
@@ -4876,23 +4896,9 @@ class MultiStrategy {
     this.state = state;
 
     if(us.getData().id === this.state.players[0].userId) {
-      if(this.player2 === undefined) {
-        this.player2 = new __WEBPACK_IMPORTED_MODULE_7__player__["a" /* default */](this.state.players[1].userId, 0, 0);
-        this.nick2 = document.querySelector('.player2 .player_nickname');
-        this.nick2.innerHTML = this.player2.getNickname();
-        this.rat2 = document.querySelector('.player2 .player_rating_score');
-        this.rat2.innerHTML = this.player2.getRating();
-      }
       this.player1.setScore(this.state.players[0].score);
       this.player2.setScore(this.state.players[1].score);
     } else {
-      if(this.player2 === undefined) {
-        this.player2 = new __WEBPACK_IMPORTED_MODULE_7__player__["a" /* default */](this.state.players[0].userId, 0, 0);
-        this.nick2 = document.querySelector('.player2 .player_nickname');
-        this.nick2.innerHTML = this.player2.getNickname();
-        this.rat2 = document.querySelector('.player2 .player_rating_score');
-        this.rat2.innerHTML = this.player2.getRating();
-      }
       this.player1.setScore(this.state.players[1].score);
       this.player2.setScore(this.state.players[0].score);
     }
@@ -4941,6 +4947,16 @@ class MultiStrategy {
       };
       this.ball.setPosition(this.pos);
     }
+  }
+
+  setOpponent(state) {
+    console.log(state);
+    this.state = state;
+    this.player2 = new __WEBPACK_IMPORTED_MODULE_7__player__["a" /* default */](this.state.opponentLogin, 0, this.state.opponentRating);
+    this.nick2 = document.querySelector('.player2 .player_nickname');
+    this.nick2.innerHTML = this.player2.getNickname();
+    this.rat2 = document.querySelector('.player2 .player_rating_score');
+    this.rat2.innerHTML = this.player2.getRating();
   }
 
   stop() {
@@ -5278,7 +5294,7 @@ class SingleStrategy {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__eventEmitter_eventEmitter__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__eventEmitter_eventEmitter__ = __webpack_require__(5);
 /**
  * Created by sergey on 21.04.17.
  */
@@ -5309,13 +5325,13 @@ class Transport {
   handleMessage(event) {
     const messageText = event.data;
     const message = JSON.parse(messageText);
-    if (message.type === 'com.aerohockey.mechanics.base.ServerSnap') {
-      ee.emit(message.type, message);
-    }
-    else {
-      //console.log(message);
-      ee.emit('print', messageText);
-    }
+    // if (message.type === 'com.aerohockey.mechanics.base.ServerSnap') {
+    ee.emit(message.type, message);
+    // }
+    // else {
+    //   //console.log(message);
+    //   ee.emit('print', messageText);
+    // }
   }
 
   send(type, content) {

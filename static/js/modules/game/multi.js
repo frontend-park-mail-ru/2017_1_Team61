@@ -100,8 +100,6 @@ export default class MultiStrategy {
       this.control('space');
     }
 
-        // document.getElementsByClassName('score-player1__score')[0].innerHTML = scoreMy;
-       // document.getElementsByClassName('score-player2__score')[0].innerHTML = scoreEnemy;
     this.renderer.render(this.scene, this.camera);
   }
 
@@ -129,23 +127,9 @@ export default class MultiStrategy {
     this.state = state;
 
     if(us.getData().id === this.state.players[0].userId) {
-      if(this.player2 === undefined) {
-        this.player2 = new Player(this.state.players[1].userId, 0, 0);
-        this.nick2 = document.querySelector('.player2 .player_nickname');
-        this.nick2.innerHTML = this.player2.getNickname();
-        this.rat2 = document.querySelector('.player2 .player_rating_score');
-        this.rat2.innerHTML = this.player2.getRating();
-      }
       this.player1.setScore(this.state.players[0].score);
       this.player2.setScore(this.state.players[1].score);
     } else {
-      if(this.player2 === undefined) {
-        this.player2 = new Player(this.state.players[0].userId, 0, 0);
-        this.nick2 = document.querySelector('.player2 .player_nickname');
-        this.nick2.innerHTML = this.player2.getNickname();
-        this.rat2 = document.querySelector('.player2 .player_rating_score');
-        this.rat2.innerHTML = this.player2.getRating();
-      }
       this.player1.setScore(this.state.players[1].score);
       this.player2.setScore(this.state.players[0].score);
     }
@@ -194,6 +178,16 @@ export default class MultiStrategy {
       };
       this.ball.setPosition(this.pos);
     }
+  }
+
+  setOpponent(state) {
+    console.log(state);
+    this.state = state;
+    this.player2 = new Player(this.state.opponentLogin, 0, this.state.opponentRating);
+    this.nick2 = document.querySelector('.player2 .player_nickname');
+    this.nick2.innerHTML = this.player2.getNickname();
+    this.rat2 = document.querySelector('.player2 .player_rating_score');
+    this.rat2.innerHTML = this.player2.getRating();
   }
 
   stop() {
