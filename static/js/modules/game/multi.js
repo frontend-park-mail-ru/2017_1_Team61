@@ -67,13 +67,13 @@ export default class MultiStrategy {
     this.barriers.push(this.borderRight);
     this.scene.add(this.borderRight.getModel());
 
-    this.pos = { x: 0, y: 10, z: 230 };
-    this.size = { width: 60, height: 5, depth: 10 };
+    this.pos = { x: 0, y: 10, z: 232.5 };
+    this.size = { width: 60, height: 5, depth: 15 };
     this.platformMy = new Platform(0, this.pos, this.size);
     this.scene.add(this.platformMy.getModel());
 
-    this.pos = { x: 0, y: 10, z: 10 };
-    this.size = { width: 60, height: 5, depth: 10 };
+    this.pos = { x: 0, y: 10, z: 7.5 };
+    this.size = { width: 60, height: 5, depth: 15 };
     this.platformEnemy = new Platform(1, this.pos, this.size);
     this.scene.add(this.platformEnemy.getModel());
 
