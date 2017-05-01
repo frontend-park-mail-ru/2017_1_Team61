@@ -6,13 +6,13 @@ import css from '../../css/concede.css';
 
 import ModalView from './modalView';
 import Router from '../modules/router/router';
-import template from '../templates/concede.pug';
+import template2 from '../templates/concede.pug';
 
 const router = new Router();
 
 export default class ConcedeMpModal extends ModalView {
   constructor() {
-    super('Выход', template);
+    super('Выход', template2);
   }
   render() {
     super.render();

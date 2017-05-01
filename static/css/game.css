@@ -54,6 +54,6 @@ canvas {
     margin-left: 16%;
 }
 
-button, span{
+.goleft, .goright, .result {
     display: none;
 }

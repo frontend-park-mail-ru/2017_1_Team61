@@ -8,10 +8,12 @@ import template from '../templates/mp.pug';
 import GameModel from '../models/gameModel';
 import EvenEmitter from '../modules/eventEmitter/eventEmitter';
 import Game from '../modules/game/play';
+import UserModel from '../models/userModel';
 
 const gm = new GameModel();
 const ee = new EvenEmitter();
 const router = new Router();
+const us = new UserModel();
 
 export default class MpGameView extends BaseView {
   constructor() {
@@ -24,6 +26,19 @@ export default class MpGameView extends BaseView {
     ee.on('com.aerohockey.mechanics.requests.StartGame$Request', (message) => {
       this.x.innerHTML = JSON.stringify(message.content);
       this.game.setOpponent(message.content);
+    });
+    ee.on('com.aerohockey.mechanics.base.GameOverSnap', (message) => {
+      this.x.innerHTML = JSON.stringify(message.content);
+      this.state = JSON.parse(message.content);
+      console.log(this.state.newRating);
+      this.game.stop();
+      if(this.state.newRating > us.getData().rating) {
+        us.getData().newRating = this.state.newRating;
+        router.go('/victory');
+      } else {
+        us.getData().newRating = this.state.newRating;
+        router.go('/defeat');
+      }
     });
     ee.on('print', (message) => {
       this.x.innerHTML = message;
@@ -40,28 +55,34 @@ export default class MpGameView extends BaseView {
       this.game.stop();
       router.go('/concedemp');
     });
-    this.game = new Game('multi');
-    this.game.gameProcess();
+    ee.on('destroyGame', ()=> {
+      delete this.game;
+      const game = document.querySelector('canvas');
+      document.body.removeChild(game);
+    });
     gm.findOpponent();
   }
   show() {
-    if (this.game) {
-      this.game.resume();
-    }
-
     if (!this.alreadyInDOM) {
       this.render();
       this.alreadyInDOM = true;
     }
-    const game = document.querySelector('canvas');
-    game.hidden = false;
+    if (this.game) {
+      this.game.resume();
+    } else {
+      this.game = new Game('multi');
+      this.game.gameProcess();
+    }
+
+    // const game = document.querySelector('canvas');
+    // game.hidden = false;
     this.node.hidden = false;
   }
   hide() {
     if (this.alreadyInDOM) {
       // super.destruct();
-      const game = document.querySelector('canvas');
-      game.hidden = true;
+      // const game = document.querySelector('canvas');
+      // game.hidden = true;
     }
     super.hide();
   }
