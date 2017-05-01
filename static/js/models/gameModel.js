@@ -15,6 +15,7 @@ export default class GameModel {
     this.transport = new Transport();
     GameModel.instance = this;
   }
+
   // handleEvent(message) {
   //	console.log(`Hi from GM ${message}`);
   // 	ee.emit('msg', message);
@@ -25,8 +26,6 @@ export default class GameModel {
   }
 
   sendButton(button, frameTime) {
-    // let oldFrameTime =
-    console.log(JSON.stringify(button));
-    this.transport.send('com.aerohockey.mechanics.base.ClientSnap', JSON.stringify({button, frameTime}));
+    this.transport.send('com.aerohockey.mechanics.base.ClientSnap', JSON.stringify({ button, frameTime }));
   }
 }

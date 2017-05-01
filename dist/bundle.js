@@ -1181,6 +1181,7 @@ class GameModel {
     this.transport = new __WEBPACK_IMPORTED_MODULE_0__modules_gameTransport_transport__["a" /* default */]();
     GameModel.instance = this;
   }
+
   // handleEvent(message) {
   //	console.log(`Hi from GM ${message}`);
   // 	ee.emit('msg', message);
@@ -1191,9 +1192,7 @@ class GameModel {
   }
 
   sendButton(button, frameTime) {
-    // let oldFrameTime =
-    console.log(JSON.stringify(button));
-    this.transport.send('com.aerohockey.mechanics.base.ClientSnap', JSON.stringify({button, frameTime}));
+    this.transport.send('com.aerohockey.mechanics.base.ClientSnap', JSON.stringify({ button, frameTime }));
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = GameModel;
@@ -2058,6 +2057,7 @@ class MpGameView extends __WEBPACK_IMPORTED_MODULE_1__baseView__["a" /* default 
     });
     this.game = new __WEBPACK_IMPORTED_MODULE_5__modules_game_play__["a" /* default */]('multi');
     this.game.gameProcess();
+    gm.findOpponent();
   }
   show() {
     if (this.game) {
@@ -2084,7 +2084,6 @@ class MpGameView extends __WEBPACK_IMPORTED_MODULE_1__baseView__["a" /* default 
     this.x = document.querySelector('.result');
     document.querySelector('.goleft').addEventListener('click', () => {
       gm.findOpponent();
-			// ee.off('alert');
     });
     document.querySelector('.goright').addEventListener('click', () => {
       ee.emit('alert', 'OLOLOLO');
@@ -4230,7 +4229,7 @@ exports = module.exports = __webpack_require__(4)(undefined);
 
 
 // module
-exports.push([module.i, ".game-header {\n    display: flex;\n    width: 100%;\n    flex-direction: row;\n    padding-top: 20px;\n    margin-bottom: 45px;\n}\n\n.game-back-link {\n    padding-left: 20px;\n    font-size: 28px;\n}\n\n.player1, .player2, .score {\n    text-align: center;\n    width: 20%;\n}\n\n.score {\n    padding-top: 30px;\n}\n\n.player1 {\n    padding-left: 10%;\n}\n\n.player1_score, .separate, .player2_score {\n    display: inline-block;\n    font-size: 64px;\n    padding-left: 5px;\n    padding-right: 5px;\n}\n\n.player_rating_score, .player_rating {\n    display: inline-block;\n}\n\n.player_rating_score {\n    font-size: 32px;\n    margin-left: 12px;\n}\n\n.player_nickname {\n    font-size: 52px;\n    padding-top: 20px;\n    padding-bottom: 20px;\n}\n\n.player_rating {\n    font-size: 24px;\n}\n\ncanvas {\n    margin-left: 16%;\n}", ""]);
+exports.push([module.i, ".game-header {\n    display: flex;\n    width: 100%;\n    flex-direction: row;\n    padding-top: 20px;\n    margin-bottom: 45px;\n}\n\n.game-back-link {\n    padding-left: 20px;\n    font-size: 28px;\n}\n\n.player1, .player2, .score {\n    text-align: center;\n    width: 20%;\n}\n\n.score {\n    padding-top: 30px;\n}\n\n.player1 {\n    padding-left: 10%;\n}\n\n.player1_score, .separate, .player2_score {\n    display: inline-block;\n    font-size: 64px;\n    padding-left: 5px;\n    padding-right: 5px;\n}\n\n.player_rating_score, .player_rating {\n    display: inline-block;\n}\n\n.player_rating_score {\n    font-size: 32px;\n    margin-left: 12px;\n}\n\n.player_nickname {\n    font-size: 52px;\n    padding-top: 20px;\n    padding-bottom: 20px;\n}\n\n.player_rating {\n    font-size: 24px;\n}\n\ncanvas {\n    margin-left: 16%;\n}\n\nbutton, span{\n    display: none;\n}", ""]);
 
 // exports
 
@@ -4901,13 +4900,11 @@ class MultiStrategy {
       this.del = 20;
     }
     if (button === 'left') {
-      // this.send = { button: 'left', frameTime: this.del };
       gm.sendButton('left', this.del);
     } else if (button === 'right') {
-      // this.send = { button: 'right', frameTime: this.del };
       gm.sendButton('right', this.del);
     } else if (button === 'space') {
-      gm.sendButton('space');
+      gm.sendButton('space', this.del);
     }
   }
 

@@ -131,13 +131,11 @@ export default class MultiStrategy {
       this.del = 20;
     }
     if (button === 'left') {
-      // this.send = { button: 'left', frameTime: this.del };
       gm.sendButton('left', this.del);
     } else if (button === 'right') {
-      // this.send = { button: 'right', frameTime: this.del };
       gm.sendButton('right', this.del);
     } else if (button === 'space') {
-      gm.sendButton('space');
+      gm.sendButton('space', this.del);
     }
   }
 

@@ -42,6 +42,7 @@ export default class MpGameView extends BaseView {
     });
     this.game = new Game('multi');
     this.game.gameProcess();
+    gm.findOpponent();
   }
   show() {
     if (this.game) {
@@ -68,7 +69,6 @@ export default class MpGameView extends BaseView {
     this.x = document.querySelector('.result');
     document.querySelector('.goleft').addEventListener('click', () => {
       gm.findOpponent();
-			// ee.off('alert');
     });
     document.querySelector('.goright').addEventListener('click', () => {
       ee.emit('alert', 'OLOLOLO');
