@@ -4950,6 +4950,17 @@ router.addRoute(/\/$/, mainView)
 // global user profile
 const userModel = new __WEBPACK_IMPORTED_MODULE_1__models_userModel__["a" /* default */]();
 
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('static/js/sw.js')
+    .then( (registration) => {
+      console.log('ServiceWorker registration', registration);
+    })
+    .catch((err) => {
+      console.log('Registration failed with ', err);
+    });
+}
+
+
 leaderBoardModal.render();
 aboutModalView.render();
 
