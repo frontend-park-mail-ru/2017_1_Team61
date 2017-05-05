@@ -3,158 +3,172 @@
 @import "leaderboard.css";
 @import "game.css";
 
-.main-page {
-    display: flex;
-    flex-direction: column;
-    height: 90vh;
-}
+@media all {
+    .main-page {
+        display: flex;
+        flex-direction: column;
+        height: 90vh;
+    }
 
-.name-game {
-    align-self: center;
-    font-size: 120px;
-    margin-top: 5%;
-    margin-bottom: 4%;
-}
+    .name-game {
+        align-self: center;
+        font-size: 120px;
+        margin-top: 5%;
+        margin-bottom: 4%;
+    }
 
-.main-page-center {
-    align-self: center;
-}
+    .main-page-center {
+        align-self: center;
+    }
 
-.start-game-buttons {
-    background-color: white;
-    display: flex;
-    /*align-self: center;*/
-}
+    .start-game-buttons {
+        background-color: white;
+        display: flex;
+        /*align-self: center;*/
+    }
 
-.button {
-    -webkit-transition-duration: 0.4s;
-    transition-duration: 0.4s;
-    border: none;
-    color: white;
-    padding: 15px 32px;
-    font-size: 48px;
-    float: left;
-    position: relative;
-    display: block;
-    align-self: center;
-    width: 225px;
-    flex-grow: 1;
-}
+    .button {
+        -webkit-transition-duration: 0.4s;
+        transition-duration: 0.4s;
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        font-size: 48px;
+        float: left;
+        position: relative;
+        display: block;
+        align-self: center;
+        width: 225px;
+        flex-grow: 1;
+    }
 
-.button:hover {
-    /*border: 6px solid darkcyan;*/
-    width: 280px;
-    height: 90px;
-}
+    .button:hover {
+        /*border: 6px solid darkcyan;*/
+        width: 280px;
+        height: 90px;
+    }
 
-/*.btn-left:hover {*/
+    /*.btn-left:hover {*/
     /*transition: 3s;*/
     /*flex-grow: 2;*/
-/*}*/
-
-/*.btn-left:hover ~ .btn-right{*/
+    /*}*/
+    /*.btn-left:hover ~ .btn-right{*/
     /*!*transition: 3s;*!*/
     /*!*width: 25px;*!*/
-/*}*/
-
-/*.btn-right:hover {*/
+    /*}*/
+    /*.btn-right:hover {*/
     /*transition: 3s;*/
     /*flex-grow: 2;*/
-/*}*/
-
-/*.btn-right:hover ~ .btn-left{*/
+    /*}*/
+    /*.btn-right:hover ~ .btn-left{*/
     /*transition: 3s;*/
     /*width: 25px;*/
-/*}*/
+    /*}*/
+    .leaderboard-button {
+        background-image: url("../images/leaderboard.png");
+        width: 100px;
+        height: 110px;
+        margin-top: 10%;
+        color: black;
+        border: none;
+        font-size: 0.1px;
+        border-radius: 50px;
+        flex-grow: 1;
+    }
 
-.leaderboard-button {
-    background-image: url("../images/leaderboard.png");
-    width: 100px;
-    height: 110px;
-    margin-top: 10%;
-    color: black;
-    border: none;
-    font-size: 0.1px;
-    border-radius: 50px;
-    flex-grow: 1;
+    .leaderboard-button:hover {
+        background-color: darkcyan;
+        border: solid;
+    }
+
+    .btn-left {
+        flex-grow: 1;
+        background-color: #4CAF50;
+        border-radius: 50px 0 0 50px;
+    }
+
+    .btn-right {
+        background-color: orange;
+        border-radius: 0 50px 50px 0;
+        flex-grow: 1;
+    }
+
+    .btn-right:hover {
+        flex-grow: 2;
+    }
+
+    .main-page-leaderboard {
+        text-align: center;
+    }
+
+    .main-page-footer {
+        text-align: right;
+        font-size: 32px;
+        margin-right: 2%;
+    }
+
+    .user-state {
+        /*background-color: #0D47A1;*/
+        height: 50px;
+        width: 200px;
+        text-align: center;
+        align-self: flex-end;
+        position: relative;
+        display: inline-block;
+        font-size: 30px;
+        margin-right: 1%;
+        margin-top: 1%;
+    }
+
+    .dropdown-link {
+
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+    }
+
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
+
+    .dropdown-content a:hover {
+        background-color: #f1f1f1
+    }
+
+    .user-state:hover .dropdown-content {
+        display: block;
+    }
+
+    .login-link:hover, .signup-link:hover, .footer-help-link:hover {
+        color: mediumpurple;
+        text-decoration: underline;
+    }
+
+    .login-link {
+        width: 10%;
+    }
+
+    .signup-link {
+        padding-left: 15%;
+    }
 }
 
-.leaderboard-button:hover {
-    background-color: darkcyan;
-    border: solid;
-}
-
-.btn-left {
-    flex-grow: 1;
-    background-color: #4CAF50;
-    border-radius: 50px 0 0 50px;
-}
-
-.btn-right {
-    background-color: orange;
-    border-radius: 0 50px 50px 0;
-    flex-grow: 1;
-}
-
-.btn-right:hover {
-    flex-grow: 2;
-}
-
-.main-page-leaderboard {
-    text-align: center;
-}
-
-.main-page-footer {
-    text-align: right;
-    font-size: 32px;
-    margin-right: 2%;
-}
-
-.user-state {
-    /*background-color: #0D47A1;*/
-    height: 50px;
-    width: 200px;
-    text-align: center;
-    align-self: flex-end;
-    position: relative;
-    display: inline-block;
-    font-size: 30px;
-    margin-right: 1%;
-    margin-top: 1%;
-}
-
-.dropdown-link {
-
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
-.dropdown-content a {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-}
-
-.dropdown-content a:hover {background-color: #f1f1f1}
-
-.user-state:hover .dropdown-content {
-    display: block;
-}
-
-.login-link:hover, .signup-link:hover, .footer-help-link:hover {
-    color: mediumpurple;
-    text-decoration: underline;
-}
-
-.signup-link {
-    padding-left: 10%;
+@media handheld {
+    .name-game {
+        align-self: center;
+        font-size: 100px;
+        margin-top: 2%;
+        margin-bottom: 3%;
+    }
 }
 
 /*.user-state:hover .dropdown-link {*/
