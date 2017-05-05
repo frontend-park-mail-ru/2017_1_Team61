@@ -38,8 +38,8 @@ export default class SingleStrategy {
     this.spotLight.position.set(0, 40, 40);
     this.scene.add(this.spotLight);
 
-    this.y = window.innerHeight * 0.6;
-    this.x = this.y * 2.1;
+    this.x = window.innerWidth * 0.8;
+    this.y = this.x * 0.56;
 
     this.renderer = new THREE.WebGLRenderer();
     this.renderer.setSize(this.x, this.y);
