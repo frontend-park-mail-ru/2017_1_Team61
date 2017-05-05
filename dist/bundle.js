@@ -5110,6 +5110,8 @@ class MultiStrategy {
     this.camera.position.y = 120;
     this.camera.position.z = 300;
     this.camera.lookAt(this.ground.getPosition());
+
+    this.addEventListeners();
   }
 
   render() {
@@ -5130,6 +5132,18 @@ class MultiStrategy {
     }
 
     this.renderer.render(this.scene, this.camera);
+  }
+
+  addEventListeners() {
+    const canvas = document.querySelector('canvas');
+    canvas.addEventListener('touchend', (event) => {
+      if(event.changedTouches[0].clientX < canvas.getBoundingClientRect().left + canvas.getBoundingClientRect().width / 2) {
+        this.control('left');
+      } else {
+        this.control('right');
+      }
+      // this.control('left');
+    });
   }
 
   animationScene() {
@@ -5357,6 +5371,8 @@ class SingleStrategy {
     this.look = this.ground.getPosition();
     this.look.y -= 3;
     this.camera.lookAt(this.look);
+
+    this.addEventListeners();
   }
 
   render() {
@@ -5379,9 +5395,25 @@ class SingleStrategy {
       this.control('space');
     }
 
+    // window.addEventListener('touchstart', function(event) {
+    //   this.control('left');
+    // }, false);
+
     this.checkMove();
 
     this.renderer.render(this.scene, this.camera);
+  }
+
+  addEventListeners() {
+    const canvas = document.querySelector('canvas');
+    canvas.addEventListener('touchend', (event) => {
+      if(event.changedTouches[0].clientX < canvas.getBoundingClientRect().left + canvas.getBoundingClientRect().width / 2) {
+        this.control('left');
+      } else {
+        this.control('right');
+      }
+      // this.control('left');
+    });
   }
 
   animationScene() {
