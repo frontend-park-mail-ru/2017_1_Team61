@@ -15,6 +15,9 @@ export class Ground extends GameObject {
         this.Material = new THREE.MeshLambertMaterial({color: 0xF7F6EE});
         this.model = new THREE.Mesh(this.Geometry, this.Material);
         this.model.position.set(this.X, this.Y, this.Z);
+
+        this.goalMy = this.depth - 0.5;
+        this.goalEnemy = 0.5;
     }
 
     getSize() {
@@ -23,5 +26,13 @@ export class Ground extends GameObject {
 
     getModel() {
         return this.model;
+    }
+
+    getGoalMy() {
+        return this.goalMy;
+    }
+
+    getGoalEnemy() {
+        return this.goalEnemy;
     }
 }

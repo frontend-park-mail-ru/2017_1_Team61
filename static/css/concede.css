@@ -1,0 +1,35 @@
+.modal-header-title {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.concede-modal__text {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    font-size: 24px;
+}
+
+.choose {
+    font-size: 24px;
+    margin-bottom: 25px;
+}
+
+.choose__yes, .choose__no {
+    display: inline-block;
+    font-size: 36px;
+}
+
+.choose__yes {
+    margin-left: 30%;
+    margin-right: 10%;
+}
+
+.choose__no {
+    margin-left: 10%;
+    margin-right: 30%;
+}
+
+.choose__yes:hover, .choose__no:hover {
+    color: mediumpurple;
+    text-decoration: underline;
+}

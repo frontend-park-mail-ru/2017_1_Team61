@@ -47,6 +47,10 @@ export class Ball extends GameObject {
         this.move = state;
     }
 
+    setSide(side) {
+        this.side = side;
+    }
+
     setVectorMove(vector) {
         this.vectorMove.x = vector.x;
         this.vectorMove.y = vector.y;

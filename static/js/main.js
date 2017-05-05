@@ -14,9 +14,13 @@ import SignupModal from './views/signupModalVew';
 import LeaderBoardModal from './views/leaderBoardModalView';
 import ProfileModalView from './views/profileModalView';
 import AboutModalView from './views/aboutModalVIew';
-// import GameView from './views/gameView';
+import GameView from './views/gameView';
 import Page404View from './views/page404view';
 import MpView from './views/mpGameView';
+import ConcedeModal from './views/concedeModalView';
+import ConcedeMpModal from './views/concedeMpModalView';
+import VictoryModal from './views/victoryModalView';
+import DefeatModal from './views/defeatModalView';
 
 // views
 const preloaderView = new PreloaderView();
@@ -28,7 +32,11 @@ const leaderBoardModal = new LeaderBoardModal();
 const profileModalView = new ProfileModalView();
 const aboutModalView = new AboutModalView();
 const mpView = new MpView();
-// const gameView = new GameView();
+const gameView = new GameView();
+const concedeModalView = new ConcedeModal();
+const concedeMpModalView = new ConcedeMpModal();
+const victoryModalView = new VictoryModal();
+const defeatModalView = new DefeatModal();
 
 // init router
 const router = new Router();
@@ -39,7 +47,11 @@ router.addRoute(/\/$/, mainView)
   .addRoute(/profile$/, profileModalView)
   .addRoute(/about$/, aboutModalView)
   .addRoute(/mp/, mpView)
-  // .addRoute(/game$/, gameView)
+  .addRoute(/game$/, gameView)
+  .addRoute(/concede$/, concedeModalView)
+  .addRoute(/concedemp$/, concedeMpModalView)
+  .addRoute(/victory$/, victoryModalView)
+  .addRoute(/defeat$/, defeatModalView)
   .set404(p404);
 
 // global user profile
