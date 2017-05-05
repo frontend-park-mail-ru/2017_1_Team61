@@ -1,25 +1,25 @@
 {
+    "extends": "airbnb-base",
+    "plugins": [
+        "import"
+    ],
     "env": {
         "browser": true,
-        "es6": true
+        "node": true,
+        "commonjs": false
     },
-    "extends": "eslint:recommended",
     "rules": {
-        "indent": [
+        "no-underscore-dangle": [
             "error",
-            4
+            {"allowAfterThis": true}
         ],
-        "linebreak-style": [
+        "no-console": [
             "error",
-            "unix"
+            {"allow": ["log", "error"]}
         ],
-        "quotes": [
+        "no-unused-vars": [
             "error",
-            "single"
-        ],
-        "semi": [
-            "error",
-            "always"
+            {"vars": "local"}
         ]
     }
 }

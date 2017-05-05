@@ -1,0 +1,43 @@
+.modal-content {
+    width: 50%;
+}
+
+.modal-header-title {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.victory-modal__text {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    font-size: 24px;
+}
+
+.victory-modal__text {
+    margin-left: 35%;
+    font-size: 36px;
+    font-weight: bold;
+}
+
+.change, .rating_score {
+    display: inline-block;
+    margin-left: 15px;
+}
+
+.victory-modal .change {
+    color: darkgreen;
+}
+
+.rating__change, .new__rating, .change, .rating_score {
+    font-weight: bold;
+    font-size: 28px;
+}
+
+.rating__change, .new__rating {
+    margin-left: 10%;
+    margin-top: 2%;
+}
+
+.rating {
+    margin-bottom: 10%;
+}

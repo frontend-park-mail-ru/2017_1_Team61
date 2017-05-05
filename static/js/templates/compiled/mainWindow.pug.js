@@ -1,9 +1,0 @@
-function pug_escape(e){var a=""+e,t=pug_match_html.exec(a);if(!t)return e;var r,c,n,s="";for(r=t.index,c=0;r<a.length;r++){switch(a.charCodeAt(r)){case 34:n="&quot;";break;case 38:n="&amp;";break;case 60:n="&lt;";break;case 62:n="&gt;";break;default:continue}c!==r&&(s+=a.substring(c,r)),c=r+1,s+=n}return c!==r?s+a.substring(c,r):s}
-var pug_match_html=/["&<>]/;function mainWindowTemplate(locals) {var pug_html = "", pug_mixins = {}, pug_interp;;var locals_for_with = (locals || {});(function (user) {pug_html = pug_html + "\u003C!--Created by tlakatlekutl on 27.03.17.\n--\u003E\u003Cdiv class=\"main-page\"\u003E\u003Cdiv class=\"user-state\"\u003E";
-if (user.authorised) {
-pug_html = pug_html + "\u003Ca class=\"dropdown-link\"\u003E" + (pug_escape(null == (pug_interp = user.nickname) ? "" : pug_interp)) + " \\\u002F\u003C\u002Fa\u003E\u003Cdiv class=\"dropdown-content\"\u003E\u003Ca class=\"profile-link\"\u003EProfile\u003C\u002Fa\u003E\u003Ca class=\"logout-link\"\u003ELogout\u003C\u002Fa\u003E\u003C\u002Fdiv\u003E";
-}
-else {
-pug_html = pug_html + "\u003Ca class=\"login-link\"\u003ELogin\u003C\u002Fa\u003E\u003Ca class=\"signup-link\"\u003ESign up\u003C\u002Fa\u003E";
-}
-pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003Cdiv class=\"main-page-center\"\u003E\u003Cdiv class=\"start-game-buttons\"\u003E\u003Cbutton class=\"button btn-left\"\u003ESingle\u003C\u002Fbutton\u003E\u003Cbutton class=\"button btn-right\"\u003EMulti\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"main-page-leaderboard\"\u003E\u003Cbutton class=\"leaderboard-button\"\u003ELeaderboard\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cfooter class=\"main-page-footer\"\u003E\u003Ca class=\"footer-help-link\"\u003Ehelp\u003C\u002Fa\u003E\u003C\u002Ffooter\u003E";}.call(this,"user" in locals_for_with?locals_for_with.user:typeof user!=="undefined"?user:undefined));;return pug_html;}

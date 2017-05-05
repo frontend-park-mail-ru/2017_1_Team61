@@ -1,109 +1,109 @@
 /**
- * Created by tlakatlekutl on 07.03.17.
- */
+* Created by tlakatlekutl on 07.03.17.
+*/
 
-/* global API:true*/
+import API from '../modules/api/api';
 
-(function userModelFunc() {
-  const api = new API();
-  class UserModel {
+const api = new API();
 
-    constructor() {
-      if (UserModel.instance) {
-        return UserModel.instance;
-      }
-      this.user = { isAuthorised: false };
+export default class UserModel {
 
-      UserModel.instance = this;
+  constructor() {
+    if (UserModel.instance) {
+      return UserModel.instance;
     }
+    this.user = { isAuthorised: false };
 
-    isAuthorised() {
-      return this.user.isAuthorised;
-    }
-    getData() {
-      return this.user;
-    }
-    logout() {
-      return new Promise((resolve) => {
-        api.logout()
-          .then(() => {
-            this.user.isAuthorised = false;
-            resolve();
-          });
-      });
-    }
-
-    getUserStatus() {
-      return new Promise((resolve) => {
-        api.getUser()
-          .then((response) => {
-            if (response.status === 200) {
-              return response.json();
-            } else if (response.status === 403) {
-              this.user.isAuthorised = false;
-            }
-            throw new Error('User not authorized');
-          })
-          .then((json) => {
-            this.user.isAuthorised = true;
-            this.user.nickname = json.login;
-            this.user.email = json.email;
-            resolve(json);
-          })
-          .catch((err) => {
-            console.log(err);
-            resolve();
-          });
-      });
-    }
-    login(data) {
-      return new Promise((done, error) => {
-        api.login(data)
-          .then(response => new Promise((resolve, reject) => {
-            if (response.status === 200) {
-              resolve(response.json());
-            } else {
-              reject(response.json());
-            }
-          }))
-          .then((json) => {
-            this.user.isAuthorised = true;
-            this.user.nickname = json.login;
-            this.user.email = json.email;
-            done(json);
-          })
-          .catch((json) => {
-            console.log(json);
-            error(json);
-          });
-      });
-    }
-    signup(data) {
-      return new Promise((done, error) => {
-        api.signup(data)
-          .then(response => new Promise((resolve, reject) => {
-            if (response.status === 200) {
-              resolve(response.json());
-            } else {
-              reject(response.json());
-            }
-          }))
-          .then((json) => {
-            this.user.isAuthorised = true;
-            this.user.nickname = json.login;
-            this.user.email = json.email;
-            done(json);
-          })
-          .catch((errorPromise) => {
-            return errorPromise;
-          })
-          .then((json)=> {
-            // console.log(json);
-            error(json);
-          });
-      });
-    }
+    UserModel.instance = this;
   }
 
-  window.UserModel = UserModel;
-}());
+  isAuthorised() {
+    return this.user.isAuthorised;
+  }
+  getData() {
+    return this.user;
+  }
+  logout() {
+    return new Promise((resolve) => {
+      api.logout()
+        .then(() => {
+          this.user.isAuthorised = false;
+          resolve();
+        });
+    });
+  }
+
+  getUserStatus() {
+    return new Promise((resolve) => {
+      api.getUser()
+        .then((response) => {
+          if (response.status === 200) {
+            return response.json();
+          } else if (response.status === 403) {
+            this.user.isAuthorised = false;
+          }
+          throw new Error('User not authorized');
+        })
+        .then((json) => {
+          this.user.isAuthorised = true;
+          this.user.nickname = json.login;
+          this.user.email = json.email;
+          this.user.id = json.id;
+          this.user.rating = json.rating;
+          this.user.newRating = this.user.rating;
+          resolve(json);
+        })
+        .catch((err) => {
+          console.log(err);
+          resolve();
+        });
+    });
+  }
+  login(data) {
+    return new Promise((done, error) => {
+      api.login(data)
+        .then(response => new Promise((resolve, reject) => {
+          if (response.status === 200) {
+            resolve(response.json());
+          } else {
+            reject(response.json());
+          }
+        }))
+        .then((json) => {
+          this.user.isAuthorised = true;
+          this.user.nickname = json.login;
+          this.user.email = json.email;
+          done(json);
+        })
+        .catch((json) => {
+          console.log(json);
+          error(json);
+        });
+    });
+  }
+  signup(data) {
+    return new Promise((done, error) => {
+      api.signup(data)
+        .then(response => new Promise((resolve, reject) => {
+          if (response.status === 200) {
+            resolve(response.json());
+          } else {
+            reject(response.json());
+          }
+        }))
+        .then((json) => {
+          this.user.isAuthorised = true;
+          this.user.nickname = json.login;
+          this.user.email = json.email;
+          done(json);
+        })
+        .catch((errorPromise) => {
+          return errorPromise;
+        })
+        .then((json)=> {
+          // console.log(json);
+          error(json);
+        });
+    });
+  }
+}
