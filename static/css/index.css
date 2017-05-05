@@ -3,7 +3,7 @@
 @import "leaderboard.css";
 @import "game.css";
 
-@media all {
+@media all  {
     .main-page {
         display: flex;
         flex-direction: column;
@@ -46,6 +46,7 @@
         /*border: 6px solid darkcyan;*/
         width: 280px;
         height: 90px;
+        cursor: pointer;
     }
 
     /*.btn-left:hover {*/
@@ -79,6 +80,7 @@
     .leaderboard-button:hover {
         background-color: darkcyan;
         border: solid;
+        cursor: pointer;
     }
 
     .btn-left {
@@ -95,6 +97,7 @@
 
     .btn-right:hover {
         flex-grow: 2;
+        cursor: pointer;
     }
 
     .main-page-leaderboard {
@@ -151,6 +154,7 @@
     .login-link:hover, .signup-link:hover, .footer-help-link:hover {
         color: mediumpurple;
         text-decoration: underline;
+        cursor: pointer;
     }
 
     .login-link {
@@ -158,11 +162,18 @@
     }
 
     .signup-link {
-        padding-left: 15%;
+        padding-left: 12%;
+        margin-right: 30%;
     }
 }
 
-@media handheld {
+@media screen and (min-device-width:480px) and (max-device-width:800px) {
+    .main-page {
+        display: flex;
+        flex-direction: column;
+        height: 75vh;
+    }
+
     .name-game {
         align-self: center;
         font-size: 100px;
