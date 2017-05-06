@@ -124,6 +124,7 @@ module.exports = {
       // Process JS with Babel.
       {
         test: /\.(js|jsx)$/,
+        include: [paths.appSrc, paths.appNodeModules + '/react-icons'],
         loader: 'babel',
         query: {
           
@@ -140,7 +141,7 @@ module.exports = {
       // in development "style" loader enables hot editing of CSS.
       {
         test: /\.css$/,
-        loader: 'style!css?importLoaders=1&modules=1!postcss'
+        loader: 'style!css?importLoaders=1&modules!postcss'
       },
       // JSON is not enabled by default in Webpack but both Node and Browserify
       // allow it implicitly so we also enable it.

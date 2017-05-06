@@ -1,9 +1,19 @@
-:local(.default) {
-    background: red;
+.default {
+    border: none;
 }
 
 .primary {
     composes: default;
+    background-color: #FF5722;
+    height: 20px;
+}
+
+.primary:active {
+    border: none;
+}
+
+.primary:hover {
+    background-color: #E64A19;
 }
 
 .disables {
