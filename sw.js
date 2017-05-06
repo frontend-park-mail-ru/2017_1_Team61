@@ -14,17 +14,15 @@ const cacheUrls = [
   'static/js/modules/threeJS/Projector.js',
   'static/js/modules/threeJS/KeyboardState.js',
   'static/js/modules/threeJS/OrbitControls.js',
-  'dist/bundle.js'
 
 ];
 
-this.addEventListener('install', (event) => {
+self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(APP_CACHE_NAME).then(cache => cache.addAll(cacheUrls)),
-  );
+    caches.open(APP_CACHE_NAME).then(cache => cache.addAll(cacheUrls)));
 });
 
-this.addEventListener('fetch', (event) => {
+self.addEventListener('fetch', (event) => {
   let response;
   event.respondWith(caches.match(event.request).catch(() => fetch(event.request)).then((r) => {
     response = r;
