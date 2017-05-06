@@ -1,1 +1,0 @@
-pug -c -D -E pug.js -n ldbd_tmpl  static/js/templates/leaderboard.pug
