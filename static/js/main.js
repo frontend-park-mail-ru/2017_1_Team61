@@ -2,11 +2,9 @@
  * Created by tlakatlekutl on 31.03.17.
  */
 
-import css from '../css/index.css';
-
+import '../css/index.css';
 import UserModel from './models/userModel';
 import Router from './modules/router/router';
-
 import PreloaderView from './views/preloaderView';
 import MainView from './views/mainWindowView';
 import LoginModal from './views/loginModalView';
@@ -58,8 +56,8 @@ router.addRoute(/\/$/, mainView)
 const userModel = new UserModel();
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('static/js/sw.js')
-    .then( (registration) => {
+  navigator.serviceWorker.register('/sw.js')
+    .then((registration) => {
       console.log('ServiceWorker registration', registration);
     })
     .catch((err) => {

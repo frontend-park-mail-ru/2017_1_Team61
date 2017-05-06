@@ -7,6 +7,7 @@ const APP_CACHE_NAME = 'fastball_cache_v1';
 const cacheUrls = [
   '/',
   'dist/bundle.js',
+  '/game',
   'static/css/preloader.css',
   'static/js/modules/threeJS/three.min.js',
   'static/js/modules/threeJS/Detector.js',
