@@ -1,5 +1,32 @@
-@value headerColor: #f44336;
-
 .container {
-    background-color: headerColor;
+    background-color: #3F51B5;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    color: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    padding: 10px;
+}
+
+.logo {
+    margin-right: auto;
+}
+
+.item {
+    display: flex;
+    text-align: center;
+    flex-direction: row;
+    align-items: center;
+    margin-left: 30px;
+}
+
+.icon {
+    display: inline-block;
+    padding: 5px;
 }
