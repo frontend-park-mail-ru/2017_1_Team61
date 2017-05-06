@@ -8,6 +8,8 @@ import {ConnectedRouter, routerReducer, routerMiddleware} from 'react-router-red
 
 import reducers from './reducers';
 import MainPage from './components/MainPage/MainPage';
+import ScoresPage from './components/ScoresPage/ScoresPage';
+import AuthPage from './components/AuthPage/AuthPage';
 
 
 const history = createHistory();
@@ -26,6 +28,8 @@ ReactDOM.render(
         <ConnectedRouter history={history}>
             <div>
                 <Route exact path="/" component={MainPage}/>
+                <Route exact path="/auth" component={AuthPage}/>
+                <Route exact path="/scores" component={ScoresPage}/>
             </div>
         </ConnectedRouter>
     </Provider>,

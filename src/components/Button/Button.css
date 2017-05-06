@@ -1,0 +1,15 @@
+:local(.default) {
+    background: red;
+}
+
+.primary {
+    composes: default;
+}
+
+.disables {
+    composes: default;
+}
+
+.additional {
+    composes: default;
+}

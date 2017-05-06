@@ -1,0 +1,5 @@
+@value headerColor: #f44336;
+
+.container {
+    background-color: headerColor;
+}
