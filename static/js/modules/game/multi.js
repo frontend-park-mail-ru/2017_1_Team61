@@ -46,45 +46,45 @@ export default class MultiStrategy {
     this.renderer.setSize(this.x, this.y);
     document.body.appendChild(this.renderer.domElement);
 
-    this.pos = { x: 0, y: 0, z: 120 };
+    this.pos = { x: 0, y: 0, z: 0 };
     this.size = { width: 180, height: 10, depth: 240 };
     this.ground = new Ground(this.pos, this.size);
     this.scene.add(this.ground.getModel());
 
     this.barriers = [];
 
-    this.pos = { x: -85, y: 10, z: 120 };
+    this.pos = { x: -85, y: 10, z: 0 };
     this.size = { width: 10, height: 10, depth: 240 };
     this.angle = Math.PI / 2;
     this.borderLeft = new Barrier(this.pos, this.size, this.angle);
     this.barriers.push(this.borderLeft);
     this.scene.add(this.borderLeft.getModel());
 
-    this.pos = { x: 85, y: 10, z: 120 };
+    this.pos = { x: 85, y: 10, z: 0 };
     this.size = { width: 10, height: 10, depth: 240 };
     this.angle = Math.PI / 2;
     this.borderRight = new Barrier(this.pos, this.size, this.angle);
     this.barriers.push(this.borderRight);
     this.scene.add(this.borderRight.getModel());
 
-    this.pos = { x: 0, y: 10, z: 232.5 };
+    this.pos = { x: 0, y: 10, z: 112.5 };
     this.size = { width: 60, height: 5, depth: 15 };
     this.platformMy = new Platform(0, this.pos, this.size);
     this.scene.add(this.platformMy.getModel());
 
-    this.pos = { x: 0, y: 10, z: 7.5 };
+    this.pos = { x: 0, y: 10, z: -112.5 };
     this.size = { width: 60, height: 5, depth: 15 };
     this.platformEnemy = new Platform(1, this.pos, this.size);
     this.scene.add(this.platformEnemy.getModel());
 
-    this.pos = { x: 0, y: 10, z: 220 };
+    this.pos = { x: 0, y: 10, z: 100 };
     this.radius = 5;
     this.ball = new Ball(0, this.pos, this.radius);
     this.scene.add(this.ball.getModel());
 
     this.camera.position.x = 0;
     this.camera.position.y = 120;
-    this.camera.position.z = 300;
+    this.camera.position.z = 180;
     this.camera.lookAt(this.ground.getPosition());
 
     this.addEventListeners();
@@ -96,11 +96,19 @@ export default class MultiStrategy {
     this.pres = 0;
 
     if (this.keyboard2.pressed('left')) {
-      this.control('left');
+      if (this.coordsTransform === -1) {
+        this.control('left');
+      } else {
+        this.control('right');
+      }
     }
 
     if (this.keyboard2.pressed('right')) {
-      this.control('right');
+      if (this.coordsTransform === -1) {
+        this.control('right');
+      } else {
+        this.control('left');
+      }
     }
 
     if (this.keyboard2.down('space')) {
@@ -113,7 +121,7 @@ export default class MultiStrategy {
   addEventListeners() {
     const canvas = document.querySelector('canvas');
     canvas.addEventListener('touchend', (event) => {
-      if(event.changedTouches[0].clientX < canvas.getBoundingClientRect().left + canvas.getBoundingClientRect().width / 2) {
+      if (event.changedTouches[0].clientX < canvas.getBoundingClientRect().left + canvas.getBoundingClientRect().width / 2) {
         this.control('left');
       } else {
         this.control('right');
@@ -172,40 +180,40 @@ export default class MultiStrategy {
 
     if(us.getData().id === this.state.players[0].userId) {
       this.pos = {
-        x: this.state.players[0].platform.x,
+        x: this.state.players[0].platform.x * this.coordsTransform,
         y: this.platformMy.getPosition().y,
         z: this.platformMy.getPosition().z
       };
       this.platformMy.setPosition(this.pos);
       this.pos = {
-        x: this.state.players[1].platform.x,
+        x: this.state.players[1].platform.x * this.coordsTransform,
         y: this.platformEnemy.getPosition().y,
         z: this.platformEnemy.getPosition().z
       };
       this.platformEnemy.setPosition(this.pos);
       this.pos = {
-        x: this.state.ballCoords.x,
+        x: this.state.ballCoords.x * this.coordsTransform,
         y: this.ball.getPosition().y,
-        z: this.state.ballCoords.y
+        z: this.state.ballCoords.y * this.coordsTransform
       };
       this.ball.setPosition(this.pos);
     } else {
       this.pos = {
-        x: this.state.players[1].platform.x,
+        x: this.state.players[1].platform.x * this.coordsTransform,
         y: this.platformMy.getPosition().y,
         z: this.platformMy.getPosition().z
       };
       this.platformMy.setPosition(this.pos);
       this.pos = {
-        x: this.state.players[0].platform.x,
+        x: this.state.players[0].platform.x * this.coordsTransform,
         y: this.platformEnemy.getPosition().y,
         z: this.platformEnemy.getPosition().z
       };
       this.platformEnemy.setPosition(this.pos);
       this.pos = {
-        x: this.state.ballCoords.x,
+        x: this.state.ballCoords.x * this.coordsTransform,
         y: this.ball.getPosition().y,
-        z: this.state.ballCoords.y
+        z: this.state.ballCoords.y * this.coordsTransform
       };
       this.ball.setPosition(this.pos);
     }
@@ -214,6 +222,7 @@ export default class MultiStrategy {
   setOpponent(state) {
     console.log(state);
     this.state = state;
+    this.coordsTransform = this.state.coordsTransform;
     this.player2 = new Player(this.state.opponentLogin, 0, this.state.opponentRating);
     this.nick2 = document.querySelector('.player2 .player_nickname');
     this.nick2.innerHTML = this.player2.getNickname();
