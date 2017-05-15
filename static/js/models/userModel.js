@@ -50,7 +50,7 @@ export default class UserModel {
           this.user.email = json.email;
           this.user.id = json.id;
           this.user.rating = json.rating;
-          this.user.newRating = this.user.rating;
+          this.user.changeRating = 0;
           resolve(json);
         })
         .catch((err) => {
@@ -73,6 +73,9 @@ export default class UserModel {
           this.user.isAuthorised = true;
           this.user.nickname = json.login;
           this.user.email = json.email;
+          this.user.id = json.id;
+          this.user.rating = json.rating;
+          this.user.changeRating = 0;
           done(json);
         })
         .catch((json) => {
@@ -95,6 +98,9 @@ export default class UserModel {
           this.user.isAuthorised = true;
           this.user.nickname = json.login;
           this.user.email = json.email;
+          this.user.id = json.id;
+          this.user.rating = json.rating;
+          this.user.changeRating = 0;
           done(json);
         })
         .catch((errorPromise) => {

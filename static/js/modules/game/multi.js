@@ -11,7 +11,6 @@ import EvenEmitter from '../eventEmitter/eventEmitter';
 import UserModel from '../../models/userModel';
 import Player from './player';
 
-const gm = new GameModel();
 const ee = new EvenEmitter();
 const us = new UserModel();
 
@@ -19,8 +18,17 @@ export default class MultiStrategy {
 
   constructor() {
 
+    this.gm = new GameModel();
+
     this.play = true;
     this.time = (new Date).getTime();
+
+    this.timepr = 0;
+    this.time_st = 0;
+    this.timen = 0;
+    this.speed = 0;
+    this.dist = 0;
+
     this.pres = 0;
     this.timeLast = (new Date).getTime();
 
@@ -111,8 +119,21 @@ export default class MultiStrategy {
       }
     }
 
-    if (this.keyboard2.down('space')) {
-      this.control('space');
+    if(this.touchCheck === 1) {
+      const canvas = document.querySelector('canvas');
+      if (this.touch.changedTouches[0].clientX < canvas.getBoundingClientRect().left + canvas.getBoundingClientRect().width / 2) {
+        if (this.coordsTransform === -1) {
+          this.control('left');
+        } else {
+          this.control('right');
+        }
+      } else {
+        if (this.coordsTransform === -1) {
+          this.control('right');
+        } else {
+          this.control('left');
+        }
+      }
     }
 
     this.renderer.render(this.scene, this.camera);
@@ -120,27 +141,27 @@ export default class MultiStrategy {
 
   addEventListeners() {
     const canvas = document.querySelector('canvas');
+    canvas.addEventListener('touchstart', (event) => {
+      event.preventDefault();
+      this.touch = event;
+      this.touchCheck = 1;
+    });
     canvas.addEventListener('touchend', (event) => {
-      if (event.changedTouches[0].clientX < canvas.getBoundingClientRect().left + canvas.getBoundingClientRect().width / 2) {
-        this.control('left');
-      } else {
-        this.control('right');
-      }
-      // this.control('left');
+      this.touchCheck = 0;
     });
   }
 
   animationScene() {
     this.render();
+    // console.log(this.time - (new Date).getTime());
     this.time = (new Date).getTime();
 
-    if(this.play === true) {
+    if (this.play === true) {
       window.requestAnimationFrame(this.animationScene.bind(this));
     }
   }
 
   control(button) {
-    this.controller = 1;
     if(this.pres === 0) {
       this.pres = 1;
       this.del = 20;
@@ -153,19 +174,26 @@ export default class MultiStrategy {
       this.del = 20;
     }
     if (button === 'left') {
-      gm.sendButton('left', this.del);
+      this.gm.sendButton('left', this.del);
     } else if (button === 'right') {
-      gm.sendButton('right', this.del);
-    } else if (button === 'space') {
-      gm.sendButton('space', this.del);
+      this.gm.sendButton('right', this.del);
     }
   }
 
-  setStateGame(state) {
+  setStateGame(state, time) {
     // console.log(us);
     this.state = state;
 
-    if(us.getData().id === this.state.players[0].userId) {
+    if (this.time_st === 0) {
+      this.timen = time;
+      this.time_st = 1;
+    } else {
+      this.timepr = this.timen;
+      this.timen = time;
+    }
+    console.log(this.timen - this.timepr);
+
+    if (us.getData().id === this.state.players[0].userId) {
       this.player1.setScore(this.state.players[0].score);
       this.player2.setScore(this.state.players[1].score);
     } else {
@@ -178,7 +206,8 @@ export default class MultiStrategy {
     this.score2 = document.querySelector('.player2_score');
     this.score2.innerHTML = this.player2.getScore();
 
-    if(us.getData().id === this.state.players[0].userId) {
+    if (us.getData().id === this.state.players[0].userId) {
+      // this.dist = this.platformMy.getPosition().x - this.state.players[0].platform.x * this.coordsTransform;
       this.pos = {
         x: this.state.players[0].platform.x * this.coordsTransform,
         y: this.platformMy.getPosition().y,

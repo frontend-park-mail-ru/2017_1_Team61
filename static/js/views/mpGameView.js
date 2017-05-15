@@ -10,7 +10,6 @@ import EvenEmitter from '../modules/eventEmitter/eventEmitter';
 import Game from '../modules/game/play';
 import UserModel from '../models/userModel';
 
-const gm = new GameModel();
 const ee = new EvenEmitter();
 const router = new Router();
 const us = new UserModel();
@@ -18,10 +17,14 @@ const us = new UserModel();
 export default class MpGameView extends BaseView {
   constructor() {
     super(['multiplayer-game-view'], template);
+    this.gm = new GameModel();
     // this.render();
     ee.on('com.aerohockey.mechanics.base.ServerSnap', (message) => {
       this.x.innerHTML = JSON.stringify(message.content);
-      this.game.setStateGame(message.content);
+      this.time = (new Date).getTime();
+      this.game.setStateGame(message.content, this.time);
+      // console.log((new Date).getTime() - this.time);
+      // this.time = (new Date).getTime();
     });
     ee.on('com.aerohockey.mechanics.requests.StartGame$Request', (message) => {
       this.x.innerHTML = JSON.stringify(message.content);
@@ -30,13 +33,13 @@ export default class MpGameView extends BaseView {
     ee.on('com.aerohockey.mechanics.base.GameOverSnap', (message) => {
       this.x.innerHTML = JSON.stringify(message.content);
       this.state = JSON.parse(message.content);
-      console.log(this.state.newRating);
+      console.log(this.state);
       this.game.stop();
-      if(this.state.newRating > us.getData().rating) {
-        us.getData().newRating = this.state.newRating;
+      if (this.state.changeRating > 0) {
+        us.getData().changeRating = this.state.changeRating;
         router.go('/victory');
       } else {
-        us.getData().newRating = this.state.newRating;
+        us.getData().changeRating = this.state.changeRating;
         router.go('/defeat');
       }
     });
@@ -60,7 +63,7 @@ export default class MpGameView extends BaseView {
       const game = document.querySelector('canvas');
       document.body.removeChild(game);
     });
-    gm.findOpponent();
+    this.gm.findOpponent();
   }
   show() {
     if (!this.alreadyInDOM) {
@@ -89,7 +92,7 @@ export default class MpGameView extends BaseView {
   addEventListeners() {
     this.x = document.querySelector('.result');
     document.querySelector('.goleft').addEventListener('click', () => {
-      gm.findOpponent();
+      this.gm.findOpponent();
     });
     document.querySelector('.goright').addEventListener('click', () => {
       ee.emit('alert', 'OLOLOLO');

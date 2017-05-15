@@ -16,7 +16,6 @@ import ProfileModalView from './views/profileModalView';
 import AboutModalView from './views/aboutModalVIew';
 import GameView from './views/gameView';
 import Page404View from './views/page404view';
-import MpView from './views/mpGameView';
 import ConcedeModal from './views/concedeModalView';
 import ConcedeMpModal from './views/concedeMpModalView';
 import VictoryModal from './views/victoryModalView';
@@ -31,7 +30,6 @@ const signupModalView = new SignupModal();
 const leaderBoardModal = new LeaderBoardModal();
 const profileModalView = new ProfileModalView();
 const aboutModalView = new AboutModalView();
-const mpView = new MpView();
 const gameView = new GameView();
 const concedeModalView = new ConcedeModal();
 const concedeMpModalView = new ConcedeMpModal();
@@ -46,7 +44,6 @@ router.addRoute(/\/$/, mainView)
   .addRoute(/leaderboard$/, leaderBoardModal)
   .addRoute(/profile$/, profileModalView)
   .addRoute(/about$/, aboutModalView)
-  .addRoute(/mp/, mpView)
   .addRoute(/game$/, gameView)
   .addRoute(/concede$/, concedeModalView)
   .addRoute(/concedemp$/, concedeMpModalView)
@@ -57,15 +54,15 @@ router.addRoute(/\/$/, mainView)
 // global user profile
 const userModel = new UserModel();
 
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('static/js/sw.js')
-    .then( (registration) => {
-      console.log('ServiceWorker registration', registration);
-    })
-    .catch((err) => {
-      console.log('Registration failed with ', err);
-    });
-}
+// if ('serviceWorker' in navigator) {
+//   navigator.serviceWorker.register('static/js/sw.js')
+//     .then( (registration) => {
+//       console.log('ServiceWorker registration', registration);
+//     })
+//     .catch((err) => {
+//       console.log('Registration failed with ', err);
+//     });
+// }
 
 
 leaderBoardModal.render();

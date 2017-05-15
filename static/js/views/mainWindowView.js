@@ -6,6 +6,7 @@ import BaseView from './baseView';
 import UserModel from '../models/userModel';
 import Router from '../modules/router/router';
 import template from '../templates/mainWindow.pug';
+import MpView from './mpGameView';
 
 const router = new Router();
 const userModel = new UserModel();
@@ -35,7 +36,11 @@ export default class MainView extends BaseView {
   }
   addListeners() {
     document.querySelector('.btn-left').addEventListener('click', () => { router.go('/game'); });
-    document.querySelector('.btn-right').addEventListener('click', () => { router.go('/mp'); });
+    document.querySelector('.btn-right').addEventListener('click', () => {
+      this.mpView = new MpView();
+      router.addRoute(/mp/, this.mpView);
+      router.go('/mp');
+    });
     document.querySelector('.leaderboard-button').addEventListener('click', () => { router.go('/leaderboard'); });
     document.querySelector('.footer-help-link').addEventListener('click', () => { router.go('/about'); });
 

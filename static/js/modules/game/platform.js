@@ -38,4 +38,14 @@ export class Platform extends GameObject {
     getModel() {
         return this.model;
     }
+
+    // platformEdgeCollision(frameTime) {
+    //     if (Math.abs(platform.getCoords().x - coords.x + speedX * frameTime) > platform.getWidth()/2 + radius) {
+    //         speedX = -speedX;
+    //         coords.x += speedX * frameTime;
+    //         coords.y += speedY * frameTime;
+    //         return true;
+    //     }
+    //     return false;
+    // }
 }

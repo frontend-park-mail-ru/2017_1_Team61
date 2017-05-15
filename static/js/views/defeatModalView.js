@@ -21,16 +21,9 @@ export default class DefeatModal extends ModalView {
   render() {
     super.render();
     this.changeRating = document.querySelector('.defeat-modal .change');
-    this.changeRating.innerHTML = us.getData().rating - us.getData().newRating;
+    this.changeRating.innerHTML = us.getData().changeRating;
     this.newRating = document.querySelector('.defeat-modal .rating_score');
-    this.newRating.innerHTML = us.getData().newRating;
-    // document.querySelector('.choose__yes').addEventListener('click', () => {
-    //   ee.emit('destroyGame');
-    //   router.go('/');
-    // });
-    // document.querySelector('.choose__no').addEventListener('click', () => {
-    //   router.go('/game');
-    // });
+    this.newRating.innerHTML = us.getData().rating + us.getData().changeRating;
     this.onClose(() => {
       ee.emit('destroyGame');
       router.go('/');
