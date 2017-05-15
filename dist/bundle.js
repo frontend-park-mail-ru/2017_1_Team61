@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 61);
+/******/ 	return __webpack_require__(__webpack_require__.s = 60);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -484,7 +484,7 @@ class UserModel {
           this.user.email = json.email;
           this.user.id = json.id;
           this.user.rating = json.rating;
-          this.user.newRating = this.user.rating;
+          this.user.changeRating = 0;
           resolve(json);
         })
         .catch((err) => {
@@ -507,6 +507,9 @@ class UserModel {
           this.user.isAuthorised = true;
           this.user.nickname = json.login;
           this.user.email = json.email;
+          this.user.id = json.id;
+          this.user.rating = json.rating;
+          this.user.changeRating = 0;
           done(json);
         })
         .catch((json) => {
@@ -529,6 +532,9 @@ class UserModel {
           this.user.isAuthorised = true;
           this.user.nickname = json.login;
           this.user.email = json.email;
+          this.user.id = json.id;
+          this.user.rating = json.rating;
+          this.user.changeRating = 0;
           done(json);
         })
         .catch((errorPromise) => {
@@ -707,7 +713,7 @@ function toComment(sourceMap) {
   return '/*# ' + data + ' */';
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(35).Buffer))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(34).Buffer))
 
 /***/ }),
 /* 5 */
@@ -792,7 +798,7 @@ var stylesInDom = {},
 	singletonElement = null,
 	singletonCounter = 0,
 	styleElementsInsertedAtTop = [],
-	fixUrls = __webpack_require__(56);
+	fixUrls = __webpack_require__(55);
 
 module.exports = function(list, options) {
 	if(typeof DEBUG !== "undefined" && DEBUG) {
@@ -1140,7 +1146,7 @@ module.exports = template;
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(36);
+var content = __webpack_require__(35);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
 var update = __webpack_require__(6)(content, {});
@@ -1164,7 +1170,7 @@ if(false) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_gameTransport_transport__ = __webpack_require__(65);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_gameTransport_transport__ = __webpack_require__(64);
 /**
  * Created by tlakatlekutl on 19.04.17.
  */
@@ -1205,7 +1211,7 @@ class GameModel {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__network_net__ = __webpack_require__(66);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__network_net__ = __webpack_require__(65);
 /**
 * Created by tlakatlekutl on 07.03.17.
 */
@@ -1478,6 +1484,16 @@ class Platform extends __WEBPACK_IMPORTED_MODULE_0__object__["a" /* GameObject *
     getModel() {
         return this.model;
     }
+
+    // platformEdgeCollision(frameTime) {
+    //     if (Math.abs(platform.getCoords().x - coords.x + speedX * frameTime) > platform.getWidth()/2 + radius) {
+    //         speedX = -speedX;
+    //         coords.x += speedX * frameTime;
+    //         coords.y += speedY * frameTime;
+    //         return true;
+    //     }
+    //     return false;
+    // }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Platform;
 
@@ -1487,8 +1503,8 @@ class Platform extends __WEBPACK_IMPORTED_MODULE_0__object__["a" /* GameObject *
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategy__ = __webpack_require__(64);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__multi__ = __webpack_require__(63);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategy__ = __webpack_require__(63);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__multi__ = __webpack_require__(62);
 /**
  * Created by sergey on 21.04.17.
  */
@@ -1528,8 +1544,8 @@ class Game {
       this.gameProcess();
     }
 
-    setStateGame(message) {
-      this.games.setStateGame(JSON.parse(message));
+    setStateGame(message, time) {
+      this.games.setStateGame(JSON.parse(message), time);
     }
 
     setOpponent(message) {
@@ -1583,7 +1599,7 @@ class Player {
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(39);
+var content = __webpack_require__(38);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
 var update = __webpack_require__(6)(content, {});
@@ -1608,7 +1624,7 @@ if(false) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modalView__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__templates_about_pug__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__templates_about_pug__ = __webpack_require__(45);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__templates_about_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__templates_about_pug__);
 /**
  * Created by tlakatlekutl on 04.04.17.
@@ -1735,11 +1751,11 @@ class ConcedeMpModal extends __WEBPACK_IMPORTED_MODULE_1__modalView__["a" /* def
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_defeat_css__ = __webpack_require__(57);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_defeat_css__ = __webpack_require__(56);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_defeat_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__css_defeat_css__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__modalView__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_defeat_pug__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_defeat_pug__ = __webpack_require__(46);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_defeat_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__templates_defeat_pug__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__models_userModel__ = __webpack_require__(2);
@@ -1766,16 +1782,9 @@ class DefeatModal extends __WEBPACK_IMPORTED_MODULE_1__modalView__["a" /* defaul
   render() {
     super.render();
     this.changeRating = document.querySelector('.defeat-modal .change');
-    this.changeRating.innerHTML = us.getData().rating - us.getData().newRating;
+    this.changeRating.innerHTML = us.getData().changeRating;
     this.newRating = document.querySelector('.defeat-modal .rating_score');
-    this.newRating.innerHTML = us.getData().newRating;
-    // document.querySelector('.choose__yes').addEventListener('click', () => {
-    //   ee.emit('destroyGame');
-    //   router.go('/');
-    // });
-    // document.querySelector('.choose__no').addEventListener('click', () => {
-    //   router.go('/game');
-    // });
+    this.newRating.innerHTML = us.getData().rating + us.getData().changeRating;
     this.onClose(() => {
       ee.emit('destroyGame');
       router.go('/');
@@ -1800,7 +1809,7 @@ class DefeatModal extends __WEBPACK_IMPORTED_MODULE_1__modalView__["a" /* defaul
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_router_router__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__baseView__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_gameTemplate_pug__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_gameTemplate_pug__ = __webpack_require__(47);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_gameTemplate_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__templates_gameTemplate_pug__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__modules_eventEmitter_eventEmitter__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__modules_game_play__ = __webpack_require__(17);
@@ -1873,7 +1882,7 @@ class GameView extends __WEBPACK_IMPORTED_MODULE_1__baseView__["a" /* default */
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_api_api__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__modalView__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_leaderboard_pug__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_leaderboard_pug__ = __webpack_require__(48);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_leaderboard_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__templates_leaderboard_pug__);
 /**
 * Created by tlakatlekutl on 04.04.17.
@@ -1918,7 +1927,7 @@ class LeaderBoardModal extends __WEBPACK_IMPORTED_MODULE_1__modalView__["a" /* d
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modalView__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_userModel__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_login_pug__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_login_pug__ = __webpack_require__(49);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_login_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__templates_login_pug__);
 /**
 * Created by tlakatlekutl on 02.04.17.
@@ -1996,11 +2005,13 @@ class LoginModal extends __WEBPACK_IMPORTED_MODULE_0__modalView__["a" /* default
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__baseView__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_userModel__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_mainWindow_pug__ = __webpack_require__(51);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_mainWindow_pug__ = __webpack_require__(50);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_mainWindow_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__templates_mainWindow_pug__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__mpGameView__ = __webpack_require__(66);
 /**
 * Created by tlakatlekutl on 27.03.17.
 */
+
 
 
 
@@ -2035,7 +2046,11 @@ class MainView extends __WEBPACK_IMPORTED_MODULE_0__baseView__["a" /* default */
   }
   addListeners() {
     document.querySelector('.btn-left').addEventListener('click', () => { router.go('/game'); });
-    document.querySelector('.btn-right').addEventListener('click', () => { router.go('/mp'); });
+    document.querySelector('.btn-right').addEventListener('click', () => {
+      this.mpView = new __WEBPACK_IMPORTED_MODULE_4__mpGameView__["a" /* default */]();
+      router.addRoute(/mp/, this.mpView);
+      router.go('/mp');
+    });
     document.querySelector('.leaderboard-button').addEventListener('click', () => { router.go('/leaderboard'); });
     document.querySelector('.footer-help-link').addEventListener('click', () => { router.go('/about'); });
 
@@ -2070,123 +2085,6 @@ class MainView extends __WEBPACK_IMPORTED_MODULE_0__baseView__["a" /* default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_router_router__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__baseView__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_mp_pug__ = __webpack_require__(52);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_mp_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__templates_mp_pug__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__models_gameModel__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__modules_game_play__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__models_userModel__ = __webpack_require__(2);
-/**
- * Created by tlakatlekutl on 27.03.17.
- */
-
-
-
-
-
-
-
-
-
-const gm = new __WEBPACK_IMPORTED_MODULE_3__models_gameModel__["a" /* default */]();
-const ee = new __WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__["a" /* default */]();
-const router = new __WEBPACK_IMPORTED_MODULE_0__modules_router_router__["a" /* default */]();
-const us = new __WEBPACK_IMPORTED_MODULE_6__models_userModel__["a" /* default */]();
-
-class MpGameView extends __WEBPACK_IMPORTED_MODULE_1__baseView__["a" /* default */] {
-  constructor() {
-    super(['multiplayer-game-view'], __WEBPACK_IMPORTED_MODULE_2__templates_mp_pug___default.a);
-    // this.render();
-    ee.on('com.aerohockey.mechanics.base.ServerSnap', (message) => {
-      this.x.innerHTML = JSON.stringify(message.content);
-      this.game.setStateGame(message.content);
-    });
-    ee.on('com.aerohockey.mechanics.requests.StartGame$Request', (message) => {
-      this.x.innerHTML = JSON.stringify(message.content);
-      this.game.setOpponent(message.content);
-    });
-    ee.on('com.aerohockey.mechanics.base.GameOverSnap', (message) => {
-      this.x.innerHTML = JSON.stringify(message.content);
-      this.state = JSON.parse(message.content);
-      console.log(this.state.newRating);
-      this.game.stop();
-      if(this.state.newRating > us.getData().rating) {
-        us.getData().newRating = this.state.newRating;
-        router.go('/victory');
-      } else {
-        us.getData().newRating = this.state.newRating;
-        router.go('/defeat');
-      }
-    });
-    ee.on('print', (message) => {
-      this.x.innerHTML = message;
-    });
-    ee.on('alert', (msg) => { alert(msg); });
-    this.alreadyInDOM = false;
-  }
-  render() {
-    super.render();
-    this.node.innerHTML = this.drawFunc();
-    this.parent.appendChild(this.node);
-    this.addEventListeners();
-    document.querySelector('.game-back-link').addEventListener('click', () => {
-      this.game.stop();
-      router.go('/concedemp');
-    });
-    ee.on('destroyGame', ()=> {
-      delete this.game;
-      const game = document.querySelector('canvas');
-      document.body.removeChild(game);
-    });
-    gm.findOpponent();
-  }
-  show() {
-    if (!this.alreadyInDOM) {
-      this.render();
-      this.alreadyInDOM = true;
-    }
-    if (this.game) {
-      this.game.resume();
-    } else {
-      this.game = new __WEBPACK_IMPORTED_MODULE_5__modules_game_play__["a" /* default */]('multi');
-      this.game.gameProcess();
-    }
-
-    // const game = document.querySelector('canvas');
-    // game.hidden = false;
-    this.node.hidden = false;
-  }
-  hide() {
-    if (this.alreadyInDOM) {
-      // super.destruct();
-      // const game = document.querySelector('canvas');
-      // game.hidden = true;
-    }
-    super.hide();
-  }
-  addEventListeners() {
-    this.x = document.querySelector('.result');
-    document.querySelector('.goleft').addEventListener('click', () => {
-      gm.findOpponent();
-    });
-    document.querySelector('.goright').addEventListener('click', () => {
-      ee.emit('alert', 'OLOLOLO');
-    });
-  }
-
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = MpGameView;
-
-
-
-
-/***/ }),
-/* 29 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__baseView__ = __webpack_require__(8);
 /**
  * Created by tlakatlekutl on 27.03.17.
@@ -2206,7 +2104,7 @@ class Page404View extends __WEBPACK_IMPORTED_MODULE_0__baseView__["a" /* default
 
 
 /***/ }),
-/* 30 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2231,14 +2129,14 @@ class PreloaderView {
 
 
 /***/ }),
-/* 31 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modalView__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_userModel__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_profile_pug__ = __webpack_require__(53);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_profile_pug__ = __webpack_require__(52);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_profile_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__templates_profile_pug__);
 /**
  * Created by tlakatlekutl on 04.04.17.
@@ -2277,14 +2175,14 @@ class ProfileModalView extends __WEBPACK_IMPORTED_MODULE_0__modalView__["a" /* d
 
 
 /***/ }),
-/* 32 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modalView__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_userModel__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_sign_up_pug__ = __webpack_require__(54);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_sign_up_pug__ = __webpack_require__(53);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_sign_up_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__templates_sign_up_pug__);
 /**
 * Created by tlakatlekutl on 03.04.17.
@@ -2375,15 +2273,15 @@ class SignupModal extends __WEBPACK_IMPORTED_MODULE_0__modalView__["a" /* defaul
 
 
 /***/ }),
-/* 33 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_victory_css__ = __webpack_require__(58);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_victory_css__ = __webpack_require__(57);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_victory_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__css_victory_css__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__modalView__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_victory_pug__ = __webpack_require__(55);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_victory_pug__ = __webpack_require__(54);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_victory_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__templates_victory_pug__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__models_userModel__ = __webpack_require__(2);
@@ -2410,16 +2308,9 @@ class VictoryModal extends __WEBPACK_IMPORTED_MODULE_1__modalView__["a" /* defau
   render() {
     super.render();
     this.changeRating = document.querySelector('.victory-modal .change');
-    this.changeRating.innerHTML = us.getData().newRating - us.getData().rating;
+    this.changeRating.innerHTML = us.getData().changeRating;
     this.newRating = document.querySelector('.victory-modal .rating_score');
-    this.newRating.innerHTML = us.getData().newRating;
-    // document.querySelector('.choose__yes').addEventListener('click', () => {
-    //   ee.emit('destroyGame');
-    //   router.go('/');
-    // });
-    // document.querySelector('.choose__no').addEventListener('click', () => {
-    //   router.go('/game');
-    // });
+    this.newRating.innerHTML = us.getData().rating + us.getData().changeRating;
     this.onClose(() => {
       ee.emit('destroyGame');
       router.go('/');
@@ -2438,7 +2329,7 @@ class VictoryModal extends __WEBPACK_IMPORTED_MODULE_1__modalView__["a" /* defau
 
 
 /***/ }),
-/* 34 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2559,7 +2450,7 @@ function fromByteArray (uint8) {
 
 
 /***/ }),
-/* 35 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2573,9 +2464,9 @@ function fromByteArray (uint8) {
 
 
 
-var base64 = __webpack_require__(34)
-var ieee754 = __webpack_require__(44)
-var isArray = __webpack_require__(45)
+var base64 = __webpack_require__(33)
+var ieee754 = __webpack_require__(43)
+var isArray = __webpack_require__(44)
 
 exports.Buffer = Buffer
 exports.SlowBuffer = SlowBuffer
@@ -4353,10 +4244,10 @@ function isnan (val) {
   return val !== val // eslint-disable-line no-self-compare
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(60)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59)))
 
 /***/ }),
-/* 36 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(4)(undefined);
@@ -4370,7 +4261,7 @@ exports.push([module.i, ".modal-header-title {\n    margin-top: 10px;\n    margi
 
 
 /***/ }),
-/* 37 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(4)(undefined);
@@ -4384,7 +4275,7 @@ exports.push([module.i, ".modal-content {\n    width: 50%;\n}\n\n.modal-header-t
 
 
 /***/ }),
-/* 38 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(4)(undefined);
@@ -4398,24 +4289,24 @@ exports.push([module.i, ".game-header {\n    display: flex;\n    width: 100%;\n 
 
 
 /***/ }),
-/* 39 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(4)(undefined);
 // imports
-exports.i(__webpack_require__(42), "");
 exports.i(__webpack_require__(41), "");
 exports.i(__webpack_require__(40), "");
-exports.i(__webpack_require__(38), "");
+exports.i(__webpack_require__(39), "");
+exports.i(__webpack_require__(37), "");
 
 // module
-exports.push([module.i, "@media all  {\n    .main-page {\n        display: flex;\n        flex-direction: column;\n        height: 90vh;\n    }\n\n    .name-game {\n        align-self: center;\n        font-size: 120px;\n        margin-top: 5%;\n        margin-bottom: 4%;\n    }\n\n    .main-page-center {\n        align-self: center;\n    }\n\n    .start-game-buttons {\n        background-color: white;\n        display: flex;\n        /*align-self: center;*/\n    }\n\n    .button {\n        -webkit-transition-duration: 0.4s;\n        transition-duration: 0.4s;\n        border: none;\n        color: white;\n        padding: 15px 32px;\n        font-size: 48px;\n        float: left;\n        position: relative;\n        display: block;\n        align-self: center;\n        width: 225px;\n        flex-grow: 1;\n    }\n\n    .button:hover {\n        /*border: 6px solid darkcyan;*/\n        width: 280px;\n        height: 90px;\n        cursor: pointer;\n    }\n\n    /*.btn-left:hover {*/\n    /*transition: 3s;*/\n    /*flex-grow: 2;*/\n    /*}*/\n    /*.btn-left:hover ~ .btn-right{*/\n    /*!*transition: 3s;*!*/\n    /*!*width: 25px;*!*/\n    /*}*/\n    /*.btn-right:hover {*/\n    /*transition: 3s;*/\n    /*flex-grow: 2;*/\n    /*}*/\n    /*.btn-right:hover ~ .btn-left{*/\n    /*transition: 3s;*/\n    /*width: 25px;*/\n    /*}*/\n    .leaderboard-button {\n        background-image: url(" + __webpack_require__(59) + ");\n        width: 100px;\n        height: 110px;\n        margin-top: 10%;\n        color: black;\n        border: none;\n        font-size: 0.1px;\n        border-radius: 50px;\n        flex-grow: 1;\n    }\n\n    .leaderboard-button:hover {\n        background-color: darkcyan;\n        border: solid;\n        cursor: pointer;\n    }\n\n    .btn-left {\n        flex-grow: 1;\n        background-color: #4CAF50;\n        border-radius: 50px 0 0 50px;\n    }\n\n    .btn-right {\n        background-color: orange;\n        border-radius: 0 50px 50px 0;\n        flex-grow: 1;\n    }\n\n    .btn-right:hover {\n        flex-grow: 2;\n        cursor: pointer;\n    }\n\n    .main-page-leaderboard {\n        text-align: center;\n    }\n\n    .main-page-footer {\n        text-align: right;\n        font-size: 32px;\n        margin-right: 2%;\n    }\n\n    .user-state {\n        /*background-color: #0D47A1;*/\n        height: 50px;\n        width: 200px;\n        text-align: center;\n        align-self: flex-end;\n        position: relative;\n        display: inline-block;\n        font-size: 30px;\n        margin-right: 1%;\n        margin-top: 1%;\n    }\n\n    .dropdown-link {\n\n    }\n\n    .dropdown-content {\n        display: none;\n        position: absolute;\n        background-color: #f9f9f9;\n        min-width: 160px;\n        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);\n        z-index: 1;\n    }\n\n    .dropdown-content a {\n        color: black;\n        padding: 12px 16px;\n        text-decoration: none;\n        display: block;\n    }\n\n    .dropdown-content a:hover {\n        background-color: #f1f1f1\n    }\n\n    .user-state:hover .dropdown-content {\n        display: block;\n    }\n\n    .login-link:hover, .signup-link:hover, .footer-help-link:hover {\n        color: mediumpurple;\n        text-decoration: underline;\n        cursor: pointer;\n    }\n\n    .login-link {\n        width: 10%;\n    }\n\n    .signup-link {\n        padding-left: 12%;\n        margin-right: 30%;\n    }\n}\n\n@media screen and (min-device-width:480px) and (max-device-width:800px) {\n    .main-page {\n        display: flex;\n        flex-direction: column;\n        height: 75vh;\n    }\n\n    .name-game {\n        align-self: center;\n        font-size: 100px;\n        margin-top: 2%;\n        margin-bottom: 3%;\n    }\n}\n", ""]);
+exports.push([module.i, "@media all  {\n    .main-page {\n        display: flex;\n        flex-direction: column;\n        height: 90vh;\n    }\n\n    .name-game {\n        align-self: center;\n        font-size: 120px;\n        margin-top: 5%;\n        margin-bottom: 4%;\n    }\n\n    .main-page-center {\n        align-self: center;\n    }\n\n    .start-game-buttons {\n        background-color: white;\n        display: flex;\n        /*align-self: center;*/\n    }\n\n    .button {\n        -webkit-transition-duration: 0.4s;\n        transition-duration: 0.4s;\n        border: none;\n        color: white;\n        padding: 15px 32px;\n        font-size: 48px;\n        float: left;\n        position: relative;\n        display: block;\n        align-self: center;\n        width: 225px;\n        flex-grow: 1;\n    }\n\n    .button:hover {\n        /*border: 6px solid darkcyan;*/\n        width: 280px;\n        height: 90px;\n        cursor: pointer;\n    }\n\n    /*.btn-left:hover {*/\n    /*transition: 3s;*/\n    /*flex-grow: 2;*/\n    /*}*/\n    /*.btn-left:hover ~ .btn-right{*/\n    /*!*transition: 3s;*!*/\n    /*!*width: 25px;*!*/\n    /*}*/\n    /*.btn-right:hover {*/\n    /*transition: 3s;*/\n    /*flex-grow: 2;*/\n    /*}*/\n    /*.btn-right:hover ~ .btn-left{*/\n    /*transition: 3s;*/\n    /*width: 25px;*/\n    /*}*/\n    .leaderboard-button {\n        background-image: url(" + __webpack_require__(58) + ");\n        width: 100px;\n        height: 110px;\n        margin-top: 10%;\n        color: black;\n        border: none;\n        font-size: 0.1px;\n        border-radius: 50px;\n        flex-grow: 1;\n    }\n\n    .leaderboard-button:hover {\n        background-color: darkcyan;\n        border: solid;\n        cursor: pointer;\n    }\n\n    .btn-left {\n        flex-grow: 1;\n        background-color: #4CAF50;\n        border-radius: 50px 0 0 50px;\n    }\n\n    .btn-right {\n        background-color: orange;\n        border-radius: 0 50px 50px 0;\n        flex-grow: 1;\n    }\n\n    .btn-right:hover {\n        flex-grow: 2;\n        cursor: pointer;\n    }\n\n    .main-page-leaderboard {\n        text-align: center;\n    }\n\n    .main-page-footer {\n        text-align: right;\n        font-size: 32px;\n        margin-right: 2%;\n    }\n\n    .user-state {\n        /*background-color: #0D47A1;*/\n        height: 50px;\n        width: 200px;\n        text-align: center;\n        align-self: flex-end;\n        position: relative;\n        display: inline-block;\n        font-size: 30px;\n        margin-right: 1%;\n        margin-top: 1%;\n    }\n\n    .dropdown-link {\n\n    }\n\n    .dropdown-content {\n        display: none;\n        position: absolute;\n        background-color: #f9f9f9;\n        min-width: 160px;\n        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);\n        z-index: 1;\n    }\n\n    .dropdown-content a {\n        color: black;\n        padding: 12px 16px;\n        text-decoration: none;\n        display: block;\n    }\n\n    .dropdown-content a:hover {\n        background-color: #f1f1f1\n    }\n\n    .user-state:hover .dropdown-content {\n        display: block;\n    }\n\n    .login-link:hover, .signup-link:hover, .footer-help-link:hover {\n        color: mediumpurple;\n        text-decoration: underline;\n        cursor: pointer;\n    }\n\n    .login-link {\n        width: 10%;\n    }\n\n    .signup-link {\n        padding-left: 12%;\n        margin-right: 30%;\n    }\n}\n\n@media screen and (min-device-width:480px) and (max-device-width:800px) {\n    .main-page {\n        display: flex;\n        flex-direction: column;\n        height: 75vh;\n    }\n\n    .name-game {\n        align-self: center;\n        font-size: 100px;\n        margin-top: 2%;\n        margin-bottom: 3%;\n    }\n}\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 40 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(4)(undefined);
@@ -4429,7 +4320,7 @@ exports.push([module.i, ".leaderboard-table {\n    border-collapse: collapse;\n 
 
 
 /***/ }),
-/* 41 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(4)(undefined);
@@ -4443,7 +4334,7 @@ exports.push([module.i, "input, select {\n    width: 100%;\n    padding: 12px 20
 
 
 /***/ }),
-/* 42 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(4)(undefined);
@@ -4457,7 +4348,7 @@ exports.push([module.i, ".modal {\n    display: none; /* Hidden by default */\n 
 
 
 /***/ }),
-/* 43 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(4)(undefined);
@@ -4471,7 +4362,7 @@ exports.push([module.i, ".modal-content {\n    width: 50%;\n}\n\n.modal-header-t
 
 
 /***/ }),
-/* 44 */
+/* 43 */
 /***/ (function(module, exports) {
 
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -4561,7 +4452,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 
 
 /***/ }),
-/* 45 */
+/* 44 */
 /***/ (function(module, exports) {
 
 var toString = {}.toString;
@@ -4572,7 +4463,7 @@ module.exports = Array.isArray || function (arr) {
 
 
 /***/ }),
-/* 46 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(1);
@@ -4581,7 +4472,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 47 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(1);
@@ -4590,7 +4481,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 48 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(1);
@@ -4599,7 +4490,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 49 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(1);
@@ -4627,7 +4518,7 @@ pug_html = pug_html + "\u003C\u002Ftable\u003E\u003C\u002Fdiv\u003E";}.call(this
 module.exports = template;
 
 /***/ }),
-/* 50 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(1);
@@ -4636,7 +4527,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 51 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(1);
@@ -4652,7 +4543,7 @@ pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003Cdiv class=\"name-game\"\u003EF
 module.exports = template;
 
 /***/ }),
-/* 52 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(1);
@@ -4661,7 +4552,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 53 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(1);
@@ -4670,7 +4561,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;;var l
 module.exports = template;
 
 /***/ }),
-/* 54 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(1);
@@ -4679,7 +4570,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 55 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var pug = __webpack_require__(1);
@@ -4688,7 +4579,7 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_ht
 module.exports = template;
 
 /***/ }),
-/* 56 */
+/* 55 */
 /***/ (function(module, exports) {
 
 
@@ -4783,13 +4674,13 @@ module.exports = function (css) {
 
 
 /***/ }),
-/* 57 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(37);
+var content = __webpack_require__(36);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
 var update = __webpack_require__(6)(content, {});
@@ -4809,13 +4700,13 @@ if(false) {
 }
 
 /***/ }),
-/* 58 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(43);
+var content = __webpack_require__(42);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
 var update = __webpack_require__(6)(content, {});
@@ -4835,13 +4726,13 @@ if(false) {
 }
 
 /***/ }),
-/* 59 */
+/* 58 */
 /***/ (function(module, exports) {
 
 module.exports = "data:image/png;base64,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"
 
 /***/ }),
-/* 60 */
+/* 59 */
 /***/ (function(module, exports) {
 
 var g;
@@ -4868,7 +4759,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 61 */
+/* 60 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4877,24 +4768,22 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_index_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__css_index_css__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_userModel__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__views_preloaderView__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__views_preloaderView__ = __webpack_require__(29);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__views_mainWindowView__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__views_loginModalView__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__views_signupModalVew__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__views_signupModalVew__ = __webpack_require__(31);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__views_leaderBoardModalView__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__views_profileModalView__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__views_profileModalView__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__views_aboutModalVIew__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__views_gameView__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__views_page404view__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__views_mpGameView__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__views_concedeModalView__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__views_concedeMpModalView__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__views_victoryModalView__ = __webpack_require__(33);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__views_defeatModalView__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__views_page404view__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__views_concedeModalView__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__views_concedeMpModalView__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__views_victoryModalView__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__views_defeatModalView__ = __webpack_require__(23);
 /**
  * Created by tlakatlekutl on 31.03.17.
  */
-
 
 
 
@@ -4924,12 +4813,11 @@ const signupModalView = new __WEBPACK_IMPORTED_MODULE_6__views_signupModalVew__[
 const leaderBoardModal = new __WEBPACK_IMPORTED_MODULE_7__views_leaderBoardModalView__["a" /* default */]();
 const profileModalView = new __WEBPACK_IMPORTED_MODULE_8__views_profileModalView__["a" /* default */]();
 const aboutModalView = new __WEBPACK_IMPORTED_MODULE_9__views_aboutModalVIew__["a" /* default */]();
-const mpView = new __WEBPACK_IMPORTED_MODULE_12__views_mpGameView__["a" /* default */]();
 const gameView = new __WEBPACK_IMPORTED_MODULE_10__views_gameView__["a" /* default */]();
-const concedeModalView = new __WEBPACK_IMPORTED_MODULE_13__views_concedeModalView__["a" /* default */]();
-const concedeMpModalView = new __WEBPACK_IMPORTED_MODULE_14__views_concedeMpModalView__["a" /* default */]();
-const victoryModalView = new __WEBPACK_IMPORTED_MODULE_15__views_victoryModalView__["a" /* default */]();
-const defeatModalView = new __WEBPACK_IMPORTED_MODULE_16__views_defeatModalView__["a" /* default */]();
+const concedeModalView = new __WEBPACK_IMPORTED_MODULE_12__views_concedeModalView__["a" /* default */]();
+const concedeMpModalView = new __WEBPACK_IMPORTED_MODULE_13__views_concedeMpModalView__["a" /* default */]();
+const victoryModalView = new __WEBPACK_IMPORTED_MODULE_14__views_victoryModalView__["a" /* default */]();
+const defeatModalView = new __WEBPACK_IMPORTED_MODULE_15__views_defeatModalView__["a" /* default */]();
 
 // init router
 const router = new __WEBPACK_IMPORTED_MODULE_2__modules_router_router__["a" /* default */]();
@@ -4939,7 +4827,6 @@ router.addRoute(/\/$/, mainView)
   .addRoute(/leaderboard$/, leaderBoardModal)
   .addRoute(/profile$/, profileModalView)
   .addRoute(/about$/, aboutModalView)
-  .addRoute(/mp/, mpView)
   .addRoute(/game$/, gameView)
   .addRoute(/concede$/, concedeModalView)
   .addRoute(/concedemp$/, concedeMpModalView)
@@ -4950,15 +4837,15 @@ router.addRoute(/\/$/, mainView)
 // global user profile
 const userModel = new __WEBPACK_IMPORTED_MODULE_1__models_userModel__["a" /* default */]();
 
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('static/js/sw.js')
-    .then( (registration) => {
-      console.log('ServiceWorker registration', registration);
-    })
-    .catch((err) => {
-      console.log('Registration failed with ', err);
-    });
-}
+// if ('serviceWorker' in navigator) {
+//   navigator.serviceWorker.register('static/js/sw.js')
+//     .then( (registration) => {
+//       console.log('ServiceWorker registration', registration);
+//     })
+//     .catch((err) => {
+//       console.log('Registration failed with ', err);
+//     });
+// }
 
 
 leaderBoardModal.render();
@@ -4974,7 +4861,7 @@ router.start()
 
 
 /***/ }),
-/* 62 */
+/* 61 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5021,7 +4908,7 @@ class Bot {
 
 
 /***/ }),
-/* 63 */
+/* 62 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5046,7 +4933,6 @@ class Bot {
 
 
 
-const gm = new __WEBPACK_IMPORTED_MODULE_4__models_gameModel__["a" /* default */]();
 const ee = new __WEBPACK_IMPORTED_MODULE_5__eventEmitter_eventEmitter__["a" /* default */]();
 const us = new __WEBPACK_IMPORTED_MODULE_6__models_userModel__["a" /* default */]();
 
@@ -5054,8 +4940,17 @@ class MultiStrategy {
 
   constructor() {
 
+    this.gm = new __WEBPACK_IMPORTED_MODULE_4__models_gameModel__["a" /* default */]();
+
     this.play = true;
     this.time = (new Date).getTime();
+
+    this.timepr = 0;
+    this.time_st = 0;
+    this.timen = 0;
+    this.speed = 0;
+    this.dist = 0;
+
     this.pres = 0;
     this.timeLast = (new Date).getTime();
 
@@ -5146,8 +5041,21 @@ class MultiStrategy {
       }
     }
 
-    if (this.keyboard2.down('space')) {
-      this.control('space');
+    if(this.touchCheck === 1) {
+      const canvas = document.querySelector('canvas');
+      if (this.touch.changedTouches[0].clientX < canvas.getBoundingClientRect().left + canvas.getBoundingClientRect().width / 2) {
+        if (this.coordsTransform === -1) {
+          this.control('left');
+        } else {
+          this.control('right');
+        }
+      } else {
+        if (this.coordsTransform === -1) {
+          this.control('right');
+        } else {
+          this.control('left');
+        }
+      }
     }
 
     this.renderer.render(this.scene, this.camera);
@@ -5155,27 +5063,27 @@ class MultiStrategy {
 
   addEventListeners() {
     const canvas = document.querySelector('canvas');
+    canvas.addEventListener('touchstart', (event) => {
+      event.preventDefault();
+      this.touch = event;
+      this.touchCheck = 1;
+    });
     canvas.addEventListener('touchend', (event) => {
-      if (event.changedTouches[0].clientX < canvas.getBoundingClientRect().left + canvas.getBoundingClientRect().width / 2) {
-        this.control('left');
-      } else {
-        this.control('right');
-      }
-      // this.control('left');
+      this.touchCheck = 0;
     });
   }
 
   animationScene() {
     this.render();
+    // console.log(this.time - (new Date).getTime());
     this.time = (new Date).getTime();
 
-    if(this.play === true) {
+    if (this.play === true) {
       window.requestAnimationFrame(this.animationScene.bind(this));
     }
   }
 
   control(button) {
-    this.controller = 1;
     if(this.pres === 0) {
       this.pres = 1;
       this.del = 20;
@@ -5188,19 +5096,26 @@ class MultiStrategy {
       this.del = 20;
     }
     if (button === 'left') {
-      gm.sendButton('left', this.del);
+      this.gm.sendButton('left', this.del);
     } else if (button === 'right') {
-      gm.sendButton('right', this.del);
-    } else if (button === 'space') {
-      gm.sendButton('space', this.del);
+      this.gm.sendButton('right', this.del);
     }
   }
 
-  setStateGame(state) {
+  setStateGame(state, time) {
     // console.log(us);
     this.state = state;
 
-    if(us.getData().id === this.state.players[0].userId) {
+    if (this.time_st === 0) {
+      this.timen = time;
+      this.time_st = 1;
+    } else {
+      this.timepr = this.timen;
+      this.timen = time;
+    }
+    console.log(this.timen - this.timepr);
+
+    if (us.getData().id === this.state.players[0].userId) {
       this.player1.setScore(this.state.players[0].score);
       this.player2.setScore(this.state.players[1].score);
     } else {
@@ -5213,7 +5128,8 @@ class MultiStrategy {
     this.score2 = document.querySelector('.player2_score');
     this.score2.innerHTML = this.player2.getScore();
 
-    if(us.getData().id === this.state.players[0].userId) {
+    if (us.getData().id === this.state.players[0].userId) {
+      // this.dist = this.platformMy.getPosition().x - this.state.players[0].platform.x * this.coordsTransform;
       this.pos = {
         x: this.state.players[0].platform.x * this.coordsTransform,
         y: this.platformMy.getPosition().y,
@@ -5280,7 +5196,7 @@ class MultiStrategy {
 
 
 /***/ }),
-/* 64 */
+/* 63 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5288,7 +5204,7 @@ class MultiStrategy {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ball__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__barrier__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ground__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__bot__ = __webpack_require__(62);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__bot__ = __webpack_require__(61);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__player__ = __webpack_require__(18);
 /**
  * Created by sergey on 15.04.17.
@@ -5614,7 +5530,7 @@ class SingleStrategy {
 
 
 /***/ }),
-/* 65 */
+/* 64 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5674,7 +5590,7 @@ class Transport {
 
 
 /***/ }),
-/* 66 */
+/* 65 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5763,6 +5679,126 @@ class Net {
   }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Net;
+
+
+
+
+/***/ }),
+/* 66 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_router_router__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__baseView__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_mp_pug__ = __webpack_require__(51);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_mp_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__templates_mp_pug__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__models_gameModel__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__modules_game_play__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__models_userModel__ = __webpack_require__(2);
+/**
+ * Created by tlakatlekutl on 27.03.17.
+ */
+
+
+
+
+
+
+
+
+
+const ee = new __WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__["a" /* default */]();
+const router = new __WEBPACK_IMPORTED_MODULE_0__modules_router_router__["a" /* default */]();
+const us = new __WEBPACK_IMPORTED_MODULE_6__models_userModel__["a" /* default */]();
+
+class MpGameView extends __WEBPACK_IMPORTED_MODULE_1__baseView__["a" /* default */] {
+  constructor() {
+    super(['multiplayer-game-view'], __WEBPACK_IMPORTED_MODULE_2__templates_mp_pug___default.a);
+    this.gm = new __WEBPACK_IMPORTED_MODULE_3__models_gameModel__["a" /* default */]();
+    // this.render();
+    ee.on('com.aerohockey.mechanics.base.ServerSnap', (message) => {
+      this.x.innerHTML = JSON.stringify(message.content);
+      this.time = (new Date).getTime();
+      this.game.setStateGame(message.content, this.time);
+      // console.log((new Date).getTime() - this.time);
+      // this.time = (new Date).getTime();
+    });
+    ee.on('com.aerohockey.mechanics.requests.StartGame$Request', (message) => {
+      this.x.innerHTML = JSON.stringify(message.content);
+      this.game.setOpponent(message.content);
+    });
+    ee.on('com.aerohockey.mechanics.base.GameOverSnap', (message) => {
+      this.x.innerHTML = JSON.stringify(message.content);
+      this.state = JSON.parse(message.content);
+      console.log(this.state);
+      this.game.stop();
+      if (this.state.changeRating > 0) {
+        us.getData().changeRating = this.state.changeRating;
+        router.go('/victory');
+      } else {
+        us.getData().changeRating = this.state.changeRating;
+        router.go('/defeat');
+      }
+    });
+    ee.on('print', (message) => {
+      this.x.innerHTML = message;
+    });
+    ee.on('alert', (msg) => { alert(msg); });
+    this.alreadyInDOM = false;
+  }
+  render() {
+    super.render();
+    this.node.innerHTML = this.drawFunc();
+    this.parent.appendChild(this.node);
+    this.addEventListeners();
+    document.querySelector('.game-back-link').addEventListener('click', () => {
+      this.game.stop();
+      router.go('/concedemp');
+    });
+    ee.on('destroyGame', ()=> {
+      delete this.game;
+      const game = document.querySelector('canvas');
+      document.body.removeChild(game);
+    });
+    this.gm.findOpponent();
+  }
+  show() {
+    if (!this.alreadyInDOM) {
+      this.render();
+      this.alreadyInDOM = true;
+    }
+    if (this.game) {
+      this.game.resume();
+    } else {
+      this.game = new __WEBPACK_IMPORTED_MODULE_5__modules_game_play__["a" /* default */]('multi');
+      this.game.gameProcess();
+    }
+
+    // const game = document.querySelector('canvas');
+    // game.hidden = false;
+    this.node.hidden = false;
+  }
+  hide() {
+    if (this.alreadyInDOM) {
+      // super.destruct();
+      // const game = document.querySelector('canvas');
+      // game.hidden = true;
+    }
+    super.hide();
+  }
+  addEventListeners() {
+    this.x = document.querySelector('.result');
+    document.querySelector('.goleft').addEventListener('click', () => {
+      this.gm.findOpponent();
+    });
+    document.querySelector('.goright').addEventListener('click', () => {
+      ee.emit('alert', 'OLOLOLO');
+    });
+  }
+
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = MpGameView;
 
 
 
