@@ -5246,6 +5246,9 @@ class MultiStrategy {
       };
       this.balls[i].setPosition(this.pos);
     }
+    //console.log(this.state.balls[0].x * this.coordsTransform);
+    //console.log(this.balls[0].getPosition().x);
+
     //console.log(this.balls);
   }
 
@@ -5292,8 +5295,10 @@ class MultiStrategy {
       };
       this.balls[i].setPosition(this.pos);
       if (this.state.balls[i].radius !== this.balls[i].getSize()) {
-        this.size = this.state.balls[i].radius;
-        this.balls[i].setSize(this.size);
+        console.log(this.state.balls[i].radius);
+        this.scene.remove(this.balls[i].getModel());
+        this.balls[i].setSize(this.state.balls[i].radius);
+        this.scene.add(this.balls[i].getModel());
       }
     }
 
