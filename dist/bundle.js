@@ -5297,7 +5297,9 @@ class MultiStrategy {
     }
 
     for (let i = 0; i < this.state.bonuses.length; i += 1) {
-      this.pos = { x: this.state.bonuses[i].coords.x, y: 15, z: this.state.bonuses[i].coords.y };
+      this.pos = { x: this.state.bonuses[i].coords.x * this.coordsTransform,
+        y: 15,
+        z: this.state.bonuses[i].coords.y * this.coordsTransform };
       this.radius = 5;
       this.bonus = new __WEBPACK_IMPORTED_MODULE_4__bonus__["a" /* Bonus */](this.state.bonuses[i].type, this.pos, this.radius);
       this.scene.add(this.bonus.getModel());
