@@ -30,6 +30,10 @@ export default class MpGameView extends BaseView {
       this.x.innerHTML = JSON.stringify(message.content);
       this.game.setOpponent(message.content);
     });
+    ee.on('com.aerohockey.mechanics.base.ServerDetailSnap', (message) => {
+      this.x.innerHTML = JSON.stringify(message.content);
+      this.game.setChangeGame(message.content);
+    });
     ee.on('com.aerohockey.mechanics.base.GameOverSnap', (message) => {
       this.x.innerHTML = JSON.stringify(message.content);
       this.state = JSON.parse(message.content);
@@ -77,15 +81,16 @@ export default class MpGameView extends BaseView {
       this.game.gameProcess();
     }
 
-    // const game = document.querySelector('canvas');
-    // game.hidden = false;
+    const eee = document.querySelector('.game-header');
+    eee.style.display = '';
     this.node.hidden = false;
   }
   hide() {
     if (this.alreadyInDOM) {
-      // super.destruct();
       // const game = document.querySelector('canvas');
       // game.hidden = true;
+      // const eee = document.querySelector('.game-header');
+      // eee.hidden = true;
     }
     super.hide();
   }

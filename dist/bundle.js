@@ -400,7 +400,7 @@ function pug_rethrow(err, filename, lineno, str){
     throw err;
   }
   try {
-    str = str || __webpack_require__(67).readFileSync(filename, 'utf8')
+    str = str || __webpack_require__(68).readFileSync(filename, 'utf8')
   } catch (ex) {
     pug_rethrow(err, null, lineno)
   }
@@ -762,6 +762,34 @@ class EventEmitter {
 
 /***/ }),
 /* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/**
+ * Created by sergey on 15.04.17.
+ */
+class GameObject {
+    constructor(pos) {
+        this.X = pos.x;
+        this.Y = pos.y;
+        this.Z = pos.z;
+    }
+
+    setPosition(pos) {
+        this.X = pos.x;
+        this.Y = pos.y;
+        this.Z = pos.z;
+    }
+
+    getPosition() {
+        return {x: this.X, y: this.Y, z: this.Z };
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = GameObject;
+
+
+/***/ }),
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -1057,34 +1085,6 @@ function updateLink(linkElement, options, obj) {
 
 
 /***/ }),
-/* 7 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/**
- * Created by sergey on 15.04.17.
- */
-class GameObject {
-    constructor(pos) {
-        this.X = pos.x;
-        this.Y = pos.y;
-        this.Z = pos.z;
-    }
-
-    setPosition(pos) {
-        this.X = pos.x;
-        this.Y = pos.y;
-        this.Z = pos.z;
-    }
-
-    getPosition() {
-        return {x: this.X, y: this.Y, z: this.Z };
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = GameObject;
-
-
-/***/ }),
 /* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1149,7 +1149,7 @@ module.exports = template;
 var content = __webpack_require__(35);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
-var update = __webpack_require__(6)(content, {});
+var update = __webpack_require__(7)(content, {});
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -1170,7 +1170,7 @@ if(false) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_gameTransport_transport__ = __webpack_require__(64);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_gameTransport_transport__ = __webpack_require__(65);
 /**
  * Created by tlakatlekutl on 19.04.17.
  */
@@ -1211,7 +1211,7 @@ class GameModel {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__network_net__ = __webpack_require__(65);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__network_net__ = __webpack_require__(66);
 /**
 * Created by tlakatlekutl on 07.03.17.
 */
@@ -1282,7 +1282,7 @@ class API {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object__ = __webpack_require__(6);
 /**
  * Created by sergey on 15.04.17.
  */
@@ -1305,6 +1305,14 @@ class Ball extends __WEBPACK_IMPORTED_MODULE_0__object__["a" /* GameObject */] {
 
     getSize() {
         return this.radius;
+    }
+
+    setSize(radius) {
+      this.radius = radius;
+      this.Geometry = new THREE.SphereGeometry(this.radius, 20, 20);
+      this.Material = new THREE.MeshLambertMaterial({ color: 0xE7DF32 });
+      this.model = new THREE.Mesh(this.Geometry, this.Material);
+      this.model.position.set(this.X, this.Y, this.Z);
     }
 
     getSide() {
@@ -1350,7 +1358,7 @@ class Ball extends __WEBPACK_IMPORTED_MODULE_0__object__["a" /* GameObject */] {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object__ = __webpack_require__(6);
 /**
  * Created by sergey on 15.04.17.
  */
@@ -1396,7 +1404,7 @@ class Barrier extends __WEBPACK_IMPORTED_MODULE_0__object__["a" /* GameObject */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object__ = __webpack_require__(6);
 /**
  * Created by sergey on 15.04.17.
  */
@@ -1443,7 +1451,7 @@ class Ground extends __WEBPACK_IMPORTED_MODULE_0__object__["a" /* GameObject */]
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object__ = __webpack_require__(6);
 /**
  * Created by sergey on 15.04.17.
  */
@@ -1477,6 +1485,19 @@ class Platform extends __WEBPACK_IMPORTED_MODULE_0__object__["a" /* GameObject *
         return { width: this.width, height: this.height, depth: this.depth };
     }
 
+    setSize(size) {
+        this.width = size.width;
+        this.height = size.height;
+        this.Geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
+        if(side === 0) {
+          this.Material = new THREE.MeshLambertMaterial({ color: 0x1D870D });
+        } else {
+          this.Material = new THREE.MeshLambertMaterial({ color: 0xC70A00 });
+        }
+        this.model = new THREE.Mesh(this.Geometry, this.Material);
+        this.model.position.set(this.X, this.Y, this.Z);
+    }
+
     getSide() {
         return this.side;
     }
@@ -1484,16 +1505,6 @@ class Platform extends __WEBPACK_IMPORTED_MODULE_0__object__["a" /* GameObject *
     getModel() {
         return this.model;
     }
-
-    // platformEdgeCollision(frameTime) {
-    //     if (Math.abs(platform.getCoords().x - coords.x + speedX * frameTime) > platform.getWidth()/2 + radius) {
-    //         speedX = -speedX;
-    //         coords.x += speedX * frameTime;
-    //         coords.y += speedY * frameTime;
-    //         return true;
-    //     }
-    //     return false;
-    // }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Platform;
 
@@ -1503,8 +1514,8 @@ class Platform extends __WEBPACK_IMPORTED_MODULE_0__object__["a" /* GameObject *
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategy__ = __webpack_require__(63);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__multi__ = __webpack_require__(62);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategy__ = __webpack_require__(64);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__multi__ = __webpack_require__(63);
 /**
  * Created by sergey on 21.04.17.
  */
@@ -1546,6 +1557,10 @@ class Game {
 
     setStateGame(message, time) {
       this.games.setStateGame(JSON.parse(message), time);
+    }
+
+    setChangeGame(message) {
+      this.games.setChangeGame(JSON.parse(message));
     }
 
     setOpponent(message) {
@@ -1602,7 +1617,7 @@ class Player {
 var content = __webpack_require__(38);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
-var update = __webpack_require__(6)(content, {});
+var update = __webpack_require__(7)(content, {});
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -1677,6 +1692,10 @@ class ConcedeModal extends __WEBPACK_IMPORTED_MODULE_1__modalView__["a" /* defau
   render() {
     super.render();
     document.querySelector('.choose__yes').addEventListener('click', () => {
+      const game = document.querySelector('canvas');
+      game.hidden = true;
+      const eee = document.querySelector('.game-header');
+      eee.hidden = true;
       ee.emit('destroyGame');
       router.go('/');
     });
@@ -1708,6 +1727,7 @@ class ConcedeModal extends __WEBPACK_IMPORTED_MODULE_1__modalView__["a" /* defau
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_concede_pug__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_concede_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__templates_concede_pug__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__ = __webpack_require__(5);
 /**
  * Created by sergey on 25.04.17.
  */
@@ -1718,7 +1738,9 @@ class ConcedeModal extends __WEBPACK_IMPORTED_MODULE_1__modalView__["a" /* defau
 
 
 
+
 const router = new __WEBPACK_IMPORTED_MODULE_2__modules_router_router__["a" /* default */]();
+const ee = new __WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__["a" /* default */]();
 
 class ConcedeMpModal extends __WEBPACK_IMPORTED_MODULE_1__modalView__["a" /* default */] {
   constructor() {
@@ -1727,6 +1749,9 @@ class ConcedeMpModal extends __WEBPACK_IMPORTED_MODULE_1__modalView__["a" /* def
   render() {
     super.render();
     document.querySelector('.choose__yes').addEventListener('click', () => {
+      const eee = document.querySelector('.game-header');
+      eee.style.display = 'none';
+      ee.emit('destroyGame');
       router.go('/');
     });
     document.querySelector('.choose__no').addEventListener('click', () => {
@@ -2007,7 +2032,7 @@ class LoginModal extends __WEBPACK_IMPORTED_MODULE_0__modalView__["a" /* default
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_mainWindow_pug__ = __webpack_require__(50);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_mainWindow_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__templates_mainWindow_pug__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__mpGameView__ = __webpack_require__(66);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__mpGameView__ = __webpack_require__(67);
 /**
 * Created by tlakatlekutl on 27.03.17.
 */
@@ -4502,14 +4527,14 @@ function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;;var l
   if ('number' == typeof $$obj.length) {
       for (var index = 0, $$l = $$obj.length; index < $$l; index++) {
         var user = $$obj[index];
-pug_html = pug_html + "\u003Ctr\u003E\u003Ctd\u003E" + (pug.escape(null == (pug_interp = index) ? "" : pug_interp)) + "\u003C\u002Ftd\u003E\u003Ctd\u003E" + (pug.escape(null == (pug_interp = user.login) ? "" : pug_interp)) + "\u003C\u002Ftd\u003E\u003Ctd\u003E" + (pug.escape(null == (pug_interp = user.rating) ? "" : pug_interp)) + "\u003C\u002Ftd\u003E\u003C\u002Ftr\u003E";
+pug_html = pug_html + "\u003Ctr\u003E\u003Ctd\u003E" + (pug.escape(null == (pug_interp = index+1) ? "" : pug_interp)) + "\u003C\u002Ftd\u003E\u003Ctd\u003E" + (pug.escape(null == (pug_interp = user.login) ? "" : pug_interp)) + "\u003C\u002Ftd\u003E\u003Ctd\u003E" + (pug.escape(null == (pug_interp = user.rating) ? "" : pug_interp)) + "\u003C\u002Ftd\u003E\u003C\u002Ftr\u003E";
       }
   } else {
     var $$l = 0;
     for (var index in $$obj) {
       $$l++;
       var user = $$obj[index];
-pug_html = pug_html + "\u003Ctr\u003E\u003Ctd\u003E" + (pug.escape(null == (pug_interp = index) ? "" : pug_interp)) + "\u003C\u002Ftd\u003E\u003Ctd\u003E" + (pug.escape(null == (pug_interp = user.login) ? "" : pug_interp)) + "\u003C\u002Ftd\u003E\u003Ctd\u003E" + (pug.escape(null == (pug_interp = user.rating) ? "" : pug_interp)) + "\u003C\u002Ftd\u003E\u003C\u002Ftr\u003E";
+pug_html = pug_html + "\u003Ctr\u003E\u003Ctd\u003E" + (pug.escape(null == (pug_interp = index+1) ? "" : pug_interp)) + "\u003C\u002Ftd\u003E\u003Ctd\u003E" + (pug.escape(null == (pug_interp = user.login) ? "" : pug_interp)) + "\u003C\u002Ftd\u003E\u003Ctd\u003E" + (pug.escape(null == (pug_interp = user.rating) ? "" : pug_interp)) + "\u003C\u002Ftd\u003E\u003C\u002Ftr\u003E";
     }
   }
 }).call(this);
@@ -4683,7 +4708,7 @@ module.exports = function (css) {
 var content = __webpack_require__(36);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
-var update = __webpack_require__(6)(content, {});
+var update = __webpack_require__(7)(content, {});
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -4709,7 +4734,7 @@ if(false) {
 var content = __webpack_require__(42);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
-var update = __webpack_require__(6)(content, {});
+var update = __webpack_require__(7)(content, {});
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -4865,6 +4890,63 @@ router.start()
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object__ = __webpack_require__(6);
+/**
+ * Created by sergey on 16.05.17.
+ */
+
+
+class Bonus extends __WEBPACK_IMPORTED_MODULE_0__object__["a" /* GameObject */] {
+  constructor(type, pos, radius) {
+    super(pos);
+
+    this.radius = radius;
+
+    this.Geometry = new THREE.SphereGeometry(this.radius, 30, 30);
+    this.Material = new THREE.MeshLambertMaterial({ color: 0x54FF9F });
+
+    if (type === 'BALL_INCREASE') {
+      this.Geometry = new THREE.SphereGeometry(this.radius, 30, 30);
+      this.Material = new THREE.MeshLambertMaterial({ color: 0x54FF9F });
+    } else if (type === 'BALL_DECREASE') {
+      this.Geometry = new THREE.SphereGeometry(this.radius, 30, 30);
+      this.Material = new THREE.MeshLambertMaterial({ color: 0xFE28A2 });
+    } else if (type === 'BALL_MULTIPLY') {
+      this.Geometry = new THREE.SphereGeometry(this.radius, 30, 30);
+      this.Material = new THREE.MeshLambertMaterial({ color: 0xF4C430 });
+    } else if (type === 'PLATFORM_INCREASE') {
+      this.Geometry = new THREE.SphereGeometry(this.radius, 30, 30);
+      this.Material = new THREE.MeshLambertMaterial({ color: 0x4FFF18 });
+    } else if (type === 'PLATFORM_DECREASE') {
+      this.Geometry = new THREE.SphereGeometry(this.radius, 30, 30);
+      this.Material = new THREE.MeshLambertMaterial({ color: 0xFF4F18 });
+    }
+
+    this.model = new THREE.Mesh(this.Geometry, this.Material);
+    this.model.position.set(this.X, this.Y, this.Z);
+  }
+
+  getSize() {
+    return this.radius;
+  }
+
+  getModel() {
+    return this.model;
+  }
+
+  setPosition(pos) {
+    super.setPosition(pos);
+    this.model.position.set(this.X, this.Y, this.Z);
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Bonus;
+
+
+/***/ }),
+/* 62 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /**
  * Created by sergey on 20.04.17.
  */
@@ -4908,7 +4990,7 @@ class Bot {
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4916,10 +4998,11 @@ class Bot {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ball__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__barrier__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ground__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__models_gameModel__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__eventEmitter_eventEmitter__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__models_userModel__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__player__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__bonus__ = __webpack_require__(61);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__models_gameModel__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__eventEmitter_eventEmitter__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__models_userModel__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__player__ = __webpack_require__(18);
 /**
  * Created by sergey on 21.04.17.
  */
@@ -4933,14 +5016,15 @@ class Bot {
 
 
 
-const ee = new __WEBPACK_IMPORTED_MODULE_5__eventEmitter_eventEmitter__["a" /* default */]();
-const us = new __WEBPACK_IMPORTED_MODULE_6__models_userModel__["a" /* default */]();
+
+const ee = new __WEBPACK_IMPORTED_MODULE_6__eventEmitter_eventEmitter__["a" /* default */]();
+const us = new __WEBPACK_IMPORTED_MODULE_7__models_userModel__["a" /* default */]();
 
 class MultiStrategy {
 
   constructor() {
 
-    this.gm = new __WEBPACK_IMPORTED_MODULE_4__models_gameModel__["a" /* default */]();
+    this.gm = new __WEBPACK_IMPORTED_MODULE_5__models_gameModel__["a" /* default */]();
 
     this.play = true;
     this.time = (new Date).getTime();
@@ -4954,12 +5038,15 @@ class MultiStrategy {
     this.pres = 0;
     this.timeLast = (new Date).getTime();
 
-    this.player1 = new __WEBPACK_IMPORTED_MODULE_7__player__["a" /* default */](us.getData().nickname, 0, us.getData().rating);
+    this.player1 = new __WEBPACK_IMPORTED_MODULE_8__player__["a" /* default */](us.getData().nickname, 0, us.getData().rating);
 
     this.nick1 = document.querySelector('.player1 .player_nickname');
     this.nick1.innerHTML = this.player1.getNickname();
     this.rat1 = document.querySelector('.player1 .player_rating_score');
     this.rat1.innerHTML = this.player1.getRating();
+
+    this.score1 = document.querySelector('.player1_score');
+    this.score1.innerHTML = this.player1.getScore();
 
     this.scene = new THREE.Scene();
     this.clock = new THREE.Clock();
@@ -5007,15 +5094,23 @@ class MultiStrategy {
     this.platformEnemy = new __WEBPACK_IMPORTED_MODULE_0__platform__["a" /* Platform */](1, this.pos, this.size);
     this.scene.add(this.platformEnemy.getModel());
 
+    this.balls = [];
+    this.countBalls = 0;
+
     this.pos = { x: 0, y: 10, z: 100 };
     this.radius = 5;
     this.ball = new __WEBPACK_IMPORTED_MODULE_1__ball__["a" /* Ball */](0, this.pos, this.radius);
     this.scene.add(this.ball.getModel());
 
+    this.balls[this.countBalls] = this.ball;
+    this.countBalls += 1;
+
     this.camera.position.x = 0;
     this.camera.position.y = 120;
     this.camera.position.z = 180;
     this.camera.lookAt(this.ground.getPosition());
+
+    this.bonuses = [];
 
     this.addEventListeners();
   }
@@ -5041,7 +5136,7 @@ class MultiStrategy {
       }
     }
 
-    if(this.touchCheck === 1) {
+    if (this.touchCheck === 1) {
       const canvas = document.querySelector('canvas');
       if (this.touch.changedTouches[0].clientX < canvas.getBoundingClientRect().left + canvas.getBoundingClientRect().width / 2) {
         if (this.coordsTransform === -1) {
@@ -5084,7 +5179,7 @@ class MultiStrategy {
   }
 
   control(button) {
-    if(this.pres === 0) {
+    if (this.pres === 0) {
       this.pres = 1;
       this.del = 20;
     } else {
@@ -5092,7 +5187,7 @@ class MultiStrategy {
       this.del = this.time - this.timeLast;
     }
     this.timeLast = (new Date).getTime();
-    if(this.del > 100) {
+    if (this.del > 100) {
       this.del = 20;
     }
     if (button === 'left') {
@@ -5103,7 +5198,7 @@ class MultiStrategy {
   }
 
   setStateGame(state, time) {
-    // console.log(us);
+    // console.log(state);
     this.state = state;
 
     if (this.time_st === 0) {
@@ -5113,14 +5208,100 @@ class MultiStrategy {
       this.timepr = this.timen;
       this.timen = time;
     }
-    console.log(this.timen - this.timepr);
+    //console.log(this.timen - this.timepr);
 
+    if (us.getData().id === this.state.players[0].userId) {
+      // this.dist = this.platformMy.getPosition().x - this.state.players[0].platform.x * this.coordsTransform;
+      this.pos = {
+        x: this.state.players[0].coords.x * this.coordsTransform,
+        y: this.platformMy.getPosition().y,
+        z: this.platformMy.getPosition().z
+      };
+      this.platformMy.setPosition(this.pos);
+      this.pos = {
+        x: this.state.players[1].coords.x * this.coordsTransform,
+        y: this.platformEnemy.getPosition().y,
+        z: this.platformEnemy.getPosition().z
+      };
+      this.platformEnemy.setPosition(this.pos);
+    } else {
+      this.pos = {
+        x: this.state.players[1].coords.x * this.coordsTransform,
+        y: this.platformMy.getPosition().y,
+        z: this.platformMy.getPosition().z
+      };
+      this.platformMy.setPosition(this.pos);
+      this.pos = {
+        x: this.state.players[0].coords.x * this.coordsTransform,
+        y: this.platformEnemy.getPosition().y,
+        z: this.platformEnemy.getPosition().z
+      };
+      this.platformEnemy.setPosition(this.pos);
+    }
+    for (let i = 0; i < this.countBalls; i++) {
+      this.pos = {
+        x: this.state.balls[i].x * this.coordsTransform,
+        y: this.ball.getPosition().y,
+        z: this.state.balls[i].y * this.coordsTransform
+      };
+      this.balls[i].setPosition(this.pos);
+    }
+  }
+
+  setChangeGame(state) {
+    console.log(state);
+    this.state = state;
     if (us.getData().id === this.state.players[0].userId) {
       this.player1.setScore(this.state.players[0].score);
       this.player2.setScore(this.state.players[1].score);
+      if (this.state.players[0].width !== this.platformMy.getSize().width) {
+        this.size = {};
+        this.size.width = this.state.players[0].width;
+        this.size.height = this.platformMy.getSize().height;
+        this.platformMy.setSize(this.size);
+      }
+      if (this.state.players[1].width !== this.platformEnemy.getSize().width) {
+        this.size = {};
+        this.size.width = this.state.players[1].width;
+        this.size.height = this.platformEnemy.getSize().height;
+        this.platformEnemy.setSize(this.size);
+      }
     } else {
       this.player1.setScore(this.state.players[1].score);
       this.player2.setScore(this.state.players[0].score);
+      if (this.state.players[1].width !== this.platformMy.getSize().width) {
+        this.size = {};
+        this.size.width = this.state.players[1].width;
+        this.size.height = this.platformMy.getSize().height;
+        this.platformMy.setSize(this.size);
+      }
+      if (this.state.players[0].width !== this.platformEnemy.getSize().width) {
+        this.size = {};
+        this.size.width = this.state.players[0].width;
+        this.size.height = this.platformEnemy.getSize().height;
+        this.platformEnemy.setSize(this.size);
+      }
+    }
+
+    for (let i = 0; i < this.countBalls; i += 1) {
+      this.pos = {
+        x: this.state.balls[i].x * this.coordsTransform,
+        y: this.ball.getPosition().y,
+        z: this.state.balls[i].y * this.coordsTransform,
+      };
+      this.balls[i].setPosition(this.pos);
+      if (this.state.balls[i].radius !== this.balls[i].getSize()) {
+        this.size = this.state.balls[i].radius;
+        this.balls[i].setSize(this.size);
+      }
+    }
+
+    for (let i = 0; i < this.state.bonuses.length; i += 1) {
+      this.pos = { x: this.state.bonuses[i].coords.x, y: 15, z: this.state.bonuses[i].coords.y };
+      this.radius = 5;
+      this.bonus = new __WEBPACK_IMPORTED_MODULE_4__bonus__["a" /* Bonus */](this.state.bonuses[i].type, this.pos, this.radius);
+      this.scene.add(this.bonus.getModel());
+      this.bonuses[i] = this.bonus;
     }
 
     this.score1 = document.querySelector('.player1_score');
@@ -5128,57 +5309,20 @@ class MultiStrategy {
     this.score2 = document.querySelector('.player2_score');
     this.score2.innerHTML = this.player2.getScore();
 
-    if (us.getData().id === this.state.players[0].userId) {
-      // this.dist = this.platformMy.getPosition().x - this.state.players[0].platform.x * this.coordsTransform;
-      this.pos = {
-        x: this.state.players[0].platform.x * this.coordsTransform,
-        y: this.platformMy.getPosition().y,
-        z: this.platformMy.getPosition().z
-      };
-      this.platformMy.setPosition(this.pos);
-      this.pos = {
-        x: this.state.players[1].platform.x * this.coordsTransform,
-        y: this.platformEnemy.getPosition().y,
-        z: this.platformEnemy.getPosition().z
-      };
-      this.platformEnemy.setPosition(this.pos);
-      this.pos = {
-        x: this.state.ballCoords.x * this.coordsTransform,
-        y: this.ball.getPosition().y,
-        z: this.state.ballCoords.y * this.coordsTransform
-      };
-      this.ball.setPosition(this.pos);
-    } else {
-      this.pos = {
-        x: this.state.players[1].platform.x * this.coordsTransform,
-        y: this.platformMy.getPosition().y,
-        z: this.platformMy.getPosition().z
-      };
-      this.platformMy.setPosition(this.pos);
-      this.pos = {
-        x: this.state.players[0].platform.x * this.coordsTransform,
-        y: this.platformEnemy.getPosition().y,
-        z: this.platformEnemy.getPosition().z
-      };
-      this.platformEnemy.setPosition(this.pos);
-      this.pos = {
-        x: this.state.ballCoords.x * this.coordsTransform,
-        y: this.ball.getPosition().y,
-        z: this.state.ballCoords.y * this.coordsTransform
-      };
-      this.ball.setPosition(this.pos);
-    }
+    //console.log(this.state.bonuses);
   }
 
   setOpponent(state) {
     console.log(state);
     this.state = state;
     this.coordsTransform = this.state.coordsTransform;
-    this.player2 = new __WEBPACK_IMPORTED_MODULE_7__player__["a" /* default */](this.state.opponentLogin, 0, this.state.opponentRating);
+    this.player2 = new __WEBPACK_IMPORTED_MODULE_8__player__["a" /* default */](this.state.opponentLogin, 0, this.state.opponentRating);
     this.nick2 = document.querySelector('.player2 .player_nickname');
     this.nick2.innerHTML = this.player2.getNickname();
     this.rat2 = document.querySelector('.player2 .player_rating_score');
     this.rat2.innerHTML = this.player2.getRating();
+    this.score2 = document.querySelector('.player2_score');
+    this.score2.innerHTML = this.player2.getScore();
   }
 
   stop() {
@@ -5196,7 +5340,7 @@ class MultiStrategy {
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5204,7 +5348,7 @@ class MultiStrategy {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ball__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__barrier__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ground__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__bot__ = __webpack_require__(61);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__bot__ = __webpack_require__(62);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__player__ = __webpack_require__(18);
 /**
  * Created by sergey on 15.04.17.
@@ -5530,7 +5674,7 @@ class SingleStrategy {
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5590,7 +5734,7 @@ class Transport {
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5684,7 +5828,7 @@ class Net {
 
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5727,6 +5871,10 @@ class MpGameView extends __WEBPACK_IMPORTED_MODULE_1__baseView__["a" /* default 
     ee.on('com.aerohockey.mechanics.requests.StartGame$Request', (message) => {
       this.x.innerHTML = JSON.stringify(message.content);
       this.game.setOpponent(message.content);
+    });
+    ee.on('com.aerohockey.mechanics.base.ServerDetailSnap', (message) => {
+      this.x.innerHTML = JSON.stringify(message.content);
+      this.game.setChangeGame(message.content);
     });
     ee.on('com.aerohockey.mechanics.base.GameOverSnap', (message) => {
       this.x.innerHTML = JSON.stringify(message.content);
@@ -5775,15 +5923,16 @@ class MpGameView extends __WEBPACK_IMPORTED_MODULE_1__baseView__["a" /* default 
       this.game.gameProcess();
     }
 
-    // const game = document.querySelector('canvas');
-    // game.hidden = false;
+    const eee = document.querySelector('.game-header');
+    eee.style.display = '';
     this.node.hidden = false;
   }
   hide() {
     if (this.alreadyInDOM) {
-      // super.destruct();
       // const game = document.querySelector('canvas');
       // game.hidden = true;
+      // const eee = document.querySelector('.game-header');
+      // eee.hidden = true;
     }
     super.hide();
   }
@@ -5804,7 +5953,7 @@ class MpGameView extends __WEBPACK_IMPORTED_MODULE_1__baseView__["a" /* default 
 
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports) {
 
 /* (ignored) */

@@ -19,6 +19,10 @@ export default class ConcedeModal extends ModalView {
   render() {
     super.render();
     document.querySelector('.choose__yes').addEventListener('click', () => {
+      const game = document.querySelector('canvas');
+      game.hidden = true;
+      const eee = document.querySelector('.game-header');
+      eee.hidden = true;
       ee.emit('destroyGame');
       router.go('/');
     });

@@ -4,7 +4,7 @@
 
 import Router from '../modules/router/router';
 import BaseView from './baseView';
-import template from '../templates/gameTemplate.pug';
+import template2 from '../templates/gameTemplate.pug';
 import EvenEmitter from '../modules/eventEmitter/eventEmitter';
 
 import Game from '../modules/game/play';
@@ -14,7 +14,7 @@ const ee = new EvenEmitter();
 
 export default class GameView extends BaseView {
   constructor() {
-    super(['game-window-container'], template);
+    super(['game-window-container'], template2);
     this.alreadyInDOM = false;
   }
   render() {

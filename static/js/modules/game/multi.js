@@ -6,6 +6,7 @@ import { Platform } from './platform';
 import { Ball } from './ball';
 import { Barrier } from './barrier';
 import { Ground } from './ground';
+import { Bonus } from './bonus';
 import GameModel from '../../models/gameModel';
 import EvenEmitter from '../eventEmitter/eventEmitter';
 import UserModel from '../../models/userModel';
@@ -38,6 +39,9 @@ export default class MultiStrategy {
     this.nick1.innerHTML = this.player1.getNickname();
     this.rat1 = document.querySelector('.player1 .player_rating_score');
     this.rat1.innerHTML = this.player1.getRating();
+
+    this.score1 = document.querySelector('.player1_score');
+    this.score1.innerHTML = this.player1.getScore();
 
     this.scene = new THREE.Scene();
     this.clock = new THREE.Clock();
@@ -85,15 +89,23 @@ export default class MultiStrategy {
     this.platformEnemy = new Platform(1, this.pos, this.size);
     this.scene.add(this.platformEnemy.getModel());
 
+    this.balls = [];
+    this.countBalls = 0;
+
     this.pos = { x: 0, y: 10, z: 100 };
     this.radius = 5;
     this.ball = new Ball(0, this.pos, this.radius);
     this.scene.add(this.ball.getModel());
 
+    this.balls[this.countBalls] = this.ball;
+    this.countBalls += 1;
+
     this.camera.position.x = 0;
     this.camera.position.y = 120;
     this.camera.position.z = 180;
     this.camera.lookAt(this.ground.getPosition());
+
+    this.bonuses = [];
 
     this.addEventListeners();
   }
@@ -119,7 +131,7 @@ export default class MultiStrategy {
       }
     }
 
-    if(this.touchCheck === 1) {
+    if (this.touchCheck === 1) {
       const canvas = document.querySelector('canvas');
       if (this.touch.changedTouches[0].clientX < canvas.getBoundingClientRect().left + canvas.getBoundingClientRect().width / 2) {
         if (this.coordsTransform === -1) {
@@ -162,7 +174,7 @@ export default class MultiStrategy {
   }
 
   control(button) {
-    if(this.pres === 0) {
+    if (this.pres === 0) {
       this.pres = 1;
       this.del = 20;
     } else {
@@ -170,7 +182,7 @@ export default class MultiStrategy {
       this.del = this.time - this.timeLast;
     }
     this.timeLast = (new Date).getTime();
-    if(this.del > 100) {
+    if (this.del > 100) {
       this.del = 20;
     }
     if (button === 'left') {
@@ -181,7 +193,7 @@ export default class MultiStrategy {
   }
 
   setStateGame(state, time) {
-    // console.log(us);
+    // console.log(state);
     this.state = state;
 
     if (this.time_st === 0) {
@@ -191,14 +203,100 @@ export default class MultiStrategy {
       this.timepr = this.timen;
       this.timen = time;
     }
-    console.log(this.timen - this.timepr);
+    //console.log(this.timen - this.timepr);
 
+    if (us.getData().id === this.state.players[0].userId) {
+      // this.dist = this.platformMy.getPosition().x - this.state.players[0].platform.x * this.coordsTransform;
+      this.pos = {
+        x: this.state.players[0].coords.x * this.coordsTransform,
+        y: this.platformMy.getPosition().y,
+        z: this.platformMy.getPosition().z
+      };
+      this.platformMy.setPosition(this.pos);
+      this.pos = {
+        x: this.state.players[1].coords.x * this.coordsTransform,
+        y: this.platformEnemy.getPosition().y,
+        z: this.platformEnemy.getPosition().z
+      };
+      this.platformEnemy.setPosition(this.pos);
+    } else {
+      this.pos = {
+        x: this.state.players[1].coords.x * this.coordsTransform,
+        y: this.platformMy.getPosition().y,
+        z: this.platformMy.getPosition().z
+      };
+      this.platformMy.setPosition(this.pos);
+      this.pos = {
+        x: this.state.players[0].coords.x * this.coordsTransform,
+        y: this.platformEnemy.getPosition().y,
+        z: this.platformEnemy.getPosition().z
+      };
+      this.platformEnemy.setPosition(this.pos);
+    }
+    for (let i = 0; i < this.countBalls; i++) {
+      this.pos = {
+        x: this.state.balls[i].x * this.coordsTransform,
+        y: this.ball.getPosition().y,
+        z: this.state.balls[i].y * this.coordsTransform
+      };
+      this.balls[i].setPosition(this.pos);
+    }
+  }
+
+  setChangeGame(state) {
+    console.log(state);
+    this.state = state;
     if (us.getData().id === this.state.players[0].userId) {
       this.player1.setScore(this.state.players[0].score);
       this.player2.setScore(this.state.players[1].score);
+      if (this.state.players[0].width !== this.platformMy.getSize().width) {
+        this.size = {};
+        this.size.width = this.state.players[0].width;
+        this.size.height = this.platformMy.getSize().height;
+        this.platformMy.setSize(this.size);
+      }
+      if (this.state.players[1].width !== this.platformEnemy.getSize().width) {
+        this.size = {};
+        this.size.width = this.state.players[1].width;
+        this.size.height = this.platformEnemy.getSize().height;
+        this.platformEnemy.setSize(this.size);
+      }
     } else {
       this.player1.setScore(this.state.players[1].score);
       this.player2.setScore(this.state.players[0].score);
+      if (this.state.players[1].width !== this.platformMy.getSize().width) {
+        this.size = {};
+        this.size.width = this.state.players[1].width;
+        this.size.height = this.platformMy.getSize().height;
+        this.platformMy.setSize(this.size);
+      }
+      if (this.state.players[0].width !== this.platformEnemy.getSize().width) {
+        this.size = {};
+        this.size.width = this.state.players[0].width;
+        this.size.height = this.platformEnemy.getSize().height;
+        this.platformEnemy.setSize(this.size);
+      }
+    }
+
+    for (let i = 0; i < this.countBalls; i += 1) {
+      this.pos = {
+        x: this.state.balls[i].x * this.coordsTransform,
+        y: this.ball.getPosition().y,
+        z: this.state.balls[i].y * this.coordsTransform,
+      };
+      this.balls[i].setPosition(this.pos);
+      if (this.state.balls[i].radius !== this.balls[i].getSize()) {
+        this.size = this.state.balls[i].radius;
+        this.balls[i].setSize(this.size);
+      }
+    }
+
+    for (let i = 0; i < this.state.bonuses.length; i += 1) {
+      this.pos = { x: this.state.bonuses[i].coords.x, y: 15, z: this.state.bonuses[i].coords.y };
+      this.radius = 5;
+      this.bonus = new Bonus(this.state.bonuses[i].type, this.pos, this.radius);
+      this.scene.add(this.bonus.getModel());
+      this.bonuses[i] = this.bonus;
     }
 
     this.score1 = document.querySelector('.player1_score');
@@ -206,46 +304,7 @@ export default class MultiStrategy {
     this.score2 = document.querySelector('.player2_score');
     this.score2.innerHTML = this.player2.getScore();
 
-    if (us.getData().id === this.state.players[0].userId) {
-      // this.dist = this.platformMy.getPosition().x - this.state.players[0].platform.x * this.coordsTransform;
-      this.pos = {
-        x: this.state.players[0].platform.x * this.coordsTransform,
-        y: this.platformMy.getPosition().y,
-        z: this.platformMy.getPosition().z
-      };
-      this.platformMy.setPosition(this.pos);
-      this.pos = {
-        x: this.state.players[1].platform.x * this.coordsTransform,
-        y: this.platformEnemy.getPosition().y,
-        z: this.platformEnemy.getPosition().z
-      };
-      this.platformEnemy.setPosition(this.pos);
-      this.pos = {
-        x: this.state.ballCoords.x * this.coordsTransform,
-        y: this.ball.getPosition().y,
-        z: this.state.ballCoords.y * this.coordsTransform
-      };
-      this.ball.setPosition(this.pos);
-    } else {
-      this.pos = {
-        x: this.state.players[1].platform.x * this.coordsTransform,
-        y: this.platformMy.getPosition().y,
-        z: this.platformMy.getPosition().z
-      };
-      this.platformMy.setPosition(this.pos);
-      this.pos = {
-        x: this.state.players[0].platform.x * this.coordsTransform,
-        y: this.platformEnemy.getPosition().y,
-        z: this.platformEnemy.getPosition().z
-      };
-      this.platformEnemy.setPosition(this.pos);
-      this.pos = {
-        x: this.state.ballCoords.x * this.coordsTransform,
-        y: this.ball.getPosition().y,
-        z: this.state.ballCoords.y * this.coordsTransform
-      };
-      this.ball.setPosition(this.pos);
-    }
+    //console.log(this.state.bonuses);
   }
 
   setOpponent(state) {
@@ -257,6 +316,8 @@ export default class MultiStrategy {
     this.nick2.innerHTML = this.player2.getNickname();
     this.rat2 = document.querySelector('.player2 .player_rating_score');
     this.rat2.innerHTML = this.player2.getRating();
+    this.score2 = document.querySelector('.player2_score');
+    this.score2.innerHTML = this.player2.getScore();
   }
 
   stop() {
