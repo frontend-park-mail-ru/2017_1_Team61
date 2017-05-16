@@ -5259,31 +5259,39 @@ class MultiStrategy {
       this.player1.setScore(this.state.players[0].score);
       this.player2.setScore(this.state.players[1].score);
       if (this.state.players[0].width !== this.platformMy.getSize().width) {
+        this.scene.remove(this.platformMy.getModel());
         this.size = {};
         this.size.width = this.state.players[0].width;
         this.size.height = this.platformMy.getSize().height;
         this.platformMy.setSize(this.size);
+        this.scene.add(this.platformMy.getModel());
       }
       if (this.state.players[1].width !== this.platformEnemy.getSize().width) {
+        this.scene.remove(this.platformEnemy.getModel());
         this.size = {};
         this.size.width = this.state.players[1].width;
         this.size.height = this.platformEnemy.getSize().height;
         this.platformEnemy.setSize(this.size);
+        this.scene.add(this.platformEnemy.getModel());
       }
     } else {
       this.player1.setScore(this.state.players[1].score);
       this.player2.setScore(this.state.players[0].score);
       if (this.state.players[1].width !== this.platformMy.getSize().width) {
+        this.scene.remove(this.platformMy.getModel());
         this.size = {};
         this.size.width = this.state.players[1].width;
         this.size.height = this.platformMy.getSize().height;
         this.platformMy.setSize(this.size);
+        this.scene.add(this.platformMy.getModel());
       }
       if (this.state.players[0].width !== this.platformEnemy.getSize().width) {
+        this.scene.remove(this.platformEnemy.getModel());
         this.size = {};
         this.size.width = this.state.players[0].width;
         this.size.height = this.platformEnemy.getSize().height;
         this.platformEnemy.setSize(this.size);
+        this.scene.add(this.platformEnemy.getModel());
       }
     }
 
@@ -5295,7 +5303,6 @@ class MultiStrategy {
       };
       this.balls[i].setPosition(this.pos);
       if (this.state.balls[i].radius !== this.balls[i].getSize()) {
-        console.log(this.state.balls[i].radius);
         this.scene.remove(this.balls[i].getModel());
         this.balls[i].setSize(this.state.balls[i].radius);
         this.scene.add(this.balls[i].getModel());
@@ -5323,8 +5330,6 @@ class MultiStrategy {
     this.score1.innerHTML = this.player1.getScore();
     this.score2 = document.querySelector('.player2_score');
     this.score2.innerHTML = this.player2.getScore();
-
-    //console.log(this.state.bonuses);
   }
 
   setOpponent(state) {
