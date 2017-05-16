@@ -13,7 +13,7 @@ export class Platform extends GameObject {
         this.side = side;
 
         this.Geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
-        if(side === 0) {
+        if (this.side === 0) {
             this.Material = new THREE.MeshLambertMaterial({color: 0x1D870D});
         } else {
             this.Material = new THREE.MeshLambertMaterial({color: 0xC70A00});
@@ -35,7 +35,7 @@ export class Platform extends GameObject {
         this.width = size.width;
         this.height = size.height;
         this.Geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
-        if(side === 0) {
+        if(this.side === 0) {
           this.Material = new THREE.MeshLambertMaterial({ color: 0x1D870D });
         } else {
           this.Material = new THREE.MeshLambertMaterial({ color: 0xC70A00 });

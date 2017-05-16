@@ -255,17 +255,13 @@ export default class MultiStrategy {
       this.player2.setScore(this.state.players[1].score);
       if (this.state.players[0].width !== this.platformMy.getSize().width) {
         this.scene.remove(this.platformMy.getModel());
-        this.size = {};
-        this.size.width = this.state.players[0].width;
-        this.size.height = this.platformMy.getSize().height;
+        this.size = { width: this.state.players[0].width, height: this.platformMy.getSize().height };
         this.platformMy.setSize(this.size);
         this.scene.add(this.platformMy.getModel());
       }
       if (this.state.players[1].width !== this.platformEnemy.getSize().width) {
         this.scene.remove(this.platformEnemy.getModel());
-        this.size = {};
-        this.size.width = this.state.players[1].width;
-        this.size.height = this.platformEnemy.getSize().height;
+        this.size = { width: this.state.players[1].width, height: this.platformEnemy.getSize().height };
         this.platformEnemy.setSize(this.size);
         this.scene.add(this.platformEnemy.getModel());
       }
@@ -274,17 +270,13 @@ export default class MultiStrategy {
       this.player2.setScore(this.state.players[0].score);
       if (this.state.players[1].width !== this.platformMy.getSize().width) {
         this.scene.remove(this.platformMy.getModel());
-        this.size = {};
-        this.size.width = this.state.players[1].width;
-        this.size.height = this.platformMy.getSize().height;
+        this.size = { width: this.state.players[1].width, height: this.platformMy.getSize().height };
         this.platformMy.setSize(this.size);
         this.scene.add(this.platformMy.getModel());
       }
       if (this.state.players[0].width !== this.platformEnemy.getSize().width) {
         this.scene.remove(this.platformEnemy.getModel());
-        this.size = {};
-        this.size.width = this.state.players[0].width;
-        this.size.height = this.platformEnemy.getSize().height;
+        this.size = { width: this.state.players[0].width, height: this.platformEnemy.getSize().height };
         this.platformEnemy.setSize(this.size);
         this.scene.add(this.platformEnemy.getModel());
       }
