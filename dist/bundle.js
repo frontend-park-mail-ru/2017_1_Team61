@@ -5198,7 +5198,7 @@ class MultiStrategy {
   }
 
   setStateGame(state, time) {
-    // console.log(state);
+    //console.log(state);
     this.state = state;
 
     if (this.time_st === 0) {
@@ -5238,18 +5238,19 @@ class MultiStrategy {
       };
       this.platformEnemy.setPosition(this.pos);
     }
-    for (let i = 0; i < this.countBalls; i++) {
+    for (let i = 0; i < this.countBalls; i += 1) {
       this.pos = {
         x: this.state.balls[i].x * this.coordsTransform,
         y: this.ball.getPosition().y,
-        z: this.state.balls[i].y * this.coordsTransform
+        z: this.state.balls[i].y * this.coordsTransform,
       };
       this.balls[i].setPosition(this.pos);
     }
+    //console.log(this.balls);
   }
 
   setChangeGame(state) {
-    console.log(state);
+    //console.log(state);
     this.state = state;
     if (us.getData().id === this.state.players[0].userId) {
       this.player1.setScore(this.state.players[0].score);
@@ -5296,11 +5297,18 @@ class MultiStrategy {
       }
     }
 
+    console.log(this.bonuses);
+    for (let i = 0; i < this.bonuses.length; i += 1) {
+      this.scene.remove(this.bonuses[i].getModel());
+    }
+    this.bonuses = [];
+
     for (let i = 0; i < this.state.bonuses.length; i += 1) {
-      this.pos = { x: this.state.bonuses[i].coords.x * this.coordsTransform,
+      this.pos = {
+        x: this.state.bonuses[i].coords.x * this.coordsTransform,
         y: 15,
         z: this.state.bonuses[i].coords.y * this.coordsTransform };
-      this.radius = 5;
+      this.radius = 10;
       this.bonus = new __WEBPACK_IMPORTED_MODULE_4__bonus__["a" /* Bonus */](this.state.bonuses[i].type, this.pos, this.radius);
       this.scene.add(this.bonus.getModel());
       this.bonuses[i] = this.bonus;
