@@ -19,6 +19,7 @@ export class Bonus extends GameObject {
       this.Geometry = new THREE.SphereGeometry(this.radius, 30, 30);
       this.Material = new THREE.MeshLambertMaterial({ color: 0xFE28A2 });
     } else if (type === 'BALL_MULTIPLY') {
+      console.log("multiply");
       this.Geometry = new THREE.SphereGeometry(this.radius, 30, 30);
       this.Material = new THREE.MeshLambertMaterial({ color: 0xF4C430 });
     } else if (type === 'PLATFORM_INCREASE') {

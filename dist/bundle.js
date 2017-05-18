@@ -4912,6 +4912,7 @@ class Bonus extends __WEBPACK_IMPORTED_MODULE_0__object__["a" /* GameObject */] 
       this.Geometry = new THREE.SphereGeometry(this.radius, 30, 30);
       this.Material = new THREE.MeshLambertMaterial({ color: 0xFE28A2 });
     } else if (type === 'BALL_MULTIPLY') {
+      console.log("multiply");
       this.Geometry = new THREE.SphereGeometry(this.radius, 30, 30);
       this.Material = new THREE.MeshLambertMaterial({ color: 0xF4C430 });
     } else if (type === 'PLATFORM_INCREASE') {
@@ -5199,8 +5200,10 @@ class MultiStrategy {
 
   setStateGame(state, time) {
     //console.log(state);
+    // if (state.balls.length > 1) {
+    //   console.log(state.balls);
+    // }
     this.state = state;
-
     if (this.time_st === 0) {
       this.timen = time;
       this.time_st = 1;
@@ -5241,7 +5244,7 @@ class MultiStrategy {
     for (let i = 0; i < this.countBalls; i += 1) {
       this.pos = {
         x: this.state.balls[i].x * this.coordsTransform,
-        y: this.ball.getPosition().y,
+        y: this.balls[0].getPosition().y,
         z: this.state.balls[i].y * this.coordsTransform,
       };
       this.balls[i].setPosition(this.pos);
@@ -5253,7 +5256,10 @@ class MultiStrategy {
   }
 
   setChangeGame(state) {
-    //console.log(state);
+    //console.log(state.balls.length);
+    // if (state.balls.length > 1) {
+    //   console.log(state.balls);
+    // }
     this.state = state;
     if (us.getData().id === this.state.players[0].userId) {
       this.player1.setScore(this.state.players[0].score);
@@ -5287,10 +5293,31 @@ class MultiStrategy {
       }
     }
 
+    for (let i = this.state.balls.length; i < this.countBalls; i += 1) {
+      this.scene.remove(this.balls[i].getModel());
+      this.countBalls -= 1;
+    }
+
+    for (let i = 0; i < this.state.balls.length; i += 1) {
+      if (this.countBalls === i) {
+        this.pos = {
+          x: this.state.balls[i].x * this.coordsTransform,
+          y: this.balls[0].getPosition().y,
+          z: this.state.balls[i].y * this.coordsTransform,
+        };
+        this.radius = this.state.balls[i].radius;
+        this.ball = new __WEBPACK_IMPORTED_MODULE_1__ball__["a" /* Ball */](0, this.pos, this.radius);
+        this.scene.add(this.ball.getModel());
+        this.balls[this.countBalls] = this.ball;
+        this.balls[i].setPosition(this.pos);
+        this.countBalls += 1;
+      }
+    }
+
     for (let i = 0; i < this.countBalls; i += 1) {
       this.pos = {
         x: this.state.balls[i].x * this.coordsTransform,
-        y: this.ball.getPosition().y,
+        y: this.balls[i].getPosition().y,
         z: this.state.balls[i].y * this.coordsTransform,
       };
       this.balls[i].setPosition(this.pos);
@@ -5301,7 +5328,6 @@ class MultiStrategy {
       }
     }
 
-    console.log(this.bonuses);
     for (let i = 0; i < this.bonuses.length; i += 1) {
       this.scene.remove(this.bonuses[i].getModel());
     }
