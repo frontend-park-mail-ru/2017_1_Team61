@@ -6086,4 +6086,3 @@ class VictoryModal extends __WEBPACK_IMPORTED_MODULE_1__modalView__["a" /* defau
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=bundle.js.map
