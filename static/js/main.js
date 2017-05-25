@@ -16,10 +16,6 @@ import LeaderBoardModal from './views/leaderBoardModalView';
 import AboutModalView from './views/aboutModalVIew';
 import GameView from './views/gameView';
 import Page404View from './views/page404view';
-// import ConcedeModal from './views/concedeModalView';
-import ConcedeMpModal from './views/concedeMpModalView';
-import VictoryModal from './views/victoryModalView';
-import DefeatModal from './views/defeatModalView';
 
 import EvenEmitter,
 { START_USER_UNAUTHORISED,
@@ -35,10 +31,6 @@ const p404 = new Page404View();
 const leaderBoardModal = new LeaderBoardModal();
 const aboutModalView = new AboutModalView();
 const gameView = new GameView();
-// const concedeModalView = new ConcedeModal();
-const concedeMpModalView = new ConcedeMpModal();
-const victoryModalView = new VictoryModal();
-const defeatModalView = new DefeatModal();
 
 // init router
 const router = new Router();
@@ -46,14 +38,13 @@ router.addRoute(/\/$/, mainView)
   .addRoute(/leaderboard$/, leaderBoardModal)
   .addRoute(/about$/, aboutModalView)
   .addRoute(/game$/, gameView)
-  // .addRoute(/concede$/, concedeModalView)
   .set404(p404);
 
 // global user profile
 const userModel = new UserModel();
 
 // if ('serviceWorker' in navigator) {
-//   navigator.serviceWorker.register('static/js/sw.js')
+//   navigator.serviceWorker.register('sw.js')
 //     .then( (registration) => {
 //       console.log('ServiceWorker registration', registration);
 //     })
@@ -68,7 +59,6 @@ aboutModalView.render();
 
 router.start()
   .then(() => {
-    // console.log(userModel.getData());
     if (userModel.isAuthorised()) {
       ee.emit(START_USER_AUTHORISED);
     } else {

@@ -24,13 +24,8 @@ import EvenEmitter,
 import UserModel from './models/userModel';
 import Router from './modules/router/router';
 
-import LeaderBoardModal from './views/leaderBoardModalView';
 import ProfileModalView from './views/profileModalView';
-import AboutModalView from './views/aboutModalVIew';
-import GameView from './views/gameView';
-import Page404View from './views/page404view';
 import ConcedeModal from './views/concedeModalView';
-import ConcedeMpModal from './views/concedeMpModalView';
 import VictoryModal from './views/victoryModalView';
 import DefeatModal from './views/defeatModalView';
 import MpView from './views/mpGameView';
@@ -71,7 +66,6 @@ ee.on(GAME_PAUSE, (game) => {
   console.log(GAME_PAUSE);
   const concedeModalView = new ConcedeModal(game);
   concedeModalView.render();
-
 });
 
 ee.on(LOGOUTED, () => {

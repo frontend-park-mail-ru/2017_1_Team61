@@ -17,31 +17,23 @@ export default class MpGameView extends BaseView {
   constructor() {
     super(['multiplayer-game-view'], template);
     this.gm = new GameModel();
-    console.log('!!!!!!!!!!!!!!!!!');
 
     ee.on('com.aerohockey.mechanics.base.ServerSnap', (message) => {
-      // this.x.innerHTML = JSON.stringify(message.content);
       this.time = (new Date()).getTime();
       this.game.setStateGame(message.content, this.time);
-      // console.log((new Date).getTime() - this.time);
-      // this.time = (new Date).getTime();
     });
     ee.on('com.aerohockey.mechanics.requests.StartGame$Request', (message) => {
-      // this.x.innerHTML = JSON.stringify(message.content);
       this.game.setOpponent(message.content);
     });
     ee.on('com.aerohockey.mechanics.base.ServerDetailSnap', (message) => {
-      // this.x.innerHTML = JSON.stringify(message.content);
       this.game.setChangeGame(message.content);
     });
     ee.on('com.aerohockey.mechanics.base.GameOverSnap', (message) => {
-      // this.x.innerHTML = JSON.stringify(message.content);
       this.state = JSON.parse(message.content);
       console.log(this.state);
       this.game.stop();
       if (this.state.changeRating > 0) {
         us.getData().changeRating = this.state.changeRating;
-        // debugger;
         ee.emit(VICTORY);
       } else {
         us.getData().changeRating = this.state.changeRating;
@@ -87,7 +79,6 @@ export default class MpGameView extends BaseView {
     this.alreadyInDOM = false;
     this.gm.exit();
     delete this.game;
-    // delete this.gm;
   }
 
 }
