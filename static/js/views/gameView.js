@@ -2,32 +2,33 @@
 * Created by tlakatlekutl on 04.04.17.
 */
 
-import Router from '../modules/router/router';
 import BaseView from './baseView';
-import template from '../templates/gameTemplate.pug';
-import EvenEmitter from '../modules/eventEmitter/eventEmitter';
+import template2 from '../templates/gameTemplate.pug';
+import EvenEmitter, {GAME_PAUSE} from '../modules/eventEmitter/eventEmitter';
 
 import Game from '../modules/game/play';
 
-const router = new Router();
+// const router = new Router();
 const ee = new EvenEmitter();
 
 export default class GameView extends BaseView {
   constructor() {
-    super(['game-window-container'], template);
+
+    if (GameView.instance) {
+      return GameView.instance;
+    }
+
+    super(['game-window-container'], template2);
     this.alreadyInDOM = false;
+
+    GameView.instance = this;
   }
   render() {
     this.node.innerHTML = this.drawFunc();
     this.parent.appendChild(this.node);
     document.querySelector('.game-back-link').addEventListener('click', () => {
       this.game.stop();
-      router.go('/concede');
-    });
-    ee.on('destroyGame', ()=> {
-      delete this.game;
-      const game = document.querySelector('canvas');
-      document.body.removeChild(game);
+      ee.emit(GAME_PAUSE, this.game);
     });
   }
   show() {
@@ -41,17 +42,23 @@ export default class GameView extends BaseView {
       this.game = new Game('single');
       this.game.gameProcess();
     }
-    // const game = document.querySelector('canvas');
-    // game.hidden = false;
     this.node.hidden = false;
   }
+
   hide() {
-    if (this.alreadyInDOM) {
-      // super.destruct();
-      // const game = document.querySelector('canvas');
-      // game.hidden = true;
-    }
-    super.hide();
+    console.log('single game hide');
+    this.destruct();
+  }
+
+  destruct() {
+    const root = document.querySelector('main');
+    const gamePage = document.querySelector('.game-window-container');
+    root.removeChild(gamePage);
+    const game = document.querySelector('canvas');
+    const body = document.querySelector('body');
+    body.removeChild(game);
+    this.alreadyInDOM = false;
+    delete this.game;
   }
 
 }

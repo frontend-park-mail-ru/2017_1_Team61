@@ -37,8 +37,12 @@ export default class Game {
       this.gameProcess();
     }
 
-    setStateGame(message) {
-      this.games.setStateGame(JSON.parse(message));
+    setStateGame(message, time) {
+      this.games.setStateGame(JSON.parse(message), time);
+    }
+
+    setChangeGame(message) {
+      this.games.setChangeGame(JSON.parse(message));
     }
 
     setOpponent(message) {

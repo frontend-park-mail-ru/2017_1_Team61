@@ -15,7 +15,7 @@ module.exports = {
     fs: 'empty',
   },
   // devtool: 'source-map',
-  devtool: 'eval',
+  // devtool: 'eval',
   module: {
     rules: [
       {
@@ -24,7 +24,7 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader'],
+        use: ['style-loader', 'css-loader', 'postcss-loader'],
       },
       {
         test: /\.(png|jpg|gif|svg|eot|ttf|woff|woff2)$/,

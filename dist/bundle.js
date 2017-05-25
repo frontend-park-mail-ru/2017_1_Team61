@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 61);
+/******/ 	return __webpack_require__(__webpack_require__.s = 54);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -71,445 +71,6018 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__models_userModel__ = __webpack_require__(2);\n/**\n* Created by tlakatlekutl on 24.03.17.\n*/\n\n\n\nconst userModel = new __WEBPACK_IMPORTED_MODULE_0__models_userModel__[\"a\" /* default */]();\n\nclass Router {\n  // singleton class Router\n  constructor() {\n    if (Router.instance) {\n      return Router.instance;\n    }\n    // this.root = '/';\n    this.routes = [];\n    this.history = window.history;\n    this.goto404 = () => { console.error('page not found'); };\n    Router.instance = this;\n  }\n\n  addRoute(re, view) {\n    if (typeof view !== 'object') {\n      throw new TypeError('handler is not a view');\n    }\n    this.routes.push({ re, view });\n    return this;\n  }\n\n  checkPathExists(url) {\n    return this.routes.findIndex(route => route.re.test(url));\n  }\n\n  navigate(url) {\n    const i = this.checkPathExists(url);\n    // debugger;\n    if (i !== -1) {\n      if (this.routes[i].view.isModal) {\n        if (!this.currentView) {\n          this.routes[0].view.show();\n        }\n        this.currentView = this.routes[i].view;\n      } else {\n        if (this.currentView) {\n          this.currentView.hide();\n        }\n        this.currentView = this.routes[i].view;\n      }\n    } else {\n      if (this.currentView) {\n        this.currentView.hide();\n      }\n      this.currentView = this.goto404;\n    }\n    this.currentView.show();\n  }\n\n  go(url) {\n    this.history.pushState(null, '', url);\n    this.navigate(url);\n    this.currentUrl = url;\n    return this;\n  }\n\n  set404(view) {\n    this.goto404 = view;\n    return this;\n  }\n\n  start() {\n    return new Promise((resolve) => {\n      userModel.getUserStatus()\n        .then(() => {\n          setInterval(() => { this.checkUrlChanging(); }, 50);\n          resolve();\n        });\n    })\n    ;\n  }\n  checkUrlChanging() {\n    const url = window.location.href;\n    if (url !== this.currentUrl) {\n      this.navigate(url);\n      this.currentUrl = url;\n    }\n  }\n\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = Router;\n\n\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/modules/router/router.js\n// module id = 0\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/modules/router/router.js?");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_api_api__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__modules_eventEmitter_eventEmitter__ = __webpack_require__(1);
+/**
+* Created by tlakatlekutl on 07.03.17.
+*/
+
+
+
+
+
+const api = new __WEBPACK_IMPORTED_MODULE_0__modules_api_api__["a" /* default */]();
+const ee = new __WEBPACK_IMPORTED_MODULE_1__modules_eventEmitter_eventEmitter__["a" /* default */]();
+
+class UserModel {
+
+  constructor() {
+    if (UserModel.instance) {
+      return UserModel.instance;
+    }
+    this.user = { isAuthorised: false };
+
+    UserModel.instance = this;
+  }
+
+  isAuthorised() {
+    return this.user.isAuthorised;
+  }
+  getData() {
+    return this.user;
+  }
+  logout() {
+    return new Promise((resolve) => {
+      api.logout()
+        .then(() => {
+          this.user.isAuthorised = false;
+          ee.emit(__WEBPACK_IMPORTED_MODULE_1__modules_eventEmitter_eventEmitter__["d" /* LOGOUTED */]);
+          resolve();
+        });
+    });
+  }
+
+  getUserStatus() {
+    return new Promise((resolve) => {
+      api.getUser()
+        .then((response) => {
+          if (response.status === 200) {
+            return response.json();
+          } else if (response.status === 403) {
+            this.user.isAuthorised = false;
+          }
+          throw new Error('User not authorized');
+        })
+        .then((json) => {
+          this.user.isAuthorised = true;
+          this.user.nickname = json.login;
+          this.user.email = json.email;
+          this.user.id = json.id;
+          this.user.rating = json.rating;
+          this.user.changeRating = 0;
+          resolve(json);
+        })
+        .catch((err) => {
+          console.log(err);
+          resolve();
+        });
+    });
+  }
+  login(data) {
+    return new Promise((done, error) => {
+      api.login(data)
+        .then(response => new Promise((resolve, reject) => {
+          if (response.status === 200) {
+            resolve(response.json());
+          } else {
+            reject(response.json());
+          }
+        }))
+        .then((json) => {
+          this.user.isAuthorised = true;
+          this.user.nickname = json.login;
+          this.user.email = json.email;
+          this.user.id = json.id;
+          this.user.rating = json.rating;
+          this.user.changeRating = 0;
+          ee.emit(__WEBPACK_IMPORTED_MODULE_1__modules_eventEmitter_eventEmitter__["e" /* LOGINED */]);
+          done(json);
+        })
+        .catch((json) => {
+          console.log(json);
+          error(json);
+        });
+    });
+  }
+  signup(data) {
+    return new Promise((done, error) => {
+      api.signup(data)
+        .then(response => new Promise((resolve, reject) => {
+          if (response.status === 200) {
+            resolve(response.json());
+          } else {
+            reject(response.json());
+          }
+        }))
+        .then((json) => {
+          this.user.isAuthorised = true;
+          this.user.nickname = json.login;
+          this.user.email = json.email;
+          this.user.id = json.id;
+          this.user.rating = json.rating;
+          this.user.changeRating = 0;
+          done(json);
+        })
+        .catch((errorPromise) => {
+          return errorPromise;
+        })
+        .then((json)=> {
+          // console.log(json);
+          error(json);
+        });
+    });
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = UserModel;
+
+
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("\n\nvar pug_has_own_property = Object.prototype.hasOwnProperty;\n\n/**\n * Merge two attribute objects giving precedence\n * to values in object `b`. Classes are special-cased\n * allowing for arrays and merging/joining appropriately\n * resulting in a string.\n *\n * @param {Object} a\n * @param {Object} b\n * @return {Object} a\n * @api private\n */\n\nexports.merge = pug_merge;\nfunction pug_merge(a, b) {\n  if (arguments.length === 1) {\n    var attrs = a[0];\n    for (var i = 1; i < a.length; i++) {\n      attrs = pug_merge(attrs, a[i]);\n    }\n    return attrs;\n  }\n\n  for (var key in b) {\n    if (key === 'class') {\n      var valA = a[key] || [];\n      a[key] = (Array.isArray(valA) ? valA : [valA]).concat(b[key] || []);\n    } else if (key === 'style') {\n      var valA = pug_style(a[key]);\n      var valB = pug_style(b[key]);\n      a[key] = valA + valB;\n    } else {\n      a[key] = b[key];\n    }\n  }\n\n  return a;\n};\n\n/**\n * Process array, object, or string as a string of classes delimited by a space.\n *\n * If `val` is an array, all members of it and its subarrays are counted as\n * classes. If `escaping` is an array, then whether or not the item in `val` is\n * escaped depends on the corresponding item in `escaping`. If `escaping` is\n * not an array, no escaping is done.\n *\n * If `val` is an object, all the keys whose value is truthy are counted as\n * classes. No escaping is done.\n *\n * If `val` is a string, it is counted as a class. No escaping is done.\n *\n * @param {(Array.<string>|Object.<string, boolean>|string)} val\n * @param {?Array.<string>} escaping\n * @return {String}\n */\nexports.classes = pug_classes;\nfunction pug_classes_array(val, escaping) {\n  var classString = '', className, padding = '', escapeEnabled = Array.isArray(escaping);\n  for (var i = 0; i < val.length; i++) {\n    className = pug_classes(val[i]);\n    if (!className) continue;\n    escapeEnabled && escaping[i] && (className = pug_escape(className));\n    classString = classString + padding + className;\n    padding = ' ';\n  }\n  return classString;\n}\nfunction pug_classes_object(val) {\n  var classString = '', padding = '';\n  for (var key in val) {\n    if (key && val[key] && pug_has_own_property.call(val, key)) {\n      classString = classString + padding + key;\n      padding = ' ';\n    }\n  }\n  return classString;\n}\nfunction pug_classes(val, escaping) {\n  if (Array.isArray(val)) {\n    return pug_classes_array(val, escaping);\n  } else if (val && typeof val === 'object') {\n    return pug_classes_object(val);\n  } else {\n    return val || '';\n  }\n}\n\n/**\n * Convert object or string to a string of CSS styles delimited by a semicolon.\n *\n * @param {(Object.<string, string>|string)} val\n * @return {String}\n */\n\nexports.style = pug_style;\nfunction pug_style(val) {\n  if (!val) return '';\n  if (typeof val === 'object') {\n    var out = '';\n    for (var style in val) {\n      /* istanbul ignore else */\n      if (pug_has_own_property.call(val, style)) {\n        out = out + style + ':' + val[style] + ';';\n      }\n    }\n    return out;\n  } else {\n    val += '';\n    if (val[val.length - 1] !== ';') \n      return val + ';';\n    return val;\n  }\n};\n\n/**\n * Render the given attribute.\n *\n * @param {String} key\n * @param {String} val\n * @param {Boolean} escaped\n * @param {Boolean} terse\n * @return {String}\n */\nexports.attr = pug_attr;\nfunction pug_attr(key, val, escaped, terse) {\n  if (val === false || val == null || !val && (key === 'class' || key === 'style')) {\n    return '';\n  }\n  if (val === true) {\n    return ' ' + (terse ? key : key + '=\"' + key + '\"');\n  }\n  if (typeof val.toJSON === 'function') {\n    val = val.toJSON();\n  }\n  if (typeof val !== 'string') {\n    val = JSON.stringify(val);\n    if (!escaped && val.indexOf('\"') !== -1) {\n      return ' ' + key + '=\\'' + val.replace(/'/g, '&#39;') + '\\'';\n    }\n  }\n  if (escaped) val = pug_escape(val);\n  return ' ' + key + '=\"' + val + '\"';\n};\n\n/**\n * Render the given attributes object.\n *\n * @param {Object} obj\n * @param {Object} terse whether to use HTML5 terse boolean attributes\n * @return {String}\n */\nexports.attrs = pug_attrs;\nfunction pug_attrs(obj, terse){\n  var attrs = '';\n\n  for (var key in obj) {\n    if (pug_has_own_property.call(obj, key)) {\n      var val = obj[key];\n\n      if ('class' === key) {\n        val = pug_classes(val);\n        attrs = pug_attr(key, val, false, terse) + attrs;\n        continue;\n      }\n      if ('style' === key) {\n        val = pug_style(val);\n      }\n      attrs += pug_attr(key, val, false, terse);\n    }\n  }\n\n  return attrs;\n};\n\n/**\n * Escape the given string of `html`.\n *\n * @param {String} html\n * @return {String}\n * @api private\n */\n\nvar pug_match_html = /[\"&<>]/;\nexports.escape = pug_escape;\nfunction pug_escape(_html){\n  var html = '' + _html;\n  var regexResult = pug_match_html.exec(html);\n  if (!regexResult) return _html;\n\n  var result = '';\n  var i, lastIndex, escape;\n  for (i = regexResult.index, lastIndex = 0; i < html.length; i++) {\n    switch (html.charCodeAt(i)) {\n      case 34: escape = '&quot;'; break;\n      case 38: escape = '&amp;'; break;\n      case 60: escape = '&lt;'; break;\n      case 62: escape = '&gt;'; break;\n      default: continue;\n    }\n    if (lastIndex !== i) result += html.substring(lastIndex, i);\n    lastIndex = i + 1;\n    result += escape;\n  }\n  if (lastIndex !== i) return result + html.substring(lastIndex, i);\n  else return result;\n};\n\n/**\n * Re-throw the given `err` in context to the\n * the pug in `filename` at the given `lineno`.\n *\n * @param {Error} err\n * @param {String} filename\n * @param {String} lineno\n * @param {String} str original source\n * @api private\n */\n\nexports.rethrow = pug_rethrow;\nfunction pug_rethrow(err, filename, lineno, str){\n  if (!(err instanceof Error)) throw err;\n  if ((typeof window != 'undefined' || !filename) && !str) {\n    err.message += ' on line ' + lineno;\n    throw err;\n  }\n  try {\n    str = str || __webpack_require__(67).readFileSync(filename, 'utf8')\n  } catch (ex) {\n    pug_rethrow(err, null, lineno)\n  }\n  var context = 3\n    , lines = str.split('\\n')\n    , start = Math.max(lineno - context, 0)\n    , end = Math.min(lines.length, lineno + context);\n\n  // Error context\n  var context = lines.slice(start, end).map(function(line, i){\n    var curr = i + start + 1;\n    return (curr == lineno ? '  > ' : '    ')\n      + curr\n      + '| '\n      + line;\n  }).join('\\n');\n\n  // Alter exception message\n  err.path = filename;\n  err.message = (filename || 'Pug') + ':' + lineno\n    + '\\n' + context + '\\n\\n' + err.message;\n  throw err;\n};\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./~/pug-runtime/index.js\n// module id = 1\n// module chunks = 0\n\n//# sourceURL=webpack:///./~/pug-runtime/index.js?");
+/**
+ * Created by tlakatlekutl on 19.04.17.
+ */
+
+const START_USER_UNAUTHORISED = 'start_user_unauthorised';
+/* harmony export (immutable) */ __webpack_exports__["c"] = START_USER_UNAUTHORISED;
+
+const START_USER_AUTHORISED = 'start_user_authorised';
+/* harmony export (immutable) */ __webpack_exports__["b"] = START_USER_AUTHORISED;
+
+
+const GAME_PAUSE = 'game_pause_event';
+/* harmony export (immutable) */ __webpack_exports__["f"] = GAME_PAUSE;
+
+const DESTROY_GAME = 'game_destroy_event';
+/* harmony export (immutable) */ __webpack_exports__["k"] = DESTROY_GAME;
+
+
+const TEST_EVENT = 'test_event';
+/* harmony export (immutable) */ __webpack_exports__["l"] = TEST_EVENT;
+
+
+const START_SINGLE_GAME = 'start_single_game_event';
+/* harmony export (immutable) */ __webpack_exports__["g"] = START_SINGLE_GAME;
+
+const START_MULTI_GAME = 'start_multiplayer_game_event';
+/* harmony export (immutable) */ __webpack_exports__["h"] = START_MULTI_GAME;
+
+
+const LOGINED = 'user logined';
+/* harmony export (immutable) */ __webpack_exports__["e"] = LOGINED;
+
+const LOGOUTED = 'user logout';
+/* harmony export (immutable) */ __webpack_exports__["d"] = LOGOUTED;
+
+
+const VICTORY = 'victory_event';
+/* harmony export (immutable) */ __webpack_exports__["i"] = VICTORY;
+
+const DEFEAT = 'defeat event';
+/* harmony export (immutable) */ __webpack_exports__["j"] = DEFEAT;
+
+
+class EventEmitter {
+  constructor() {
+    if (EventEmitter.instance) {
+      return EventEmitter.instance;
+    }
+    this.events = [];
+
+    EventEmitter.instance = this;
+  }
+  on(event, listener) {
+    if (typeof listener !== 'function') {
+      throw new TypeError('listener is not a function');
+    }
+    this.events.push({ event, listener });
+    return this;
+  }
+  emit(name, payload = null) {
+    // console.log(`EVENT: ${name}`);
+    const handler = this.events.find(x => x.event === name);
+    if (handler) {
+      handler.listener(payload);
+    } else {
+      throw new Error(`Cant emit no event ${name}`);
+    }
+  }
+  off(name) {
+    const i = this.events.findIndex(x => x.event === name);
+    if (i !== -1) {
+      this.events.splice(i, 1);
+    } else {
+      throw new Error(`Cant delete no event ${name}`);
+    }
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = EventEmitter;
+
+
 
 /***/ }),
 /* 2 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_api_api__ = __webpack_require__(12);\n/**\n* Created by tlakatlekutl on 07.03.17.\n*/\n\n\n\nconst api = new __WEBPACK_IMPORTED_MODULE_0__modules_api_api__[\"a\" /* default */]();\n\nclass UserModel {\n\n  constructor() {\n    if (UserModel.instance) {\n      return UserModel.instance;\n    }\n    this.user = { isAuthorised: false };\n\n    UserModel.instance = this;\n  }\n\n  isAuthorised() {\n    return this.user.isAuthorised;\n  }\n  getData() {\n    return this.user;\n  }\n  logout() {\n    return new Promise((resolve) => {\n      api.logout()\n        .then(() => {\n          this.user.isAuthorised = false;\n          resolve();\n        });\n    });\n  }\n\n  getUserStatus() {\n    return new Promise((resolve) => {\n      api.getUser()\n        .then((response) => {\n          if (response.status === 200) {\n            return response.json();\n          } else if (response.status === 403) {\n            this.user.isAuthorised = false;\n          }\n          throw new Error('User not authorized');\n        })\n        .then((json) => {\n          this.user.isAuthorised = true;\n          this.user.nickname = json.login;\n          this.user.email = json.email;\n          this.user.id = json.id;\n          this.user.rating = json.rating;\n          this.user.newRating = this.user.rating;\n          resolve(json);\n        })\n        .catch((err) => {\n          console.log(err);\n          resolve();\n        });\n    });\n  }\n  login(data) {\n    return new Promise((done, error) => {\n      api.login(data)\n        .then(response => new Promise((resolve, reject) => {\n          if (response.status === 200) {\n            resolve(response.json());\n          } else {\n            reject(response.json());\n          }\n        }))\n        .then((json) => {\n          this.user.isAuthorised = true;\n          this.user.nickname = json.login;\n          this.user.email = json.email;\n          done(json);\n        })\n        .catch((json) => {\n          console.log(json);\n          error(json);\n        });\n    });\n  }\n  signup(data) {\n    return new Promise((done, error) => {\n      api.signup(data)\n        .then(response => new Promise((resolve, reject) => {\n          if (response.status === 200) {\n            resolve(response.json());\n          } else {\n            reject(response.json());\n          }\n        }))\n        .then((json) => {\n          this.user.isAuthorised = true;\n          this.user.nickname = json.login;\n          this.user.email = json.email;\n          done(json);\n        })\n        .catch((errorPromise) => {\n          return errorPromise;\n        })\n        .then((json)=> {\n          // console.log(json);\n          error(json);\n        });\n    });\n  }\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = UserModel;\n\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/models/userModel.js\n// module id = 2\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/models/userModel.js?");
+
+
+var pug_has_own_property = Object.prototype.hasOwnProperty;
+
+/**
+ * Merge two attribute objects giving precedence
+ * to values in object `b`. Classes are special-cased
+ * allowing for arrays and merging/joining appropriately
+ * resulting in a string.
+ *
+ * @param {Object} a
+ * @param {Object} b
+ * @return {Object} a
+ * @api private
+ */
+
+exports.merge = pug_merge;
+function pug_merge(a, b) {
+  if (arguments.length === 1) {
+    var attrs = a[0];
+    for (var i = 1; i < a.length; i++) {
+      attrs = pug_merge(attrs, a[i]);
+    }
+    return attrs;
+  }
+
+  for (var key in b) {
+    if (key === 'class') {
+      var valA = a[key] || [];
+      a[key] = (Array.isArray(valA) ? valA : [valA]).concat(b[key] || []);
+    } else if (key === 'style') {
+      var valA = pug_style(a[key]);
+      var valB = pug_style(b[key]);
+      a[key] = valA + valB;
+    } else {
+      a[key] = b[key];
+    }
+  }
+
+  return a;
+};
+
+/**
+ * Process array, object, or string as a string of classes delimited by a space.
+ *
+ * If `val` is an array, all members of it and its subarrays are counted as
+ * classes. If `escaping` is an array, then whether or not the item in `val` is
+ * escaped depends on the corresponding item in `escaping`. If `escaping` is
+ * not an array, no escaping is done.
+ *
+ * If `val` is an object, all the keys whose value is truthy are counted as
+ * classes. No escaping is done.
+ *
+ * If `val` is a string, it is counted as a class. No escaping is done.
+ *
+ * @param {(Array.<string>|Object.<string, boolean>|string)} val
+ * @param {?Array.<string>} escaping
+ * @return {String}
+ */
+exports.classes = pug_classes;
+function pug_classes_array(val, escaping) {
+  var classString = '', className, padding = '', escapeEnabled = Array.isArray(escaping);
+  for (var i = 0; i < val.length; i++) {
+    className = pug_classes(val[i]);
+    if (!className) continue;
+    escapeEnabled && escaping[i] && (className = pug_escape(className));
+    classString = classString + padding + className;
+    padding = ' ';
+  }
+  return classString;
+}
+function pug_classes_object(val) {
+  var classString = '', padding = '';
+  for (var key in val) {
+    if (key && val[key] && pug_has_own_property.call(val, key)) {
+      classString = classString + padding + key;
+      padding = ' ';
+    }
+  }
+  return classString;
+}
+function pug_classes(val, escaping) {
+  if (Array.isArray(val)) {
+    return pug_classes_array(val, escaping);
+  } else if (val && typeof val === 'object') {
+    return pug_classes_object(val);
+  } else {
+    return val || '';
+  }
+}
+
+/**
+ * Convert object or string to a string of CSS styles delimited by a semicolon.
+ *
+ * @param {(Object.<string, string>|string)} val
+ * @return {String}
+ */
+
+exports.style = pug_style;
+function pug_style(val) {
+  if (!val) return '';
+  if (typeof val === 'object') {
+    var out = '';
+    for (var style in val) {
+      /* istanbul ignore else */
+      if (pug_has_own_property.call(val, style)) {
+        out = out + style + ':' + val[style] + ';';
+      }
+    }
+    return out;
+  } else {
+    val += '';
+    if (val[val.length - 1] !== ';') 
+      return val + ';';
+    return val;
+  }
+};
+
+/**
+ * Render the given attribute.
+ *
+ * @param {String} key
+ * @param {String} val
+ * @param {Boolean} escaped
+ * @param {Boolean} terse
+ * @return {String}
+ */
+exports.attr = pug_attr;
+function pug_attr(key, val, escaped, terse) {
+  if (val === false || val == null || !val && (key === 'class' || key === 'style')) {
+    return '';
+  }
+  if (val === true) {
+    return ' ' + (terse ? key : key + '="' + key + '"');
+  }
+  if (typeof val.toJSON === 'function') {
+    val = val.toJSON();
+  }
+  if (typeof val !== 'string') {
+    val = JSON.stringify(val);
+    if (!escaped && val.indexOf('"') !== -1) {
+      return ' ' + key + '=\'' + val.replace(/'/g, '&#39;') + '\'';
+    }
+  }
+  if (escaped) val = pug_escape(val);
+  return ' ' + key + '="' + val + '"';
+};
+
+/**
+ * Render the given attributes object.
+ *
+ * @param {Object} obj
+ * @param {Object} terse whether to use HTML5 terse boolean attributes
+ * @return {String}
+ */
+exports.attrs = pug_attrs;
+function pug_attrs(obj, terse){
+  var attrs = '';
+
+  for (var key in obj) {
+    if (pug_has_own_property.call(obj, key)) {
+      var val = obj[key];
+
+      if ('class' === key) {
+        val = pug_classes(val);
+        attrs = pug_attr(key, val, false, terse) + attrs;
+        continue;
+      }
+      if ('style' === key) {
+        val = pug_style(val);
+      }
+      attrs += pug_attr(key, val, false, terse);
+    }
+  }
+
+  return attrs;
+};
+
+/**
+ * Escape the given string of `html`.
+ *
+ * @param {String} html
+ * @return {String}
+ * @api private
+ */
+
+var pug_match_html = /["&<>]/;
+exports.escape = pug_escape;
+function pug_escape(_html){
+  var html = '' + _html;
+  var regexResult = pug_match_html.exec(html);
+  if (!regexResult) return _html;
+
+  var result = '';
+  var i, lastIndex, escape;
+  for (i = regexResult.index, lastIndex = 0; i < html.length; i++) {
+    switch (html.charCodeAt(i)) {
+      case 34: escape = '&quot;'; break;
+      case 38: escape = '&amp;'; break;
+      case 60: escape = '&lt;'; break;
+      case 62: escape = '&gt;'; break;
+      default: continue;
+    }
+    if (lastIndex !== i) result += html.substring(lastIndex, i);
+    lastIndex = i + 1;
+    result += escape;
+  }
+  if (lastIndex !== i) return result + html.substring(lastIndex, i);
+  else return result;
+};
+
+/**
+ * Re-throw the given `err` in context to the
+ * the pug in `filename` at the given `lineno`.
+ *
+ * @param {Error} err
+ * @param {String} filename
+ * @param {String} lineno
+ * @param {String} str original source
+ * @api private
+ */
+
+exports.rethrow = pug_rethrow;
+function pug_rethrow(err, filename, lineno, str){
+  if (!(err instanceof Error)) throw err;
+  if ((typeof window != 'undefined' || !filename) && !str) {
+    err.message += ' on line ' + lineno;
+    throw err;
+  }
+  try {
+    str = str || __webpack_require__(68).readFileSync(filename, 'utf8')
+  } catch (ex) {
+    pug_rethrow(err, null, lineno)
+  }
+  var context = 3
+    , lines = str.split('\n')
+    , start = Math.max(lineno - context, 0)
+    , end = Math.min(lines.length, lineno + context);
+
+  // Error context
+  var context = lines.slice(start, end).map(function(line, i){
+    var curr = i + start + 1;
+    return (curr == lineno ? '  > ' : '    ')
+      + curr
+      + '| '
+      + line;
+  }).join('\n');
+
+  // Alter exception message
+  err.path = filename;
+  err.message = (filename || 'Pug') + ':' + lineno
+    + '\n' + context + '\n\n' + err.message;
+  throw err;
+};
+
 
 /***/ }),
 /* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-eval("/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_router_router__ = __webpack_require__(0);\n/**\n* Created by tlakatlekutl on 31.03.17.\n*/\n\n\n\nconst router = new __WEBPACK_IMPORTED_MODULE_0__modules_router_router__[\"a\" /* default */]();\n\nclass ModalView {\n  constructor(headerText, drawFunc, parent = document.querySelector('main')) {\n    this.isModal = true;\n    this.parent = parent;\n    this.drawFunc = drawFunc;\n    this.alreadyInDOM = false;\n    this.headerText = headerText;\n    // this.generateBase();\n  }\n  generateBase() {\n    this.modal = document.createElement('div');\n    this.modal.className = 'modal';\n\n    const content = document.createElement('div');\n    content.className = 'modal-content';\n    this.modal.appendChild(content);\n\n    const header = document.createElement('div');\n    header.className = 'modal-header';\n    content.appendChild(header);\n\n    this.close = document.createElement('span');\n    this.close.className = 'close';\n    this.close.innerHTML = '&times;';\n    header.appendChild(this.close);\n\n    const title = document.createElement('h2');\n    title.className = 'modal-header-title';\n    title.innerHTML = this.headerText;\n    header.appendChild(title);\n\n    this.bodyModal = document.createElement('div');\n    this.bodyModal.className = 'modal-body';\n    content.appendChild(this.bodyModal);\n  }\n  render(data) {\n    this.alreadyInDOM = true;\n    this.generateBase();\n    this.onClose(() => { router.go('/'); });\n    this.bodyModal.innerHTML = this.drawFunc(data);\n    this.parent.appendChild(this.modal);\n    return this;\n  }\n  destruct() {\n    this.alreadyInDOM = false;\n    this.parent.removeChild(this.modal);\n  }\n  onClose(func) {\n    this.close.addEventListener('click', func);\n    this.close.addEventListener('click', () => {\n      this.modal.style.display = 'none';\n    });\n    return this;\n  }\n  show(data) {\n    if (!this.alreadyInDOM) {\n      this.render(data);\n    }\n    this.modal.style.display = 'block';\n  }\n  hide() {\n    this.modal.style.display = 'none';\n  }\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = ModalView;\n\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/views/modalView.js\n// module id = 3\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/views/modalView.js?");
+/* WEBPACK VAR INJECTION */(function(Buffer) {/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+module.exports = function(useSourceMap) {
+	var list = [];
+
+	// return the list of modules as css string
+	list.toString = function toString() {
+		return this.map(function (item) {
+			var content = cssWithMappingToString(item, useSourceMap);
+			if(item[2]) {
+				return "@media " + item[2] + "{" + content + "}";
+			} else {
+				return content;
+			}
+		}).join("");
+	};
+
+	// import a list of modules into the list
+	list.i = function(modules, mediaQuery) {
+		if(typeof modules === "string")
+			modules = [[null, modules, ""]];
+		var alreadyImportedModules = {};
+		for(var i = 0; i < this.length; i++) {
+			var id = this[i][0];
+			if(typeof id === "number")
+				alreadyImportedModules[id] = true;
+		}
+		for(i = 0; i < modules.length; i++) {
+			var item = modules[i];
+			// skip already imported module
+			// this implementation is not 100% perfect for weird media query combinations
+			//  when a module is imported multiple times with different media queries.
+			//  I hope this will never occur (Hey this way we have smaller bundles)
+			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+				if(mediaQuery && !item[2]) {
+					item[2] = mediaQuery;
+				} else if(mediaQuery) {
+					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+				}
+				list.push(item);
+			}
+		}
+	};
+	return list;
+};
+
+function cssWithMappingToString(item, useSourceMap) {
+	var content = item[1] || '';
+	var cssMapping = item[3];
+	if (!cssMapping) {
+		return content;
+	}
+
+	if (useSourceMap) {
+		var sourceMapping = toComment(cssMapping);
+		var sourceURLs = cssMapping.sources.map(function (source) {
+			return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */'
+		});
+
+		return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
+	}
+
+	return [content].join('\n');
+}
+
+// Adapted from convert-source-map (MIT)
+function toComment(sourceMap) {
+  var base64 = new Buffer(JSON.stringify(sourceMap)).toString('base64');
+  var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
+
+  return '/*# ' + data + ' */';
+}
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(26).Buffer))
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-eval("/* WEBPACK VAR INJECTION */(function(Buffer) {/*\n\tMIT License http://www.opensource.org/licenses/mit-license.php\n\tAuthor Tobias Koppers @sokra\n*/\n// css base code, injected by the css-loader\nmodule.exports = function(useSourceMap) {\n\tvar list = [];\n\n\t// return the list of modules as css string\n\tlist.toString = function toString() {\n\t\treturn this.map(function (item) {\n\t\t\tvar content = cssWithMappingToString(item, useSourceMap);\n\t\t\tif(item[2]) {\n\t\t\t\treturn \"@media \" + item[2] + \"{\" + content + \"}\";\n\t\t\t} else {\n\t\t\t\treturn content;\n\t\t\t}\n\t\t}).join(\"\");\n\t};\n\n\t// import a list of modules into the list\n\tlist.i = function(modules, mediaQuery) {\n\t\tif(typeof modules === \"string\")\n\t\t\tmodules = [[null, modules, \"\"]];\n\t\tvar alreadyImportedModules = {};\n\t\tfor(var i = 0; i < this.length; i++) {\n\t\t\tvar id = this[i][0];\n\t\t\tif(typeof id === \"number\")\n\t\t\t\talreadyImportedModules[id] = true;\n\t\t}\n\t\tfor(i = 0; i < modules.length; i++) {\n\t\t\tvar item = modules[i];\n\t\t\t// skip already imported module\n\t\t\t// this implementation is not 100% perfect for weird media query combinations\n\t\t\t//  when a module is imported multiple times with different media queries.\n\t\t\t//  I hope this will never occur (Hey this way we have smaller bundles)\n\t\t\tif(typeof item[0] !== \"number\" || !alreadyImportedModules[item[0]]) {\n\t\t\t\tif(mediaQuery && !item[2]) {\n\t\t\t\t\titem[2] = mediaQuery;\n\t\t\t\t} else if(mediaQuery) {\n\t\t\t\t\titem[2] = \"(\" + item[2] + \") and (\" + mediaQuery + \")\";\n\t\t\t\t}\n\t\t\t\tlist.push(item);\n\t\t\t}\n\t\t}\n\t};\n\treturn list;\n};\n\nfunction cssWithMappingToString(item, useSourceMap) {\n\tvar content = item[1] || '';\n\tvar cssMapping = item[3];\n\tif (!cssMapping) {\n\t\treturn content;\n\t}\n\n\tif (useSourceMap) {\n\t\tvar sourceMapping = toComment(cssMapping);\n\t\tvar sourceURLs = cssMapping.sources.map(function (source) {\n\t\t\treturn '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */'\n\t\t});\n\n\t\treturn [content].concat(sourceURLs).concat([sourceMapping]).join('\\n');\n\t}\n\n\treturn [content].join('\\n');\n}\n\n// Adapted from convert-source-map (MIT)\nfunction toComment(sourceMap) {\n  var base64 = new Buffer(JSON.stringify(sourceMap)).toString('base64');\n  var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;\n\n  return '/*# ' + data + ' */';\n}\n\n/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(35).Buffer))\n\n//////////////////\n// WEBPACK FOOTER\n// ./~/css-loader/lib/css-base.js\n// module id = 4\n// module chunks = 0\n\n//# sourceURL=webpack:///./~/css-loader/lib/css-base.js?");
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_router_router__ = __webpack_require__(5);
+/**
+* Created by tlakatlekutl on 31.03.17.
+*/
+
+
+
+const router = new __WEBPACK_IMPORTED_MODULE_0__modules_router_router__["a" /* default */]();
+
+class ModalView {
+  constructor(headerText, drawFunc, parent = document.querySelector('main')) {
+    this.isModal = true;
+    this.parent = parent;
+    this.drawFunc = drawFunc;
+    this.alreadyInDOM = false;
+    this.headerText = headerText;
+    // this.generateBase();
+  }
+  generateBase() {
+    this.modal = document.createElement('div');
+    this.modal.className = `modal ${this.headerText}`;
+
+    const content = document.createElement('div');
+    content.className = 'modal-content';
+    this.modal.appendChild(content);
+
+    const header = document.createElement('div');
+    header.className = 'modal-header';
+    content.appendChild(header);
+
+    this.close = document.createElement('span');
+    this.close.className = 'close';
+    this.close.innerHTML = '&times;';
+    header.appendChild(this.close);
+
+    const title = document.createElement('h2');
+    title.className = 'modal-header-title';
+    title.innerHTML = this.headerText;
+    header.appendChild(title);
+
+    this.bodyModal = document.createElement('div');
+    this.bodyModal.className = 'modal-body';
+    content.appendChild(this.bodyModal);
+  }
+  render(data) {
+    this.alreadyInDOM = true;
+    this.generateBase();
+    this.bodyModal.innerHTML = this.drawFunc(data);
+    this.parent.appendChild(this.modal);
+    this.onClose(() => router.go('/'));
+    return this;
+  }
+  destruct() {
+    this.alreadyInDOM = false;
+    this.parent.removeChild(this.modal);
+  }
+  onClose(func) {
+    this.close.addEventListener('click', func);
+    this.close.addEventListener('click', () => {
+      this.modal.style.display = 'none';
+    });
+    return this;
+  }
+  show(data) {
+    if (!this.alreadyInDOM) {
+      this.render(data);
+    }
+    this.modal.style.display = 'block';
+  }
+  hide() {
+    this.modal.style.display = 'none';
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = ModalView;
+
+
 
 /***/ }),
 /* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("/**\n * Created by tlakatlekutl on 19.04.17.\n */\n\nclass EventEmitter {\n  constructor() {\n    if (EventEmitter.instance) {\n      return EventEmitter.instance;\n    }\n    this.events = [];\n\n    EventEmitter.instance = this;\n  }\n  on(event, listener) {\n    if (typeof listener !== 'function') {\n      throw new TypeError('listener is not a function');\n    }\n    this.events.push({ event, listener });\n  }\n  emit(name, payload = null) {\n    const handler = this.events.find((x) => { if (x.event === name) { return x; } });\n    if (handler) {\n      handler.listener(payload);\n    } else {\n      throw new Error(`Cant emit no event ${name}`);\n    }\n  }\n  off(name) {\n    const i = this.events.findIndex((x) => { if (x.event === name) { return x; } });\n    if (i !== -1) {\n      delete this.events[i];\n    } else {\n      throw new Error(`Cant delete no event ${name}`);\n    }\n  }\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = EventEmitter;\n\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/modules/eventEmitter/eventEmitter.js\n// module id = 5\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/modules/eventEmitter/eventEmitter.js?");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__models_userModel__ = __webpack_require__(0);
+/**
+* Created by tlakatlekutl on 24.03.17.
+*/
+
+
+
+const userModel = new __WEBPACK_IMPORTED_MODULE_0__models_userModel__["a" /* default */]();
+
+class Router {
+  // singleton class Router
+  constructor() {
+    if (Router.instance) {
+      return Router.instance;
+    }
+    // this.root = '/';
+    this.routes = [];
+    this.history = window.history;
+    this.goto404 = () => { console.error('page not found'); };
+    Router.instance = this;
+  }
+
+  addRoute(re, view) {
+    if (typeof view !== 'object') {
+      throw new TypeError('handler is not a view');
+    }
+    this.routes.push({ re, view });
+    return this;
+  }
+
+  checkPathExists(url) {
+    return this.routes.findIndex(route => route.re.test(url));
+  }
+  updateRoute(url, view) {
+    const i = this.routes.findIndex(route => route.re.test(url))
+    console.log(i);
+    // debugger;
+    if (i !== -1) {
+      this.routes[i].view = view;
+    } else {
+      throw new Error(`Cant delete route ${name}`);
+    }
+  }
+
+  navigate(url) {
+    const i = this.checkPathExists(url);
+    // debugger;
+    if (i !== -1) {
+      if (this.routes[i].view.isModal) {
+        if (!this.currentView) {
+          this.routes[0].view.show();
+        }
+        this.currentView = this.routes[i].view;
+      } else {
+        if (this.currentView) {
+          this.currentView.hide();
+        }
+        this.currentView = this.routes[i].view;
+      }
+    } else {
+      // alert(url);
+      if (/mp$/.test(url)) {
+        this.go('/');
+        return;
+      }
+      if (this.currentView) {
+        this.currentView.hide();
+      }
+      this.currentView = this.goto404;
+    }
+    this.currentView.show();
+  }
+
+  go(url) {
+    this.history.pushState(null, '', url);
+    this.navigate(url);
+    this.currentUrl = url;
+    return this;
+  }
+
+  set404(view) {
+    this.goto404 = view;
+    return this;
+  }
+
+  deleteRoute(url) {
+    const i = this.routes.findIndex(route => route.re.test(url));
+    if (i !== -1) {
+      if (i !== -1) {
+        this.routes.splice(i, 1);
+      } else {
+        throw new Error(`Cant delete no route ${url}`);
+      }
+    }
+    return this;
+  }
+
+
+  start() {
+    return new Promise((resolve) => {
+      userModel.getUserStatus()
+        .then(() => {
+          // setInterval(() => { this.checkUrlChanging(); }, 50);
+          resolve();
+        });
+    })
+    ;
+  }
+  checkUrlChanging() {
+    const url = window.location.href;
+    if (url !== this.currentUrl) {
+      console.log('url changed!');
+      this.navigate(url);
+      this.currentUrl = url;
+    }
+  }
+
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Router;
+
+
+
 
 /***/ }),
 /* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-eval("/*\n\tMIT License http://www.opensource.org/licenses/mit-license.php\n\tAuthor Tobias Koppers @sokra\n*/\nvar stylesInDom = {},\n\tmemoize = function(fn) {\n\t\tvar memo;\n\t\treturn function () {\n\t\t\tif (typeof memo === \"undefined\") memo = fn.apply(this, arguments);\n\t\t\treturn memo;\n\t\t};\n\t},\n\tisOldIE = memoize(function() {\n\t\t// Test for IE <= 9 as proposed by Browserhacks\n\t\t// @see http://browserhacks.com/#hack-e71d8692f65334173fee715c222cb805\n\t\t// Tests for existence of standard globals is to allow style-loader \n\t\t// to operate correctly into non-standard environments\n\t\t// @see https://github.com/webpack-contrib/style-loader/issues/177\n\t\treturn window && document && document.all && !window.atob;\n\t}),\n\tgetElement = (function(fn) {\n\t\tvar memo = {};\n\t\treturn function(selector) {\n\t\t\tif (typeof memo[selector] === \"undefined\") {\n\t\t\t\tmemo[selector] = fn.call(this, selector);\n\t\t\t}\n\t\t\treturn memo[selector]\n\t\t};\n\t})(function (styleTarget) {\n\t\treturn document.querySelector(styleTarget)\n\t}),\n\tsingletonElement = null,\n\tsingletonCounter = 0,\n\tstyleElementsInsertedAtTop = [],\n\tfixUrls = __webpack_require__(56);\n\nmodule.exports = function(list, options) {\n\tif(typeof DEBUG !== \"undefined\" && DEBUG) {\n\t\tif(typeof document !== \"object\") throw new Error(\"The style-loader cannot be used in a non-browser environment\");\n\t}\n\n\toptions = options || {};\n\toptions.attrs = typeof options.attrs === \"object\" ? options.attrs : {};\n\n\t// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>\n\t// tags it will allow on a page\n\tif (typeof options.singleton === \"undefined\") options.singleton = isOldIE();\n\n\t// By default, add <style> tags to the <head> element\n\tif (typeof options.insertInto === \"undefined\") options.insertInto = \"head\";\n\n\t// By default, add <style> tags to the bottom of the target\n\tif (typeof options.insertAt === \"undefined\") options.insertAt = \"bottom\";\n\n\tvar styles = listToStyles(list);\n\taddStylesToDom(styles, options);\n\n\treturn function update(newList) {\n\t\tvar mayRemove = [];\n\t\tfor(var i = 0; i < styles.length; i++) {\n\t\t\tvar item = styles[i];\n\t\t\tvar domStyle = stylesInDom[item.id];\n\t\t\tdomStyle.refs--;\n\t\t\tmayRemove.push(domStyle);\n\t\t}\n\t\tif(newList) {\n\t\t\tvar newStyles = listToStyles(newList);\n\t\t\taddStylesToDom(newStyles, options);\n\t\t}\n\t\tfor(var i = 0; i < mayRemove.length; i++) {\n\t\t\tvar domStyle = mayRemove[i];\n\t\t\tif(domStyle.refs === 0) {\n\t\t\t\tfor(var j = 0; j < domStyle.parts.length; j++)\n\t\t\t\t\tdomStyle.parts[j]();\n\t\t\t\tdelete stylesInDom[domStyle.id];\n\t\t\t}\n\t\t}\n\t};\n};\n\nfunction addStylesToDom(styles, options) {\n\tfor(var i = 0; i < styles.length; i++) {\n\t\tvar item = styles[i];\n\t\tvar domStyle = stylesInDom[item.id];\n\t\tif(domStyle) {\n\t\t\tdomStyle.refs++;\n\t\t\tfor(var j = 0; j < domStyle.parts.length; j++) {\n\t\t\t\tdomStyle.parts[j](item.parts[j]);\n\t\t\t}\n\t\t\tfor(; j < item.parts.length; j++) {\n\t\t\t\tdomStyle.parts.push(addStyle(item.parts[j], options));\n\t\t\t}\n\t\t} else {\n\t\t\tvar parts = [];\n\t\t\tfor(var j = 0; j < item.parts.length; j++) {\n\t\t\t\tparts.push(addStyle(item.parts[j], options));\n\t\t\t}\n\t\t\tstylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};\n\t\t}\n\t}\n}\n\nfunction listToStyles(list) {\n\tvar styles = [];\n\tvar newStyles = {};\n\tfor(var i = 0; i < list.length; i++) {\n\t\tvar item = list[i];\n\t\tvar id = item[0];\n\t\tvar css = item[1];\n\t\tvar media = item[2];\n\t\tvar sourceMap = item[3];\n\t\tvar part = {css: css, media: media, sourceMap: sourceMap};\n\t\tif(!newStyles[id])\n\t\t\tstyles.push(newStyles[id] = {id: id, parts: [part]});\n\t\telse\n\t\t\tnewStyles[id].parts.push(part);\n\t}\n\treturn styles;\n}\n\nfunction insertStyleElement(options, styleElement) {\n\tvar styleTarget = getElement(options.insertInto)\n\tif (!styleTarget) {\n\t\tthrow new Error(\"Couldn't find a style target. This probably means that the value for the 'insertInto' parameter is invalid.\");\n\t}\n\tvar lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];\n\tif (options.insertAt === \"top\") {\n\t\tif(!lastStyleElementInsertedAtTop) {\n\t\t\tstyleTarget.insertBefore(styleElement, styleTarget.firstChild);\n\t\t} else if(lastStyleElementInsertedAtTop.nextSibling) {\n\t\t\tstyleTarget.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);\n\t\t} else {\n\t\t\tstyleTarget.appendChild(styleElement);\n\t\t}\n\t\tstyleElementsInsertedAtTop.push(styleElement);\n\t} else if (options.insertAt === \"bottom\") {\n\t\tstyleTarget.appendChild(styleElement);\n\t} else {\n\t\tthrow new Error(\"Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.\");\n\t}\n}\n\nfunction removeStyleElement(styleElement) {\n\tstyleElement.parentNode.removeChild(styleElement);\n\tvar idx = styleElementsInsertedAtTop.indexOf(styleElement);\n\tif(idx >= 0) {\n\t\tstyleElementsInsertedAtTop.splice(idx, 1);\n\t}\n}\n\nfunction createStyleElement(options) {\n\tvar styleElement = document.createElement(\"style\");\n\toptions.attrs.type = \"text/css\";\n\n\tattachTagAttrs(styleElement, options.attrs);\n\tinsertStyleElement(options, styleElement);\n\treturn styleElement;\n}\n\nfunction createLinkElement(options) {\n\tvar linkElement = document.createElement(\"link\");\n\toptions.attrs.type = \"text/css\";\n\toptions.attrs.rel = \"stylesheet\";\n\n\tattachTagAttrs(linkElement, options.attrs);\n\tinsertStyleElement(options, linkElement);\n\treturn linkElement;\n}\n\nfunction attachTagAttrs(element, attrs) {\n\tObject.keys(attrs).forEach(function (key) {\n\t\telement.setAttribute(key, attrs[key]);\n\t});\n}\n\nfunction addStyle(obj, options) {\n\tvar styleElement, update, remove;\n\n\tif (options.singleton) {\n\t\tvar styleIndex = singletonCounter++;\n\t\tstyleElement = singletonElement || (singletonElement = createStyleElement(options));\n\t\tupdate = applyToSingletonTag.bind(null, styleElement, styleIndex, false);\n\t\tremove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);\n\t} else if(obj.sourceMap &&\n\t\ttypeof URL === \"function\" &&\n\t\ttypeof URL.createObjectURL === \"function\" &&\n\t\ttypeof URL.revokeObjectURL === \"function\" &&\n\t\ttypeof Blob === \"function\" &&\n\t\ttypeof btoa === \"function\") {\n\t\tstyleElement = createLinkElement(options);\n\t\tupdate = updateLink.bind(null, styleElement, options);\n\t\tremove = function() {\n\t\t\tremoveStyleElement(styleElement);\n\t\t\tif(styleElement.href)\n\t\t\t\tURL.revokeObjectURL(styleElement.href);\n\t\t};\n\t} else {\n\t\tstyleElement = createStyleElement(options);\n\t\tupdate = applyToTag.bind(null, styleElement);\n\t\tremove = function() {\n\t\t\tremoveStyleElement(styleElement);\n\t\t};\n\t}\n\n\tupdate(obj);\n\n\treturn function updateStyle(newObj) {\n\t\tif(newObj) {\n\t\t\tif(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)\n\t\t\t\treturn;\n\t\t\tupdate(obj = newObj);\n\t\t} else {\n\t\t\tremove();\n\t\t}\n\t};\n}\n\nvar replaceText = (function () {\n\tvar textStore = [];\n\n\treturn function (index, replacement) {\n\t\ttextStore[index] = replacement;\n\t\treturn textStore.filter(Boolean).join('\\n');\n\t};\n})();\n\nfunction applyToSingletonTag(styleElement, index, remove, obj) {\n\tvar css = remove ? \"\" : obj.css;\n\n\tif (styleElement.styleSheet) {\n\t\tstyleElement.styleSheet.cssText = replaceText(index, css);\n\t} else {\n\t\tvar cssNode = document.createTextNode(css);\n\t\tvar childNodes = styleElement.childNodes;\n\t\tif (childNodes[index]) styleElement.removeChild(childNodes[index]);\n\t\tif (childNodes.length) {\n\t\t\tstyleElement.insertBefore(cssNode, childNodes[index]);\n\t\t} else {\n\t\t\tstyleElement.appendChild(cssNode);\n\t\t}\n\t}\n}\n\nfunction applyToTag(styleElement, obj) {\n\tvar css = obj.css;\n\tvar media = obj.media;\n\n\tif(media) {\n\t\tstyleElement.setAttribute(\"media\", media)\n\t}\n\n\tif(styleElement.styleSheet) {\n\t\tstyleElement.styleSheet.cssText = css;\n\t} else {\n\t\twhile(styleElement.firstChild) {\n\t\t\tstyleElement.removeChild(styleElement.firstChild);\n\t\t}\n\t\tstyleElement.appendChild(document.createTextNode(css));\n\t}\n}\n\nfunction updateLink(linkElement, options, obj) {\n\tvar css = obj.css;\n\tvar sourceMap = obj.sourceMap;\n\n\t/* If convertToAbsoluteUrls isn't defined, but sourcemaps are enabled\n\tand there is no publicPath defined then lets turn convertToAbsoluteUrls\n\ton by default.  Otherwise default to the convertToAbsoluteUrls option\n\tdirectly\n\t*/\n\tvar autoFixUrls = options.convertToAbsoluteUrls === undefined && sourceMap;\n\n\tif (options.convertToAbsoluteUrls || autoFixUrls){\n\t\tcss = fixUrls(css);\n\t}\n\n\tif(sourceMap) {\n\t\t// http://stackoverflow.com/a/26603875\n\t\tcss += \"\\n/*# sourceMappingURL=data:application/json;base64,\" + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + \" */\";\n\t}\n\n\tvar blob = new Blob([css], { type: \"text/css\" });\n\n\tvar oldSrc = linkElement.href;\n\n\tlinkElement.href = URL.createObjectURL(blob);\n\n\tif(oldSrc)\n\t\tURL.revokeObjectURL(oldSrc);\n}\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./~/style-loader/addStyles.js\n// module id = 6\n// module chunks = 0\n\n//# sourceURL=webpack:///./~/style-loader/addStyles.js?");
-
-/***/ }),
-/* 7 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("/**\n * Created by sergey on 15.04.17.\n */\nclass GameObject {\n    constructor(pos) {\n        this.X = pos.x;\n        this.Y = pos.y;\n        this.Z = pos.z;\n    }\n\n    setPosition(pos) {\n        this.X = pos.x;\n        this.Y = pos.y;\n        this.Z = pos.z;\n    }\n\n    getPosition() {\n        return {x: this.X, y: this.Y, z: this.Z };\n    }\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = GameObject;\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/modules/game/object.js\n// module id = 7\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/modules/game/object.js?");
+/**
+ * Created by sergey on 15.04.17.
+ */
+class GameObject {
+    constructor(pos) {
+        this.X = pos.x;
+        this.Y = pos.y;
+        this.Z = pos.z;
+    }
+
+    setPosition(pos) {
+        this.X = pos.x;
+        this.Y = pos.y;
+        this.Z = pos.z;
+    }
+
+    getPosition() {
+        return {x: this.X, y: this.Y, z: this.Z };
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = GameObject;
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+var stylesInDom = {},
+	memoize = function(fn) {
+		var memo;
+		return function () {
+			if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+			return memo;
+		};
+	},
+	isOldIE = memoize(function() {
+		// Test for IE <= 9 as proposed by Browserhacks
+		// @see http://browserhacks.com/#hack-e71d8692f65334173fee715c222cb805
+		// Tests for existence of standard globals is to allow style-loader 
+		// to operate correctly into non-standard environments
+		// @see https://github.com/webpack-contrib/style-loader/issues/177
+		return window && document && document.all && !window.atob;
+	}),
+	getElement = (function(fn) {
+		var memo = {};
+		return function(selector) {
+			if (typeof memo[selector] === "undefined") {
+				memo[selector] = fn.call(this, selector);
+			}
+			return memo[selector]
+		};
+	})(function (styleTarget) {
+		return document.querySelector(styleTarget)
+	}),
+	singletonElement = null,
+	singletonCounter = 0,
+	styleElementsInsertedAtTop = [],
+	fixUrls = __webpack_require__(48);
+
+module.exports = function(list, options) {
+	if(typeof DEBUG !== "undefined" && DEBUG) {
+		if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+	}
+
+	options = options || {};
+	options.attrs = typeof options.attrs === "object" ? options.attrs : {};
+
+	// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+	// tags it will allow on a page
+	if (typeof options.singleton === "undefined") options.singleton = isOldIE();
+
+	// By default, add <style> tags to the <head> element
+	if (typeof options.insertInto === "undefined") options.insertInto = "head";
+
+	// By default, add <style> tags to the bottom of the target
+	if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
+
+	var styles = listToStyles(list);
+	addStylesToDom(styles, options);
+
+	return function update(newList) {
+		var mayRemove = [];
+		for(var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+			domStyle.refs--;
+			mayRemove.push(domStyle);
+		}
+		if(newList) {
+			var newStyles = listToStyles(newList);
+			addStylesToDom(newStyles, options);
+		}
+		for(var i = 0; i < mayRemove.length; i++) {
+			var domStyle = mayRemove[i];
+			if(domStyle.refs === 0) {
+				for(var j = 0; j < domStyle.parts.length; j++)
+					domStyle.parts[j]();
+				delete stylesInDom[domStyle.id];
+			}
+		}
+	};
+};
+
+function addStylesToDom(styles, options) {
+	for(var i = 0; i < styles.length; i++) {
+		var item = styles[i];
+		var domStyle = stylesInDom[item.id];
+		if(domStyle) {
+			domStyle.refs++;
+			for(var j = 0; j < domStyle.parts.length; j++) {
+				domStyle.parts[j](item.parts[j]);
+			}
+			for(; j < item.parts.length; j++) {
+				domStyle.parts.push(addStyle(item.parts[j], options));
+			}
+		} else {
+			var parts = [];
+			for(var j = 0; j < item.parts.length; j++) {
+				parts.push(addStyle(item.parts[j], options));
+			}
+			stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+		}
+	}
+}
+
+function listToStyles(list) {
+	var styles = [];
+	var newStyles = {};
+	for(var i = 0; i < list.length; i++) {
+		var item = list[i];
+		var id = item[0];
+		var css = item[1];
+		var media = item[2];
+		var sourceMap = item[3];
+		var part = {css: css, media: media, sourceMap: sourceMap};
+		if(!newStyles[id])
+			styles.push(newStyles[id] = {id: id, parts: [part]});
+		else
+			newStyles[id].parts.push(part);
+	}
+	return styles;
+}
+
+function insertStyleElement(options, styleElement) {
+	var styleTarget = getElement(options.insertInto)
+	if (!styleTarget) {
+		throw new Error("Couldn't find a style target. This probably means that the value for the 'insertInto' parameter is invalid.");
+	}
+	var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
+	if (options.insertAt === "top") {
+		if(!lastStyleElementInsertedAtTop) {
+			styleTarget.insertBefore(styleElement, styleTarget.firstChild);
+		} else if(lastStyleElementInsertedAtTop.nextSibling) {
+			styleTarget.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
+		} else {
+			styleTarget.appendChild(styleElement);
+		}
+		styleElementsInsertedAtTop.push(styleElement);
+	} else if (options.insertAt === "bottom") {
+		styleTarget.appendChild(styleElement);
+	} else {
+		throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
+	}
+}
+
+function removeStyleElement(styleElement) {
+	styleElement.parentNode.removeChild(styleElement);
+	var idx = styleElementsInsertedAtTop.indexOf(styleElement);
+	if(idx >= 0) {
+		styleElementsInsertedAtTop.splice(idx, 1);
+	}
+}
+
+function createStyleElement(options) {
+	var styleElement = document.createElement("style");
+	options.attrs.type = "text/css";
+
+	attachTagAttrs(styleElement, options.attrs);
+	insertStyleElement(options, styleElement);
+	return styleElement;
+}
+
+function createLinkElement(options) {
+	var linkElement = document.createElement("link");
+	options.attrs.type = "text/css";
+	options.attrs.rel = "stylesheet";
+
+	attachTagAttrs(linkElement, options.attrs);
+	insertStyleElement(options, linkElement);
+	return linkElement;
+}
+
+function attachTagAttrs(element, attrs) {
+	Object.keys(attrs).forEach(function (key) {
+		element.setAttribute(key, attrs[key]);
+	});
+}
+
+function addStyle(obj, options) {
+	var styleElement, update, remove;
+
+	if (options.singleton) {
+		var styleIndex = singletonCounter++;
+		styleElement = singletonElement || (singletonElement = createStyleElement(options));
+		update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
+		remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
+	} else if(obj.sourceMap &&
+		typeof URL === "function" &&
+		typeof URL.createObjectURL === "function" &&
+		typeof URL.revokeObjectURL === "function" &&
+		typeof Blob === "function" &&
+		typeof btoa === "function") {
+		styleElement = createLinkElement(options);
+		update = updateLink.bind(null, styleElement, options);
+		remove = function() {
+			removeStyleElement(styleElement);
+			if(styleElement.href)
+				URL.revokeObjectURL(styleElement.href);
+		};
+	} else {
+		styleElement = createStyleElement(options);
+		update = applyToTag.bind(null, styleElement);
+		remove = function() {
+			removeStyleElement(styleElement);
+		};
+	}
+
+	update(obj);
+
+	return function updateStyle(newObj) {
+		if(newObj) {
+			if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
+				return;
+			update(obj = newObj);
+		} else {
+			remove();
+		}
+	};
+}
+
+var replaceText = (function () {
+	var textStore = [];
+
+	return function (index, replacement) {
+		textStore[index] = replacement;
+		return textStore.filter(Boolean).join('\n');
+	};
+})();
+
+function applyToSingletonTag(styleElement, index, remove, obj) {
+	var css = remove ? "" : obj.css;
+
+	if (styleElement.styleSheet) {
+		styleElement.styleSheet.cssText = replaceText(index, css);
+	} else {
+		var cssNode = document.createTextNode(css);
+		var childNodes = styleElement.childNodes;
+		if (childNodes[index]) styleElement.removeChild(childNodes[index]);
+		if (childNodes.length) {
+			styleElement.insertBefore(cssNode, childNodes[index]);
+		} else {
+			styleElement.appendChild(cssNode);
+		}
+	}
+}
+
+function applyToTag(styleElement, obj) {
+	var css = obj.css;
+	var media = obj.media;
+
+	if(media) {
+		styleElement.setAttribute("media", media)
+	}
+
+	if(styleElement.styleSheet) {
+		styleElement.styleSheet.cssText = css;
+	} else {
+		while(styleElement.firstChild) {
+			styleElement.removeChild(styleElement.firstChild);
+		}
+		styleElement.appendChild(document.createTextNode(css));
+	}
+}
+
+function updateLink(linkElement, options, obj) {
+	var css = obj.css;
+	var sourceMap = obj.sourceMap;
+
+	/* If convertToAbsoluteUrls isn't defined, but sourcemaps are enabled
+	and there is no publicPath defined then lets turn convertToAbsoluteUrls
+	on by default.  Otherwise default to the convertToAbsoluteUrls option
+	directly
+	*/
+	var autoFixUrls = options.convertToAbsoluteUrls === undefined && sourceMap;
+
+	if (options.convertToAbsoluteUrls || autoFixUrls){
+		css = fixUrls(css);
+	}
+
+	if(sourceMap) {
+		// http://stackoverflow.com/a/26603875
+		css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+	}
+
+	var blob = new Blob([css], { type: "text/css" });
+
+	var oldSrc = linkElement.href;
+
+	linkElement.href = URL.createObjectURL(blob);
+
+	if(oldSrc)
+		URL.revokeObjectURL(oldSrc);
+}
+
 
 /***/ }),
 /* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("/**\n* Created by tlakatlekutl on 27.03.17.\n*/\n\nclass BaseView {\n  constructor(classNames, drawFunc, parent = document.querySelector('main')) {\n    const el = document.createElement('div');\n    el.hidden = true;\n    el.classList.add(...classNames);\n    this.drawFunc = drawFunc;\n    this.node = el;\n    this.parent = parent;\n    this.isModal = false;\n  }\n  render(data) {\n    this.setContent(data);\n    this.addElemToDOM();\n    return this;\n  }\n  setContent(data) {\n    this.node.innerHTML = this.drawFunc(data);\n  }\n  addElemToDOM() {\n    this.parent.appendChild(this.node);\n  }\n  destruct() {\n    this.parent.removeChild(this.node);\n  }\n  show() {\n    this.node.hidden = false;\n  }\n\n  hide() {\n    this.node.hidden = true;\n  }\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = BaseView;\n\n\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/views/baseView.js\n// module id = 8\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/views/baseView.js?");
+/**
+* Created by tlakatlekutl on 27.03.17.
+*/
+
+class BaseView {
+  constructor(classNames, drawFunc, parent = document.querySelector('main')) {
+    const el = document.createElement('div');
+    el.hidden = true;
+    el.classList.add(...classNames);
+    this.drawFunc = drawFunc;
+    this.node = el;
+    this.parent = parent;
+    this.isModal = false;
+  }
+  render(data) {
+    this.setContent(data);
+    this.addElemToDOM();
+    return this;
+  }
+  setContent(data) {
+    this.node.innerHTML = this.drawFunc(data);
+  }
+  addElemToDOM() {
+    this.parent.appendChild(this.node);
+  }
+  destruct() {
+    this.parent.removeChild(this.node);
+  }
+  show() {
+    this.node.hidden = false;
+  }
+
+  hide() {
+    this.node.hidden = true;
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = BaseView;
+
+
+
 
 /***/ }),
 /* 9 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-eval("var pug = __webpack_require__(1);\n\nfunction template(locals) {var pug_html = \"\", pug_mixins = {}, pug_interp;pug_html = pug_html + \"\\u003Cdiv class=\\\"concede-modal\\\"\\u003E\\u003Cdiv class=\\\"concede-modal__text\\\"\\u003EВы собираетесь покинуть игру! Вам будет засчитано поражение!\\u003C\\u002Fdiv\\u003E\\u003Cdiv class=\\\"choose\\\"\\u003E\\u003Cdiv class=\\\"choose__yes\\\"\\u003EДА\\u003C\\u002Fdiv\\u003E\\u003Cdiv class=\\\"choose__no\\\"\\u003EНЕТ\\u003C\\u002Fdiv\\u003E\\u003C\\u002Fdiv\\u003E\\u003C\\u002Fdiv\\u003E\";;return pug_html;};\nmodule.exports = template;\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/templates/concede.pug\n// module id = 9\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/templates/concede.pug?");
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_gameTransport_transport__ = __webpack_require__(59);
+/**
+ * Created by tlakatlekutl on 19.04.17.
+ */
+
+// import EventEmitter from '../modules/eventEmitter/eventEmitter';
+
+// const ee = new EventEmitter();
+
+class GameModel {
+  constructor() {
+    // if (GameModel.instance) {
+    //   return GameModel.instance;
+    // }
+    this.transport = new __WEBPACK_IMPORTED_MODULE_0__modules_gameTransport_transport__["a" /* default */]();
+    // GameModel.instance = this;
+  }
+  findOpponent() {
+    if (!this.transport) {
+      this.transport = new __WEBPACK_IMPORTED_MODULE_0__modules_gameTransport_transport__["a" /* default */]();
+    }
+    this.transport.send('com.aerohockey.mechanics.requests.JoinGame$Request', '{}');
+  }
+
+  sendButton(button, frameTime) {
+    this.transport.send('com.aerohockey.mechanics.base.ClientSnap', JSON.stringify({ button, frameTime }));
+  }
+  exit(){
+    this.transport.closeSocket();
+    delete this.transport;
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = GameModel;
+
+
 
 /***/ }),
 /* 10 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-eval("// style-loader: Adds some css to the DOM by adding a <style> tag\n\n// load the styles\nvar content = __webpack_require__(36);\nif(typeof content === 'string') content = [[module.i, content, '']];\n// add the styles to the DOM\nvar update = __webpack_require__(6)(content, {});\nif(content.locals) module.exports = content.locals;\n// Hot Module Replacement\nif(false) {\n\t// When the styles change, update the <style> tags\n\tif(!content.locals) {\n\t\tmodule.hot.accept(\"!!../../node_modules/css-loader/index.js!./concede.css\", function() {\n\t\t\tvar newContent = require(\"!!../../node_modules/css-loader/index.js!./concede.css\");\n\t\t\tif(typeof newContent === 'string') newContent = [[module.id, newContent, '']];\n\t\t\tupdate(newContent);\n\t\t});\n\t}\n\t// When the module is disposed, remove the <style> tags\n\tmodule.hot.dispose(function() { update(); });\n}\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/css/concede.css\n// module id = 10\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/css/concede.css?");
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__network_net__ = __webpack_require__(60);
+/**
+* Created by tlakatlekutl on 07.03.17.
+*/
+
+
+
+class API {
+
+  constructor(
+    baseUrl = 'http://62.109.3.208:8082/api',
+    headers = { 'content-type': 'application/json; charset=utf-8' }) {
+    if (API.instance) {
+      return API.instance;
+    }
+
+    this.net = new __WEBPACK_IMPORTED_MODULE_0__network_net__["a" /* default */](baseUrl, headers);
+
+    API.instance = this;
+  }
+
+  logout() {
+    return this.net.post('/logout', null)
+              .catch((error) => {
+                console.error(error);
+              });
+  }
+
+  signup(data) {
+    return this.net.post('/signup', data)
+              .catch((error) => {
+                console.error(error);
+              });
+  }
+
+  getUser() {
+    return this.net.get('/user')
+              .catch((error) => {
+                console.error(error);
+              });
+  }
+
+  login(data) {
+    return this.net.post('/login', data)
+              .catch((error) => {
+                console.error(error);
+              });
+  }
+
+  changePass(data) {
+    return this.net.post('/change-password', data)
+              .catch((error) => {
+                console.error(error);
+              });
+  }
+  getLeaderBoard() {
+    return this.net.get('/leaderboard')
+              .catch((error) => {
+                console.error(error);
+              });
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = API;
+
+
 
 /***/ }),
 /* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_gameTransport_transport__ = __webpack_require__(65);\n/**\n * Created by tlakatlekutl on 19.04.17.\n */\n\n// import EventEmitter from '../modules/eventEmitter/eventEmitter';\n\n// const ee = new EventEmitter();\n\nclass GameModel {\n  constructor() {\n    if (GameModel.instance) {\n      return GameModel.instance;\n    }\n    // transport.send() lala\n    this.transport = new __WEBPACK_IMPORTED_MODULE_0__modules_gameTransport_transport__[\"a\" /* default */]();\n    GameModel.instance = this;\n  }\n\n  // handleEvent(message) {\n  //\tconsole.log(`Hi from GM ${message}`);\n  // \tee.emit('msg', message);\n  // }\n\n  findOpponent() {\n    this.transport.send('com.aerohockey.mechanics.requests.JoinGame$Request', '{}');\n  }\n\n  sendButton(button, frameTime) {\n    this.transport.send('com.aerohockey.mechanics.base.ClientSnap', JSON.stringify({ button, frameTime }));\n  }\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = GameModel;\n\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/models/gameModel.js\n// module id = 11\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/models/gameModel.js?");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object__ = __webpack_require__(6);
+/**
+ * Created by sergey on 15.04.17.
+ */
+
+
+class Ball extends __WEBPACK_IMPORTED_MODULE_0__object__["a" /* GameObject */] {
+    constructor(side, pos, radius) {
+        super(pos);
+        this.radius = radius;
+
+        this.side = side;
+        this.move = false;
+        this.vectorMove = { x: 0, y: 0, z: 0 };
+
+        this.Geometry = new THREE.SphereGeometry(this.radius, 20, 20);
+        this.Material = new THREE.MeshLambertMaterial({ color: 0xE7DF32 });
+        this.model = new THREE.Mesh(this.Geometry, this.Material);
+        this.model.position.set(this.X, this.Y, this.Z);
+    }
+
+    getSize() {
+        return this.radius;
+    }
+
+    setSize(radius) {
+      this.radius = radius;
+      this.Geometry = new THREE.SphereGeometry(this.radius, 20, 20);
+      this.Material = new THREE.MeshLambertMaterial({ color: 0xE7DF32 });
+      this.model = new THREE.Mesh(this.Geometry, this.Material);
+      this.model.position.set(this.X, this.Y, this.Z);
+    }
+
+    getSide() {
+        return this.side;
+    }
+
+    getMove() {
+        return this.move;
+    }
+
+    getVectorMove() {
+        return this.vectorMove;
+    }
+
+    getModel() {
+        return this.model;
+    }
+
+    setPosition(pos) {
+        super.setPosition(pos);
+        this.model.position.set(this.X, this.Y, this.Z);
+    }
+
+    setMove(state) {
+        this.move = state;
+    }
+
+    setSide(side) {
+        this.side = side;
+    }
+
+    setVectorMove(vector) {
+        this.vectorMove.x = vector.x;
+        this.vectorMove.y = vector.y;
+        this.vectorMove.z = vector.z;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Ball;
+
 
 /***/ }),
 /* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__network_net__ = __webpack_require__(66);\n/**\n* Created by tlakatlekutl on 07.03.17.\n*/\n\n\n\nclass API {\n\n  constructor(\n    baseUrl = 'http://62.109.3.208:8082/api',\n    headers = { 'content-type': 'application/json; charset=utf-8' }) {\n    if (API.instance) {\n      return API.instance;\n    }\n\n    this.net = new __WEBPACK_IMPORTED_MODULE_0__network_net__[\"a\" /* default */](baseUrl, headers);\n\n    API.instance = this;\n  }\n\n  logout() {\n    return this.net.post('/logout', null)\n              .catch((error) => {\n                console.error(error);\n              });\n  }\n\n  signup(data) {\n    return this.net.post('/signup', data)\n              .catch((error) => {\n                console.error(error);\n              });\n  }\n\n  getUser() {\n    return this.net.get('/user')\n              .catch((error) => {\n                console.error(error);\n              });\n  }\n\n  login(data) {\n    return this.net.post('/login', data)\n              .catch((error) => {\n                console.error(error);\n              });\n  }\n\n  changePass(data) {\n    return this.net.post('/change-password', data)\n              .catch((error) => {\n                console.error(error);\n              });\n  }\n  getLeaderBoard() {\n    return this.net.get('/leaderboard')\n              .catch((error) => {\n                console.error(error);\n              });\n  }\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = API;\n\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/modules/api/api.js\n// module id = 12\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/modules/api/api.js?");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object__ = __webpack_require__(6);
+/**
+ * Created by sergey on 15.04.17.
+ */
+
+
+
+class Barrier extends __WEBPACK_IMPORTED_MODULE_0__object__["a" /* GameObject */] {
+    constructor(pos, size, angle) {
+        super(pos);
+        this.width = size.width;
+        this.height = size.height;
+        this.depth = size.depth;
+
+        this.angle = angle;
+
+        this.Geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
+        this.Material = new THREE.MeshLambertMaterial({color: 0xF2F0BA});
+        this.model = new THREE.Mesh(this.Geometry, this.Material);
+        this.model.position.set(this.X, this.Y, this.Z);
+    }
+
+    getSize() {
+        return { width: this.width, height: this.height, depth: this.depth };
+    }
+
+    getSide() {
+        return this.side;
+    }
+
+    getAngle() {
+        return this.angle;
+    }
+
+    getModel() {
+        return this.model;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Barrier;
+
 
 /***/ }),
 /* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object__ = __webpack_require__(7);\n/**\n * Created by sergey on 15.04.17.\n */\n\n\nclass Ball extends __WEBPACK_IMPORTED_MODULE_0__object__[\"a\" /* GameObject */] {\n    constructor(side, pos, radius) {\n        super(pos);\n        this.radius = radius;\n\n        this.side = side;\n        this.move = false;\n        this.vectorMove = { x: 0, y: 0, z: 0 };\n\n        this.Geometry = new THREE.SphereGeometry(this.radius, 20, 20);\n        this.Material = new THREE.MeshLambertMaterial({ color: 0xE7DF32 });\n        this.model = new THREE.Mesh(this.Geometry, this.Material);\n        this.model.position.set(this.X, this.Y, this.Z);\n    }\n\n    getSize() {\n        return this.radius;\n    }\n\n    getSide() {\n        return this.side;\n    }\n\n    getMove() {\n        return this.move;\n    }\n\n    getVectorMove() {\n        return this.vectorMove;\n    }\n\n    getModel() {\n        return this.model;\n    }\n\n    setPosition(pos) {\n        super.setPosition(pos);\n        this.model.position.set(this.X, this.Y, this.Z);\n    }\n\n    setMove(state) {\n        this.move = state;\n    }\n\n    setSide(side) {\n        this.side = side;\n    }\n\n    setVectorMove(vector) {\n        this.vectorMove.x = vector.x;\n        this.vectorMove.y = vector.y;\n        this.vectorMove.z = vector.z;\n    }\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = Ball;\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/modules/game/ball.js\n// module id = 13\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/modules/game/ball.js?");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object__ = __webpack_require__(6);
+/**
+ * Created by sergey on 15.04.17.
+ */
+
+
+
+class Ground extends __WEBPACK_IMPORTED_MODULE_0__object__["a" /* GameObject */] {
+    constructor(pos, size) {
+        super(pos);
+        this.width = size.width;
+        this.height = size.height;
+        this.depth = size.depth;
+
+        this.Geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
+        this.Material = new THREE.MeshLambertMaterial({color: 0xF7F6EE});
+        this.model = new THREE.Mesh(this.Geometry, this.Material);
+        this.model.position.set(this.X, this.Y, this.Z);
+
+        this.goalMy = this.depth - 0.5;
+        this.goalEnemy = 0.5;
+    }
+
+    getSize() {
+        return { width: this.width, height: this.height, depth: this.depth };
+    }
+
+    getModel() {
+        return this.model;
+    }
+
+    getGoalMy() {
+        return this.goalMy;
+    }
+
+    getGoalEnemy() {
+        return this.goalEnemy;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Ground;
+
 
 /***/ }),
 /* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object__ = __webpack_require__(7);\n/**\n * Created by sergey on 15.04.17.\n */\n\n\n\nclass Barrier extends __WEBPACK_IMPORTED_MODULE_0__object__[\"a\" /* GameObject */] {\n    constructor(pos, size, angle) {\n        super(pos);\n        this.width = size.width;\n        this.height = size.height;\n        this.depth = size.depth;\n\n        this.angle = angle;\n\n        this.Geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);\n        this.Material = new THREE.MeshLambertMaterial({color: 0xF2F0BA});\n        this.model = new THREE.Mesh(this.Geometry, this.Material);\n        this.model.position.set(this.X, this.Y, this.Z);\n    }\n\n    getSize() {\n        return { width: this.width, height: this.height, depth: this.depth };\n    }\n\n    getSide() {\n        return this.side;\n    }\n\n    getAngle() {\n        return this.angle;\n    }\n\n    getModel() {\n        return this.model;\n    }\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = Barrier;\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/modules/game/barrier.js\n// module id = 14\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/modules/game/barrier.js?");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object__ = __webpack_require__(6);
+/**
+ * Created by sergey on 15.04.17.
+ */
+
+
+class Platform extends __WEBPACK_IMPORTED_MODULE_0__object__["a" /* GameObject */] {
+    constructor(side, pos, size) {
+        super(pos);
+        this.width = size.width;
+        this.height = size.height;
+        this.depth = size.depth;
+
+        this.side = side;
+
+        this.Geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
+        if (this.side === 0) {
+            this.Material = new THREE.MeshLambertMaterial({color: 0x1D870D});
+        } else {
+            this.Material = new THREE.MeshLambertMaterial({color: 0xC70A00});
+        }
+        this.model = new THREE.Mesh(this.Geometry, this.Material);
+        this.model.position.set(this.X, this.Y, this.Z);
+    }
+
+    setPosition(pos) {
+        super.setPosition(pos);
+        this.model.position.set(this.X, this.Y, this.Z);
+    }
+
+    getSize() {
+        return { width: this.width, height: this.height, depth: this.depth };
+    }
+
+    setSize(size) {
+        this.width = size.width;
+        this.height = size.height;
+        this.Geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
+        if(this.side === 0) {
+          this.Material = new THREE.MeshLambertMaterial({ color: 0x1D870D });
+        } else {
+          this.Material = new THREE.MeshLambertMaterial({ color: 0xC70A00 });
+        }
+        this.model = new THREE.Mesh(this.Geometry, this.Material);
+        this.model.position.set(this.X, this.Y, this.Z);
+    }
+
+    getSide() {
+        return this.side;
+    }
+
+    getModel() {
+        return this.model;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Platform;
+
 
 /***/ }),
 /* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object__ = __webpack_require__(7);\n/**\n * Created by sergey on 15.04.17.\n */\n\n\n\nclass Ground extends __WEBPACK_IMPORTED_MODULE_0__object__[\"a\" /* GameObject */] {\n    constructor(pos, size) {\n        super(pos);\n        this.width = size.width;\n        this.height = size.height;\n        this.depth = size.depth;\n\n        this.Geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);\n        this.Material = new THREE.MeshLambertMaterial({color: 0xF7F6EE});\n        this.model = new THREE.Mesh(this.Geometry, this.Material);\n        this.model.position.set(this.X, this.Y, this.Z);\n\n        this.goalMy = this.depth - 0.5;\n        this.goalEnemy = 0.5;\n    }\n\n    getSize() {\n        return { width: this.width, height: this.height, depth: this.depth };\n    }\n\n    getModel() {\n        return this.model;\n    }\n\n    getGoalMy() {\n        return this.goalMy;\n    }\n\n    getGoalEnemy() {\n        return this.goalEnemy;\n    }\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = Ground;\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/modules/game/ground.js\n// module id = 15\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/modules/game/ground.js?");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategy__ = __webpack_require__(58);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__multi__ = __webpack_require__(57);
+/**
+ * Created by sergey on 21.04.17.
+ */
+
+
+
+
+class Game {
+    constructor(state) {
+        this.state = state;
+        this.play = true;
+        if(this.state === 'single') {
+            this.games = new __WEBPACK_IMPORTED_MODULE_0__strategy__["a" /* default */]();
+        } else {
+            this.games = new __WEBPACK_IMPORTED_MODULE_1__multi__["a" /* default */]();
+        }
+    }
+
+    gameProcess () {
+        if(this.state === 'single') {
+            if (this.play === true) {
+                this.games.animationScene();
+            }
+        } else {
+            if (this.play === true) {
+                this.games.animationScene();
+            }
+        }
+    }
+
+    stop() {
+      this.games.stop();
+    }
+
+    resume() {
+      this.games.resume();
+      this.gameProcess();
+    }
+
+    setStateGame(message, time) {
+      this.games.setStateGame(JSON.parse(message), time);
+    }
+
+    setChangeGame(message) {
+      this.games.setChangeGame(JSON.parse(message));
+    }
+
+    setOpponent(message) {
+      this.games.setOpponent(JSON.parse(message));
+    }
+
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Game;
+
+
 
 /***/ }),
 /* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object__ = __webpack_require__(7);\n/**\n * Created by sergey on 15.04.17.\n */\n\n\nclass Platform extends __WEBPACK_IMPORTED_MODULE_0__object__[\"a\" /* GameObject */] {\n    constructor(side, pos, size) {\n        super(pos);\n        this.width = size.width;\n        this.height = size.height;\n        this.depth = size.depth;\n\n        this.side = side;\n\n        this.Geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);\n        if(side === 0) {\n            this.Material = new THREE.MeshLambertMaterial({color: 0x1D870D});\n        } else {\n            this.Material = new THREE.MeshLambertMaterial({color: 0xC70A00});\n        }\n        this.model = new THREE.Mesh(this.Geometry, this.Material);\n        this.model.position.set(this.X, this.Y, this.Z);\n    }\n\n    setPosition(pos) {\n        super.setPosition(pos);\n        this.model.position.set(this.X, this.Y, this.Z);\n    }\n\n    getSize() {\n        return { width: this.width, height: this.height, depth: this.depth };\n    }\n\n    getSide() {\n        return this.side;\n    }\n\n    getModel() {\n        return this.model;\n    }\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = Platform;\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/modules/game/platform.js\n// module id = 16\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/modules/game/platform.js?");
+/**
+ * Created by sergey on 22.04.17.
+ */
+
+class Player {
+  constructor(nickname, score, rating) {
+    this.nickname = nickname;
+    this.score = score;
+    this.rating = rating;
+  }
+
+  getNickname() {
+    return this.nickname;
+  }
+
+  getScore() {
+    return this.score;
+  }
+
+  setScore(score) {
+    this.score = score;
+  }
+
+  getRating() {
+    return this.rating;
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Player;
+
 
 /***/ }),
 /* 17 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-eval("/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__strategy__ = __webpack_require__(64);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__multi__ = __webpack_require__(63);\n/**\n * Created by sergey on 21.04.17.\n */\n\n\n\n\nclass Game {\n    constructor(state) {\n        this.state = state;\n        this.play = true;\n        if(this.state === 'single') {\n            this.games = new __WEBPACK_IMPORTED_MODULE_0__strategy__[\"a\" /* default */]();\n        } else {\n            this.games = new __WEBPACK_IMPORTED_MODULE_1__multi__[\"a\" /* default */]();\n        }\n    }\n\n    gameProcess () {\n        if(this.state === 'single') {\n            if (this.play === true) {\n                this.games.animationScene();\n            }\n        } else {\n            if (this.play === true) {\n                this.games.animationScene();\n            }\n        }\n    }\n\n    stop() {\n      this.games.stop();\n    }\n\n    resume() {\n      this.games.resume();\n      this.gameProcess();\n    }\n\n    setStateGame(message) {\n      this.games.setStateGame(JSON.parse(message));\n    }\n\n    setOpponent(message) {\n      this.games.setOpponent(JSON.parse(message));\n    }\n\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = Game;\n\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/modules/game/play.js\n// module id = 17\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/modules/game/play.js?");
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(29);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// add the styles to the DOM
+var update = __webpack_require__(7)(content, {});
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!../../node_modules/css-loader/index.js!../../node_modules/postcss-loader/lib/index.js!./index.css", function() {
+			var newContent = require("!!../../node_modules/css-loader/index.js!../../node_modules/postcss-loader/lib/index.js!./index.css");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
 
 /***/ }),
 /* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("/**\n * Created by sergey on 22.04.17.\n */\n\nclass Player {\n  constructor(nickname, score, rating) {\n    this.nickname = nickname;\n    this.score = score;\n    this.rating = rating;\n  }\n\n  getNickname() {\n    return this.nickname;\n  }\n\n  getScore() {\n    return this.score;\n  }\n\n  setScore(score) {\n    this.score = score;\n  }\n\n  getRating() {\n    return this.rating;\n  }\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = Player;\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/modules/game/player.js\n// module id = 18\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/modules/game/player.js?");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__views_loginModalView__ = __webpack_require__(63);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__views_signupModalVew__ = __webpack_require__(66);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_eventEmitter_eventEmitter__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__models_userModel__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__modules_router_router__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__views_profileModalView__ = __webpack_require__(65);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__views_concedeModalView__ = __webpack_require__(61);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__views_victoryModalView__ = __webpack_require__(67);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__views_defeatModalView__ = __webpack_require__(62);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__views_mpGameView__ = __webpack_require__(64);
+/**
+ * Created by tlakatlekutl on 23.05.17.
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const router = new __WEBPACK_IMPORTED_MODULE_4__modules_router_router__["a" /* default */]();
+const ee = new __WEBPACK_IMPORTED_MODULE_2__modules_eventEmitter_eventEmitter__["a" /* default */]();
+const userModel = new __WEBPACK_IMPORTED_MODULE_3__models_userModel__["a" /* default */]();
+
+ee.on(__WEBPACK_IMPORTED_MODULE_2__modules_eventEmitter_eventEmitter__["i" /* VICTORY */], () => {
+  console.log(__WEBPACK_IMPORTED_MODULE_2__modules_eventEmitter_eventEmitter__["i" /* VICTORY */]);
+  const victoryModal = new __WEBPACK_IMPORTED_MODULE_7__views_victoryModalView__["a" /* default */]();
+  victoryModal.render();
+  victoryModal.show();
+  userModel.getUserStatus();
+});
+
+ee.on(__WEBPACK_IMPORTED_MODULE_2__modules_eventEmitter_eventEmitter__["j" /* DEFEAT */], () => {
+  console.log(__WEBPACK_IMPORTED_MODULE_2__modules_eventEmitter_eventEmitter__["j" /* DEFEAT */]);
+  const defeatModal = new __WEBPACK_IMPORTED_MODULE_8__views_defeatModalView__["a" /* default */]();
+  defeatModal.render();
+  defeatModal.show();
+  userModel.getUserStatus();
+});
+
+ee.on(__WEBPACK_IMPORTED_MODULE_2__modules_eventEmitter_eventEmitter__["g" /* START_SINGLE_GAME */], () => {
+  console.log(__WEBPACK_IMPORTED_MODULE_2__modules_eventEmitter_eventEmitter__["g" /* START_SINGLE_GAME */]);
+  router.go('/game');
+});
+
+ee.on(__WEBPACK_IMPORTED_MODULE_2__modules_eventEmitter_eventEmitter__["h" /* START_MULTI_GAME */], () => {
+  console.log(__WEBPACK_IMPORTED_MODULE_2__modules_eventEmitter_eventEmitter__["h" /* START_MULTI_GAME */]);
+  this.mpView = new __WEBPACK_IMPORTED_MODULE_9__views_mpGameView__["a" /* default */]();
+  router.addRoute(/mp/, this.mpView);
+  router.go('/mp');
+});
+
+ee.on(__WEBPACK_IMPORTED_MODULE_2__modules_eventEmitter_eventEmitter__["f" /* GAME_PAUSE */], (game) => {
+  console.log(__WEBPACK_IMPORTED_MODULE_2__modules_eventEmitter_eventEmitter__["f" /* GAME_PAUSE */]);
+  const concedeModalView = new __WEBPACK_IMPORTED_MODULE_6__views_concedeModalView__["a" /* default */](game);
+  concedeModalView.render();
+});
+
+ee.on(__WEBPACK_IMPORTED_MODULE_2__modules_eventEmitter_eventEmitter__["d" /* LOGOUTED */], () => {
+  console.log(__WEBPACK_IMPORTED_MODULE_2__modules_eventEmitter_eventEmitter__["d" /* LOGOUTED */]);
+  const loginModalView = new __WEBPACK_IMPORTED_MODULE_0__views_loginModalView__["a" /* default */]();
+  const signupModalView = new __WEBPACK_IMPORTED_MODULE_1__views_signupModalVew__["a" /* default */]();
+
+  router
+    .addRoute(/login$/, loginModalView)
+    .addRoute(/signup$/, signupModalView);
+  router.deleteRoute('/profile');
+  // userModel.getUserStatus();
+});
+ee.on(__WEBPACK_IMPORTED_MODULE_2__modules_eventEmitter_eventEmitter__["e" /* LOGINED */], () => {
+  console.log(__WEBPACK_IMPORTED_MODULE_2__modules_eventEmitter_eventEmitter__["e" /* LOGINED */]);
+  const profileModalView = new __WEBPACK_IMPORTED_MODULE_5__views_profileModalView__["a" /* default */]();
+  router.addRoute(/profile$/, profileModalView);
+  router
+    .deleteRoute('/login')
+    .deleteRoute('/signup');
+  // userModel.getUserStatus();
+});
+
+
+ee.on(__WEBPACK_IMPORTED_MODULE_2__modules_eventEmitter_eventEmitter__["k" /* DESTROY_GAME */], () => {
+  console.log(__WEBPACK_IMPORTED_MODULE_2__modules_eventEmitter_eventEmitter__["k" /* DESTROY_GAME */]);
+  router.go('/');
+});
+
+ee.on(__WEBPACK_IMPORTED_MODULE_2__modules_eventEmitter_eventEmitter__["l" /* TEST_EVENT */], () => {
+  console.log(__WEBPACK_IMPORTED_MODULE_2__modules_eventEmitter_eventEmitter__["l" /* TEST_EVENT */]);
+});
+
+ee.on(__WEBPACK_IMPORTED_MODULE_2__modules_eventEmitter_eventEmitter__["c" /* START_USER_UNAUTHORISED */], () => {
+  console.log(__WEBPACK_IMPORTED_MODULE_2__modules_eventEmitter_eventEmitter__["c" /* START_USER_UNAUTHORISED */]);
+  const loginModalView = new __WEBPACK_IMPORTED_MODULE_0__views_loginModalView__["a" /* default */]();
+  const signupModalView = new __WEBPACK_IMPORTED_MODULE_1__views_signupModalVew__["a" /* default */]();
+
+  router
+  .addRoute(/login$/, loginModalView)
+  .addRoute(/signup$/, signupModalView);
+  ee.off(__WEBPACK_IMPORTED_MODULE_2__modules_eventEmitter_eventEmitter__["b" /* START_USER_AUTHORISED */]);
+});
+
+ee.on(__WEBPACK_IMPORTED_MODULE_2__modules_eventEmitter_eventEmitter__["b" /* START_USER_AUTHORISED */], () => {
+  console.log(__WEBPACK_IMPORTED_MODULE_2__modules_eventEmitter_eventEmitter__["b" /* START_USER_AUTHORISED */]);
+  const profileModalView = new __WEBPACK_IMPORTED_MODULE_5__views_profileModalView__["a" /* default */]();
+  router.addRoute(/profile$/, profileModalView);
+  ee.off(__WEBPACK_IMPORTED_MODULE_2__modules_eventEmitter_eventEmitter__["c" /* START_USER_UNAUTHORISED */]);
+});
+
 
 /***/ }),
 /* 19 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-eval("// style-loader: Adds some css to the DOM by adding a <style> tag\n\n// load the styles\nvar content = __webpack_require__(39);\nif(typeof content === 'string') content = [[module.i, content, '']];\n// add the styles to the DOM\nvar update = __webpack_require__(6)(content, {});\nif(content.locals) module.exports = content.locals;\n// Hot Module Replacement\nif(false) {\n\t// When the styles change, update the <style> tags\n\tif(!content.locals) {\n\t\tmodule.hot.accept(\"!!../../node_modules/css-loader/index.js!./index.css\", function() {\n\t\t\tvar newContent = require(\"!!../../node_modules/css-loader/index.js!./index.css\");\n\t\t\tif(typeof newContent === 'string') newContent = [[module.id, newContent, '']];\n\t\t\tupdate(newContent);\n\t\t});\n\t}\n\t// When the module is disposed, remove the <style> tags\n\tmodule.hot.dispose(function() { update(); });\n}\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/css/index.css\n// module id = 19\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/css/index.css?");
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modalView__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__templates_about_pug__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__templates_about_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__templates_about_pug__);
+/**
+ * Created by tlakatlekutl on 04.04.17.
+ */
+
+
+
+
+
+class AboutModalView extends __WEBPACK_IMPORTED_MODULE_0__modalView__["a" /* default */] {
+  constructor() {
+    super('About', __WEBPACK_IMPORTED_MODULE_1__templates_about_pug___default.a);
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = AboutModalView;
+
 
 /***/ }),
 /* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modalView__ = __webpack_require__(3);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__templates_about_pug__ = __webpack_require__(46);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__templates_about_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__templates_about_pug__);\n/**\n * Created by tlakatlekutl on 04.04.17.\n */\n\n\n\n\n\nclass AboutModalView extends __WEBPACK_IMPORTED_MODULE_0__modalView__[\"a\" /* default */] {\n  constructor() {\n    super('About', __WEBPACK_IMPORTED_MODULE_1__templates_about_pug___default.a);\n  }\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = AboutModalView;\n\n\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/views/aboutModalVIew.js\n// module id = 20\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/views/aboutModalVIew.js?");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__baseView__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__templates_gameTemplate_pug__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__templates_gameTemplate_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__templates_gameTemplate_pug__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_eventEmitter_eventEmitter__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__modules_game_play__ = __webpack_require__(15);
+/**
+* Created by tlakatlekutl on 04.04.17.
+*/
+
+
+
+
+
+
+
+// const router = new Router();
+const ee = new __WEBPACK_IMPORTED_MODULE_2__modules_eventEmitter_eventEmitter__["a" /* default */]();
+
+class GameView extends __WEBPACK_IMPORTED_MODULE_0__baseView__["a" /* default */] {
+  constructor() {
+
+    if (GameView.instance) {
+      return GameView.instance;
+    }
+
+    super(['game-window-container'], __WEBPACK_IMPORTED_MODULE_1__templates_gameTemplate_pug___default.a);
+    this.alreadyInDOM = false;
+
+    GameView.instance = this;
+  }
+  render() {
+    this.node.innerHTML = this.drawFunc();
+    this.parent.appendChild(this.node);
+    document.querySelector('.game-back-link').addEventListener('click', () => {
+      this.game.stop();
+      ee.emit(__WEBPACK_IMPORTED_MODULE_2__modules_eventEmitter_eventEmitter__["f" /* GAME_PAUSE */], this.game);
+    });
+  }
+  show() {
+    if (!this.alreadyInDOM) {
+      this.render();
+      this.alreadyInDOM = true;
+    }
+    if (this.game) {
+      this.game.resume();
+    } else {
+      this.game = new __WEBPACK_IMPORTED_MODULE_3__modules_game_play__["a" /* default */]('single');
+      this.game.gameProcess();
+    }
+    this.node.hidden = false;
+  }
+
+  hide() {
+    console.log('single game hide');
+    this.destruct();
+  }
+
+  destruct() {
+    const root = document.querySelector('main');
+    const gamePage = document.querySelector('.game-window-container');
+    root.removeChild(gamePage);
+    const game = document.querySelector('canvas');
+    const body = document.querySelector('body');
+    body.removeChild(game);
+    this.alreadyInDOM = false;
+    delete this.game;
+  }
+
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = GameView;
+
+
+
 
 /***/ }),
 /* 21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_concede_css__ = __webpack_require__(10);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_concede_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__css_concede_css__);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__modalView__ = __webpack_require__(3);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(0);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_concede_pug__ = __webpack_require__(9);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_concede_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__templates_concede_pug__);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__ = __webpack_require__(5);\n/**\n * Created by sergey on 25.04.17.\n */\n\n\n\n\n\n\n\n\nconst router = new __WEBPACK_IMPORTED_MODULE_2__modules_router_router__[\"a\" /* default */]();\nconst ee = new __WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__[\"a\" /* default */]();\n\nclass ConcedeModal extends __WEBPACK_IMPORTED_MODULE_1__modalView__[\"a\" /* default */] {\n  constructor() {\n    super('Выход', __WEBPACK_IMPORTED_MODULE_3__templates_concede_pug___default.a);\n  }\n  render() {\n    super.render();\n    document.querySelector('.choose__yes').addEventListener('click', () => {\n      ee.emit('destroyGame');\n      router.go('/');\n    });\n    document.querySelector('.choose__no').addEventListener('click', () => {\n      router.go('/game');\n    });\n    this.onClose(() => { router.go('/game'); });\n  }\n\n  onClose(func) {\n    this.close.addEventListener('click', func);\n    this.close.addEventListener('click', () => {\n      this.modal.style.display = 'none';\n    });\n    return this;\n  }\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = ConcedeModal;\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/views/concedeModalView.js\n// module id = 21\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/views/concedeModalView.js?");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_api_api__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__modalView__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_leaderboard_pug__ = __webpack_require__(41);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_leaderboard_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__templates_leaderboard_pug__);
+/**
+* Created by tlakatlekutl on 04.04.17.
+*/
+
+
+
+
+
+const api = new __WEBPACK_IMPORTED_MODULE_0__modules_api_api__["a" /* default */]();
+
+class LeaderBoardModal extends __WEBPACK_IMPORTED_MODULE_1__modalView__["a" /* default */] {
+  constructor() {
+    super('Leaderboard', __WEBPACK_IMPORTED_MODULE_2__templates_leaderboard_pug___default.a);
+  }
+  render() {
+    api.getLeaderBoard()
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        }
+        throw new Error('error getting leaderboard');
+      })
+      .then((json) => {
+        console.log(json);
+        super.render({ data: json.users });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = LeaderBoardModal;
+
+
 
 /***/ }),
 /* 22 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_concede_css__ = __webpack_require__(10);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_concede_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__css_concede_css__);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__modalView__ = __webpack_require__(3);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(0);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_concede_pug__ = __webpack_require__(9);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_concede_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__templates_concede_pug__);\n/**\n * Created by sergey on 25.04.17.\n */\n\n\n\n\n\n\n\nconst router = new __WEBPACK_IMPORTED_MODULE_2__modules_router_router__[\"a\" /* default */]();\n\nclass ConcedeMpModal extends __WEBPACK_IMPORTED_MODULE_1__modalView__[\"a\" /* default */] {\n  constructor() {\n    super('Выход', __WEBPACK_IMPORTED_MODULE_3__templates_concede_pug___default.a);\n  }\n  render() {\n    super.render();\n    document.querySelector('.choose__yes').addEventListener('click', () => {\n      router.go('/');\n    });\n    document.querySelector('.choose__no').addEventListener('click', () => {\n      router.go('/mp');\n    });\n    this.onClose(() => { router.go('/mp'); });\n  }\n\n  onClose(func) {\n    this.close.addEventListener('click', func);\n    this.close.addEventListener('click', () => {\n      this.modal.style.display = 'none';\n    });\n    return this;\n  }\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = ConcedeMpModal;\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/views/concedeMpModalView.js\n// module id = 22\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/views/concedeMpModalView.js?");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__baseView__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_userModel__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_mainWindow_pug__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_mainWindow_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__templates_mainWindow_pug__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__ = __webpack_require__(1);
+/**
+* Created by tlakatlekutl on 27.03.17.
+*/
+
+
+
+
+
+
+
+
+
+const ee = new __WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__["a" /* default */]();
+
+const router = new __WEBPACK_IMPORTED_MODULE_2__modules_router_router__["a" /* default */]();
+const userModel = new __WEBPACK_IMPORTED_MODULE_1__models_userModel__["a" /* default */]();
+
+class MainView extends __WEBPACK_IMPORTED_MODULE_0__baseView__["a" /* default */] {
+  constructor() {
+    super(['main-vindow-container'], __WEBPACK_IMPORTED_MODULE_3__templates_mainWindow_pug___default.a);
+  }
+  render() {
+    this.data = {
+      authorised: userModel.isAuthorised(),
+      nickname: userModel.getData().nickname,
+    };
+    super.render({ user: this.data });
+    this.addListeners();
+  }
+  show() {
+    if (this.data.authorised !== userModel.isAuthorised()) {
+      this.data = {
+        authorised: userModel.isAuthorised(),
+        nickname: userModel.getData().nickname,
+      };
+      this.setContent({ user: this.data });
+      this.addListeners();
+    }
+    super.show();
+  }
+  addListeners() {
+    document.querySelector('.btn-left').addEventListener('click', () => { ee.emit(__WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__["g" /* START_SINGLE_GAME */]) });
+    document.querySelector('.btn-right').addEventListener('click', () => {
+      if (userModel.isAuthorised()) {
+        ee.emit(__WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__["h" /* START_MULTI_GAME */]);
+      } else {
+        alert('Вы должны быть авторизированы');
+      }
+    });
+    document.querySelector('.leaderboard-button').addEventListener('click', () => { router.go('/leaderboard'); });
+    document.querySelector('.footer-help-link').addEventListener('click', () => { router.go('/about'); });
+
+    if (this.data.authorised) {
+      document.querySelector('.profile-link').addEventListener('click', () => {
+        router.go('/profile');
+      });
+      document.querySelector('.logout-link').addEventListener('click', () => {
+        userModel.logout()
+          .then(() => {
+            this.show();
+          });
+      });
+    } else {
+      document.querySelector('.login-link').addEventListener('click', () => {
+        router.go('/login');
+      });
+      document.querySelector('.signup-link').addEventListener('click', () => {
+        router.go('/signup');
+      });
+    }
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = MainView;
+
+
+
 
 /***/ }),
 /* 23 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_defeat_css__ = __webpack_require__(57);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_defeat_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__css_defeat_css__);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__modalView__ = __webpack_require__(3);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(0);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_defeat_pug__ = __webpack_require__(47);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_defeat_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__templates_defeat_pug__);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__ = __webpack_require__(5);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__models_userModel__ = __webpack_require__(2);\n/**\n * Created by sergey on 01.05.17.\n */\n\n\n\n\n\n\n\n\n\nconst router = new __WEBPACK_IMPORTED_MODULE_2__modules_router_router__[\"a\" /* default */]();\nconst ee = new __WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__[\"a\" /* default */]();\nconst us = new __WEBPACK_IMPORTED_MODULE_5__models_userModel__[\"a\" /* default */]();\n\nclass DefeatModal extends __WEBPACK_IMPORTED_MODULE_1__modalView__[\"a\" /* default */] {\n  constructor() {\n    super('Завершение игры', __WEBPACK_IMPORTED_MODULE_3__templates_defeat_pug___default.a);\n  }\n  render() {\n    super.render();\n    this.changeRating = document.querySelector('.defeat-modal .change');\n    this.changeRating.innerHTML = us.getData().rating - us.getData().newRating;\n    this.newRating = document.querySelector('.defeat-modal .rating_score');\n    this.newRating.innerHTML = us.getData().newRating;\n    // document.querySelector('.choose__yes').addEventListener('click', () => {\n    //   ee.emit('destroyGame');\n    //   router.go('/');\n    // });\n    // document.querySelector('.choose__no').addEventListener('click', () => {\n    //   router.go('/game');\n    // });\n    this.onClose(() => {\n      ee.emit('destroyGame');\n      router.go('/');\n    });\n  }\n\n  onClose(func) {\n    this.close.addEventListener('click', func);\n    this.close.addEventListener('click', () => {\n      this.modal.style.display = 'none';\n    });\n    return this;\n  }\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = DefeatModal;\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/views/defeatModalView.js\n// module id = 23\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/views/defeatModalView.js?");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__baseView__ = __webpack_require__(8);
+/**
+ * Created by tlakatlekutl on 27.03.17.
+ */
+
+
+
+class Page404View extends __WEBPACK_IMPORTED_MODULE_0__baseView__["a" /* default */] {
+  constructor() {
+    super(['page404-container'], () => '<h1> Not Found </h1>');
+    this.render();
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Page404View;
+
+
+
 
 /***/ }),
 /* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_router_router__ = __webpack_require__(0);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__baseView__ = __webpack_require__(8);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_gameTemplate_pug__ = __webpack_require__(48);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_gameTemplate_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__templates_gameTemplate_pug__);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__modules_eventEmitter_eventEmitter__ = __webpack_require__(5);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__modules_game_play__ = __webpack_require__(17);\n/**\n* Created by tlakatlekutl on 04.04.17.\n*/\n\n\n\n\n\n\n\n\nconst router = new __WEBPACK_IMPORTED_MODULE_0__modules_router_router__[\"a\" /* default */]();\nconst ee = new __WEBPACK_IMPORTED_MODULE_3__modules_eventEmitter_eventEmitter__[\"a\" /* default */]();\n\nclass GameView extends __WEBPACK_IMPORTED_MODULE_1__baseView__[\"a\" /* default */] {\n  constructor() {\n    super(['game-window-container'], __WEBPACK_IMPORTED_MODULE_2__templates_gameTemplate_pug___default.a);\n    this.alreadyInDOM = false;\n  }\n  render() {\n    this.node.innerHTML = this.drawFunc();\n    this.parent.appendChild(this.node);\n    document.querySelector('.game-back-link').addEventListener('click', () => {\n      this.game.stop();\n      router.go('/concede');\n    });\n    ee.on('destroyGame', ()=> {\n      delete this.game;\n      const game = document.querySelector('canvas');\n      document.body.removeChild(game);\n    });\n  }\n  show() {\n    if (!this.alreadyInDOM) {\n      this.render();\n      this.alreadyInDOM = true;\n    }\n    if (this.game) {\n      this.game.resume();\n    } else {\n      this.game = new __WEBPACK_IMPORTED_MODULE_4__modules_game_play__[\"a\" /* default */]('single');\n      this.game.gameProcess();\n    }\n    // const game = document.querySelector('canvas');\n    // game.hidden = false;\n    this.node.hidden = false;\n  }\n  hide() {\n    if (this.alreadyInDOM) {\n      // super.destruct();\n      // const game = document.querySelector('canvas');\n      // game.hidden = true;\n    }\n    super.hide();\n  }\n\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = GameView;\n\n\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/views/gameView.js\n// module id = 24\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/views/gameView.js?");
+/**
+* Created by tlakatlekutl on 31.03.17.
+*/
+class PreloaderView {
+  constructor() {
+    this.node = document.querySelector('.preloader-page');
+    this.onLoad = new Event('onUserStatusLoad');
+    this.node.addEventListener('onUserStatusLoad', this.hide);
+  }
+  hide() {
+    this.hidden = true;
+  }
+  dispatchLoadCompleted() {
+    this.node.dispatchEvent(this.onLoad);
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = PreloaderView;
+
+
 
 /***/ }),
 /* 25 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_api_api__ = __webpack_require__(12);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__modalView__ = __webpack_require__(3);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_leaderboard_pug__ = __webpack_require__(49);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_leaderboard_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__templates_leaderboard_pug__);\n/**\n* Created by tlakatlekutl on 04.04.17.\n*/\n\n\n\n\n\nconst api = new __WEBPACK_IMPORTED_MODULE_0__modules_api_api__[\"a\" /* default */]();\n\nclass LeaderBoardModal extends __WEBPACK_IMPORTED_MODULE_1__modalView__[\"a\" /* default */] {\n  constructor() {\n    super('Leaderboard', __WEBPACK_IMPORTED_MODULE_2__templates_leaderboard_pug___default.a);\n  }\n  render() {\n    api.getLeaderBoard()\n      .then((response) => {\n        if (response.status === 200) {\n          return response.json();\n        }\n        throw new Error('error getting leaderboard');\n      })\n      .then((json) => {\n        console.log(json);\n        super.render({ data: json.users });\n      })\n      .catch((err) => {\n        console.log(err);\n      });\n  }\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = LeaderBoardModal;\n\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/views/leaderBoardModalView.js\n// module id = 25\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/views/leaderBoardModalView.js?");
+
+
+exports.byteLength = byteLength
+exports.toByteArray = toByteArray
+exports.fromByteArray = fromByteArray
+
+var lookup = []
+var revLookup = []
+var Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array
+
+var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+for (var i = 0, len = code.length; i < len; ++i) {
+  lookup[i] = code[i]
+  revLookup[code.charCodeAt(i)] = i
+}
+
+revLookup['-'.charCodeAt(0)] = 62
+revLookup['_'.charCodeAt(0)] = 63
+
+function placeHoldersCount (b64) {
+  var len = b64.length
+  if (len % 4 > 0) {
+    throw new Error('Invalid string. Length must be a multiple of 4')
+  }
+
+  // the number of equal signs (place holders)
+  // if there are two placeholders, than the two characters before it
+  // represent one byte
+  // if there is only one, then the three characters before it represent 2 bytes
+  // this is just a cheap hack to not do indexOf twice
+  return b64[len - 2] === '=' ? 2 : b64[len - 1] === '=' ? 1 : 0
+}
+
+function byteLength (b64) {
+  // base64 is 4/3 + up to two characters of the original data
+  return b64.length * 3 / 4 - placeHoldersCount(b64)
+}
+
+function toByteArray (b64) {
+  var i, j, l, tmp, placeHolders, arr
+  var len = b64.length
+  placeHolders = placeHoldersCount(b64)
+
+  arr = new Arr(len * 3 / 4 - placeHolders)
+
+  // if there are placeholders, only get up to the last complete 4 chars
+  l = placeHolders > 0 ? len - 4 : len
+
+  var L = 0
+
+  for (i = 0, j = 0; i < l; i += 4, j += 3) {
+    tmp = (revLookup[b64.charCodeAt(i)] << 18) | (revLookup[b64.charCodeAt(i + 1)] << 12) | (revLookup[b64.charCodeAt(i + 2)] << 6) | revLookup[b64.charCodeAt(i + 3)]
+    arr[L++] = (tmp >> 16) & 0xFF
+    arr[L++] = (tmp >> 8) & 0xFF
+    arr[L++] = tmp & 0xFF
+  }
+
+  if (placeHolders === 2) {
+    tmp = (revLookup[b64.charCodeAt(i)] << 2) | (revLookup[b64.charCodeAt(i + 1)] >> 4)
+    arr[L++] = tmp & 0xFF
+  } else if (placeHolders === 1) {
+    tmp = (revLookup[b64.charCodeAt(i)] << 10) | (revLookup[b64.charCodeAt(i + 1)] << 4) | (revLookup[b64.charCodeAt(i + 2)] >> 2)
+    arr[L++] = (tmp >> 8) & 0xFF
+    arr[L++] = tmp & 0xFF
+  }
+
+  return arr
+}
+
+function tripletToBase64 (num) {
+  return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F]
+}
+
+function encodeChunk (uint8, start, end) {
+  var tmp
+  var output = []
+  for (var i = start; i < end; i += 3) {
+    tmp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])
+    output.push(tripletToBase64(tmp))
+  }
+  return output.join('')
+}
+
+function fromByteArray (uint8) {
+  var tmp
+  var len = uint8.length
+  var extraBytes = len % 3 // if we have 1 byte left, pad 2 bytes
+  var output = ''
+  var parts = []
+  var maxChunkLength = 16383 // must be multiple of 3
+
+  // go through the array every three bytes, we'll deal with trailing stuff later
+  for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
+    parts.push(encodeChunk(uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)))
+  }
+
+  // pad the end with zeros, but make sure to not forget the extra bytes
+  if (extraBytes === 1) {
+    tmp = uint8[len - 1]
+    output += lookup[tmp >> 2]
+    output += lookup[(tmp << 4) & 0x3F]
+    output += '=='
+  } else if (extraBytes === 2) {
+    tmp = (uint8[len - 2] << 8) + (uint8[len - 1])
+    output += lookup[tmp >> 10]
+    output += lookup[(tmp >> 4) & 0x3F]
+    output += lookup[(tmp << 2) & 0x3F]
+    output += '='
+  }
+
+  parts.push(output)
+
+  return parts.join('')
+}
+
 
 /***/ }),
 /* 26 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modalView__ = __webpack_require__(3);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_userModel__ = __webpack_require__(2);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(0);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_login_pug__ = __webpack_require__(50);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_login_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__templates_login_pug__);\n/**\n* Created by tlakatlekutl on 02.04.17.\n*/\n\n\n\n\n\n\nconst userModel = new __WEBPACK_IMPORTED_MODULE_1__models_userModel__[\"a\" /* default */]();\nconst router = new __WEBPACK_IMPORTED_MODULE_2__modules_router_router__[\"a\" /* default */]();\n\nclass LoginModal extends __WEBPACK_IMPORTED_MODULE_0__modalView__[\"a\" /* default */] {\n  constructor() {\n    super('Login', __WEBPACK_IMPORTED_MODULE_3__templates_login_pug___default.a);\n  }\n  render() {\n    super.render();\n    this.errorField = document.querySelector('.danger');\n    document.querySelector('.login-submit-button').addEventListener('click', (event) => {\n      if (this.isValid()) {\n        event.preventDefault();\n        userModel.login(this.getFormData())\n          .then(() => {\n            router.go('/');\n            this.destruct();\n          })\n          .catch(() => { this.showError(); });\n      }\n    });\n  }\n  show() {\n    if (!userModel.isAuthorised()) {\n      super.show();\n      this.hideError();\n    } else {\n      router.go('/');\n    }\n  }\n  showError() {\n    this.errorField.style.display = 'block';\n  }\n  hideError() {\n    this.errorField.style.display = 'none';\n  }\n  isValid() {\n    this.nickname = document.querySelector('.login-nickname-input').value;\n    this.password = document.querySelector('.login-password-input').value;\n    if (this.nickname === '') {\n      return false;\n    }\n    if (this.password === '') {\n      return false;\n    }\n    return true;\n  }\n  getFormData() {\n    return {\n      login: this.nickname,\n      password: this.password,\n    };\n  }\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = LoginModal;\n\n\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/views/loginModalView.js\n// module id = 26\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/views/loginModalView.js?");
+/* WEBPACK VAR INJECTION */(function(global) {/*!
+ * The buffer module from node.js, for the browser.
+ *
+ * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
+ * @license  MIT
+ */
+/* eslint-disable no-proto */
+
+
+
+var base64 = __webpack_require__(25)
+var ieee754 = __webpack_require__(35)
+var isArray = __webpack_require__(36)
+
+exports.Buffer = Buffer
+exports.SlowBuffer = SlowBuffer
+exports.INSPECT_MAX_BYTES = 50
+
+/**
+ * If `Buffer.TYPED_ARRAY_SUPPORT`:
+ *   === true    Use Uint8Array implementation (fastest)
+ *   === false   Use Object implementation (most compatible, even IE6)
+ *
+ * Browsers that support typed arrays are IE 10+, Firefox 4+, Chrome 7+, Safari 5.1+,
+ * Opera 11.6+, iOS 4.2+.
+ *
+ * Due to various browser bugs, sometimes the Object implementation will be used even
+ * when the browser supports typed arrays.
+ *
+ * Note:
+ *
+ *   - Firefox 4-29 lacks support for adding new properties to `Uint8Array` instances,
+ *     See: https://bugzilla.mozilla.org/show_bug.cgi?id=695438.
+ *
+ *   - Chrome 9-10 is missing the `TypedArray.prototype.subarray` function.
+ *
+ *   - IE10 has a broken `TypedArray.prototype.subarray` function which returns arrays of
+ *     incorrect length in some situations.
+
+ * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they
+ * get the Object implementation, which is slower but behaves correctly.
+ */
+Buffer.TYPED_ARRAY_SUPPORT = global.TYPED_ARRAY_SUPPORT !== undefined
+  ? global.TYPED_ARRAY_SUPPORT
+  : typedArraySupport()
+
+/*
+ * Export kMaxLength after typed array support is determined.
+ */
+exports.kMaxLength = kMaxLength()
+
+function typedArraySupport () {
+  try {
+    var arr = new Uint8Array(1)
+    arr.__proto__ = {__proto__: Uint8Array.prototype, foo: function () { return 42 }}
+    return arr.foo() === 42 && // typed array instances can be augmented
+        typeof arr.subarray === 'function' && // chrome 9-10 lack `subarray`
+        arr.subarray(1, 1).byteLength === 0 // ie10 has broken `subarray`
+  } catch (e) {
+    return false
+  }
+}
+
+function kMaxLength () {
+  return Buffer.TYPED_ARRAY_SUPPORT
+    ? 0x7fffffff
+    : 0x3fffffff
+}
+
+function createBuffer (that, length) {
+  if (kMaxLength() < length) {
+    throw new RangeError('Invalid typed array length')
+  }
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    // Return an augmented `Uint8Array` instance, for best performance
+    that = new Uint8Array(length)
+    that.__proto__ = Buffer.prototype
+  } else {
+    // Fallback: Return an object instance of the Buffer class
+    if (that === null) {
+      that = new Buffer(length)
+    }
+    that.length = length
+  }
+
+  return that
+}
+
+/**
+ * The Buffer constructor returns instances of `Uint8Array` that have their
+ * prototype changed to `Buffer.prototype`. Furthermore, `Buffer` is a subclass of
+ * `Uint8Array`, so the returned instances will have all the node `Buffer` methods
+ * and the `Uint8Array` methods. Square bracket notation works as expected -- it
+ * returns a single octet.
+ *
+ * The `Uint8Array` prototype remains unmodified.
+ */
+
+function Buffer (arg, encodingOrOffset, length) {
+  if (!Buffer.TYPED_ARRAY_SUPPORT && !(this instanceof Buffer)) {
+    return new Buffer(arg, encodingOrOffset, length)
+  }
+
+  // Common case.
+  if (typeof arg === 'number') {
+    if (typeof encodingOrOffset === 'string') {
+      throw new Error(
+        'If encoding is specified then the first argument must be a string'
+      )
+    }
+    return allocUnsafe(this, arg)
+  }
+  return from(this, arg, encodingOrOffset, length)
+}
+
+Buffer.poolSize = 8192 // not used by this implementation
+
+// TODO: Legacy, not needed anymore. Remove in next major version.
+Buffer._augment = function (arr) {
+  arr.__proto__ = Buffer.prototype
+  return arr
+}
+
+function from (that, value, encodingOrOffset, length) {
+  if (typeof value === 'number') {
+    throw new TypeError('"value" argument must not be a number')
+  }
+
+  if (typeof ArrayBuffer !== 'undefined' && value instanceof ArrayBuffer) {
+    return fromArrayBuffer(that, value, encodingOrOffset, length)
+  }
+
+  if (typeof value === 'string') {
+    return fromString(that, value, encodingOrOffset)
+  }
+
+  return fromObject(that, value)
+}
+
+/**
+ * Functionally equivalent to Buffer(arg, encoding) but throws a TypeError
+ * if value is a number.
+ * Buffer.from(str[, encoding])
+ * Buffer.from(array)
+ * Buffer.from(buffer)
+ * Buffer.from(arrayBuffer[, byteOffset[, length]])
+ **/
+Buffer.from = function (value, encodingOrOffset, length) {
+  return from(null, value, encodingOrOffset, length)
+}
+
+if (Buffer.TYPED_ARRAY_SUPPORT) {
+  Buffer.prototype.__proto__ = Uint8Array.prototype
+  Buffer.__proto__ = Uint8Array
+  if (typeof Symbol !== 'undefined' && Symbol.species &&
+      Buffer[Symbol.species] === Buffer) {
+    // Fix subarray() in ES2016. See: https://github.com/feross/buffer/pull/97
+    Object.defineProperty(Buffer, Symbol.species, {
+      value: null,
+      configurable: true
+    })
+  }
+}
+
+function assertSize (size) {
+  if (typeof size !== 'number') {
+    throw new TypeError('"size" argument must be a number')
+  } else if (size < 0) {
+    throw new RangeError('"size" argument must not be negative')
+  }
+}
+
+function alloc (that, size, fill, encoding) {
+  assertSize(size)
+  if (size <= 0) {
+    return createBuffer(that, size)
+  }
+  if (fill !== undefined) {
+    // Only pay attention to encoding if it's a string. This
+    // prevents accidentally sending in a number that would
+    // be interpretted as a start offset.
+    return typeof encoding === 'string'
+      ? createBuffer(that, size).fill(fill, encoding)
+      : createBuffer(that, size).fill(fill)
+  }
+  return createBuffer(that, size)
+}
+
+/**
+ * Creates a new filled Buffer instance.
+ * alloc(size[, fill[, encoding]])
+ **/
+Buffer.alloc = function (size, fill, encoding) {
+  return alloc(null, size, fill, encoding)
+}
+
+function allocUnsafe (that, size) {
+  assertSize(size)
+  that = createBuffer(that, size < 0 ? 0 : checked(size) | 0)
+  if (!Buffer.TYPED_ARRAY_SUPPORT) {
+    for (var i = 0; i < size; ++i) {
+      that[i] = 0
+    }
+  }
+  return that
+}
+
+/**
+ * Equivalent to Buffer(num), by default creates a non-zero-filled Buffer instance.
+ * */
+Buffer.allocUnsafe = function (size) {
+  return allocUnsafe(null, size)
+}
+/**
+ * Equivalent to SlowBuffer(num), by default creates a non-zero-filled Buffer instance.
+ */
+Buffer.allocUnsafeSlow = function (size) {
+  return allocUnsafe(null, size)
+}
+
+function fromString (that, string, encoding) {
+  if (typeof encoding !== 'string' || encoding === '') {
+    encoding = 'utf8'
+  }
+
+  if (!Buffer.isEncoding(encoding)) {
+    throw new TypeError('"encoding" must be a valid string encoding')
+  }
+
+  var length = byteLength(string, encoding) | 0
+  that = createBuffer(that, length)
+
+  var actual = that.write(string, encoding)
+
+  if (actual !== length) {
+    // Writing a hex string, for example, that contains invalid characters will
+    // cause everything after the first invalid character to be ignored. (e.g.
+    // 'abxxcd' will be treated as 'ab')
+    that = that.slice(0, actual)
+  }
+
+  return that
+}
+
+function fromArrayLike (that, array) {
+  var length = array.length < 0 ? 0 : checked(array.length) | 0
+  that = createBuffer(that, length)
+  for (var i = 0; i < length; i += 1) {
+    that[i] = array[i] & 255
+  }
+  return that
+}
+
+function fromArrayBuffer (that, array, byteOffset, length) {
+  array.byteLength // this throws if `array` is not a valid ArrayBuffer
+
+  if (byteOffset < 0 || array.byteLength < byteOffset) {
+    throw new RangeError('\'offset\' is out of bounds')
+  }
+
+  if (array.byteLength < byteOffset + (length || 0)) {
+    throw new RangeError('\'length\' is out of bounds')
+  }
+
+  if (byteOffset === undefined && length === undefined) {
+    array = new Uint8Array(array)
+  } else if (length === undefined) {
+    array = new Uint8Array(array, byteOffset)
+  } else {
+    array = new Uint8Array(array, byteOffset, length)
+  }
+
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    // Return an augmented `Uint8Array` instance, for best performance
+    that = array
+    that.__proto__ = Buffer.prototype
+  } else {
+    // Fallback: Return an object instance of the Buffer class
+    that = fromArrayLike(that, array)
+  }
+  return that
+}
+
+function fromObject (that, obj) {
+  if (Buffer.isBuffer(obj)) {
+    var len = checked(obj.length) | 0
+    that = createBuffer(that, len)
+
+    if (that.length === 0) {
+      return that
+    }
+
+    obj.copy(that, 0, 0, len)
+    return that
+  }
+
+  if (obj) {
+    if ((typeof ArrayBuffer !== 'undefined' &&
+        obj.buffer instanceof ArrayBuffer) || 'length' in obj) {
+      if (typeof obj.length !== 'number' || isnan(obj.length)) {
+        return createBuffer(that, 0)
+      }
+      return fromArrayLike(that, obj)
+    }
+
+    if (obj.type === 'Buffer' && isArray(obj.data)) {
+      return fromArrayLike(that, obj.data)
+    }
+  }
+
+  throw new TypeError('First argument must be a string, Buffer, ArrayBuffer, Array, or array-like object.')
+}
+
+function checked (length) {
+  // Note: cannot use `length < kMaxLength()` here because that fails when
+  // length is NaN (which is otherwise coerced to zero.)
+  if (length >= kMaxLength()) {
+    throw new RangeError('Attempt to allocate Buffer larger than maximum ' +
+                         'size: 0x' + kMaxLength().toString(16) + ' bytes')
+  }
+  return length | 0
+}
+
+function SlowBuffer (length) {
+  if (+length != length) { // eslint-disable-line eqeqeq
+    length = 0
+  }
+  return Buffer.alloc(+length)
+}
+
+Buffer.isBuffer = function isBuffer (b) {
+  return !!(b != null && b._isBuffer)
+}
+
+Buffer.compare = function compare (a, b) {
+  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) {
+    throw new TypeError('Arguments must be Buffers')
+  }
+
+  if (a === b) return 0
+
+  var x = a.length
+  var y = b.length
+
+  for (var i = 0, len = Math.min(x, y); i < len; ++i) {
+    if (a[i] !== b[i]) {
+      x = a[i]
+      y = b[i]
+      break
+    }
+  }
+
+  if (x < y) return -1
+  if (y < x) return 1
+  return 0
+}
+
+Buffer.isEncoding = function isEncoding (encoding) {
+  switch (String(encoding).toLowerCase()) {
+    case 'hex':
+    case 'utf8':
+    case 'utf-8':
+    case 'ascii':
+    case 'latin1':
+    case 'binary':
+    case 'base64':
+    case 'ucs2':
+    case 'ucs-2':
+    case 'utf16le':
+    case 'utf-16le':
+      return true
+    default:
+      return false
+  }
+}
+
+Buffer.concat = function concat (list, length) {
+  if (!isArray(list)) {
+    throw new TypeError('"list" argument must be an Array of Buffers')
+  }
+
+  if (list.length === 0) {
+    return Buffer.alloc(0)
+  }
+
+  var i
+  if (length === undefined) {
+    length = 0
+    for (i = 0; i < list.length; ++i) {
+      length += list[i].length
+    }
+  }
+
+  var buffer = Buffer.allocUnsafe(length)
+  var pos = 0
+  for (i = 0; i < list.length; ++i) {
+    var buf = list[i]
+    if (!Buffer.isBuffer(buf)) {
+      throw new TypeError('"list" argument must be an Array of Buffers')
+    }
+    buf.copy(buffer, pos)
+    pos += buf.length
+  }
+  return buffer
+}
+
+function byteLength (string, encoding) {
+  if (Buffer.isBuffer(string)) {
+    return string.length
+  }
+  if (typeof ArrayBuffer !== 'undefined' && typeof ArrayBuffer.isView === 'function' &&
+      (ArrayBuffer.isView(string) || string instanceof ArrayBuffer)) {
+    return string.byteLength
+  }
+  if (typeof string !== 'string') {
+    string = '' + string
+  }
+
+  var len = string.length
+  if (len === 0) return 0
+
+  // Use a for loop to avoid recursion
+  var loweredCase = false
+  for (;;) {
+    switch (encoding) {
+      case 'ascii':
+      case 'latin1':
+      case 'binary':
+        return len
+      case 'utf8':
+      case 'utf-8':
+      case undefined:
+        return utf8ToBytes(string).length
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return len * 2
+      case 'hex':
+        return len >>> 1
+      case 'base64':
+        return base64ToBytes(string).length
+      default:
+        if (loweredCase) return utf8ToBytes(string).length // assume utf8
+        encoding = ('' + encoding).toLowerCase()
+        loweredCase = true
+    }
+  }
+}
+Buffer.byteLength = byteLength
+
+function slowToString (encoding, start, end) {
+  var loweredCase = false
+
+  // No need to verify that "this.length <= MAX_UINT32" since it's a read-only
+  // property of a typed array.
+
+  // This behaves neither like String nor Uint8Array in that we set start/end
+  // to their upper/lower bounds if the value passed is out of range.
+  // undefined is handled specially as per ECMA-262 6th Edition,
+  // Section 13.3.3.7 Runtime Semantics: KeyedBindingInitialization.
+  if (start === undefined || start < 0) {
+    start = 0
+  }
+  // Return early if start > this.length. Done here to prevent potential uint32
+  // coercion fail below.
+  if (start > this.length) {
+    return ''
+  }
+
+  if (end === undefined || end > this.length) {
+    end = this.length
+  }
+
+  if (end <= 0) {
+    return ''
+  }
+
+  // Force coersion to uint32. This will also coerce falsey/NaN values to 0.
+  end >>>= 0
+  start >>>= 0
+
+  if (end <= start) {
+    return ''
+  }
+
+  if (!encoding) encoding = 'utf8'
+
+  while (true) {
+    switch (encoding) {
+      case 'hex':
+        return hexSlice(this, start, end)
+
+      case 'utf8':
+      case 'utf-8':
+        return utf8Slice(this, start, end)
+
+      case 'ascii':
+        return asciiSlice(this, start, end)
+
+      case 'latin1':
+      case 'binary':
+        return latin1Slice(this, start, end)
+
+      case 'base64':
+        return base64Slice(this, start, end)
+
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return utf16leSlice(this, start, end)
+
+      default:
+        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
+        encoding = (encoding + '').toLowerCase()
+        loweredCase = true
+    }
+  }
+}
+
+// The property is used by `Buffer.isBuffer` and `is-buffer` (in Safari 5-7) to detect
+// Buffer instances.
+Buffer.prototype._isBuffer = true
+
+function swap (b, n, m) {
+  var i = b[n]
+  b[n] = b[m]
+  b[m] = i
+}
+
+Buffer.prototype.swap16 = function swap16 () {
+  var len = this.length
+  if (len % 2 !== 0) {
+    throw new RangeError('Buffer size must be a multiple of 16-bits')
+  }
+  for (var i = 0; i < len; i += 2) {
+    swap(this, i, i + 1)
+  }
+  return this
+}
+
+Buffer.prototype.swap32 = function swap32 () {
+  var len = this.length
+  if (len % 4 !== 0) {
+    throw new RangeError('Buffer size must be a multiple of 32-bits')
+  }
+  for (var i = 0; i < len; i += 4) {
+    swap(this, i, i + 3)
+    swap(this, i + 1, i + 2)
+  }
+  return this
+}
+
+Buffer.prototype.swap64 = function swap64 () {
+  var len = this.length
+  if (len % 8 !== 0) {
+    throw new RangeError('Buffer size must be a multiple of 64-bits')
+  }
+  for (var i = 0; i < len; i += 8) {
+    swap(this, i, i + 7)
+    swap(this, i + 1, i + 6)
+    swap(this, i + 2, i + 5)
+    swap(this, i + 3, i + 4)
+  }
+  return this
+}
+
+Buffer.prototype.toString = function toString () {
+  var length = this.length | 0
+  if (length === 0) return ''
+  if (arguments.length === 0) return utf8Slice(this, 0, length)
+  return slowToString.apply(this, arguments)
+}
+
+Buffer.prototype.equals = function equals (b) {
+  if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
+  if (this === b) return true
+  return Buffer.compare(this, b) === 0
+}
+
+Buffer.prototype.inspect = function inspect () {
+  var str = ''
+  var max = exports.INSPECT_MAX_BYTES
+  if (this.length > 0) {
+    str = this.toString('hex', 0, max).match(/.{2}/g).join(' ')
+    if (this.length > max) str += ' ... '
+  }
+  return '<Buffer ' + str + '>'
+}
+
+Buffer.prototype.compare = function compare (target, start, end, thisStart, thisEnd) {
+  if (!Buffer.isBuffer(target)) {
+    throw new TypeError('Argument must be a Buffer')
+  }
+
+  if (start === undefined) {
+    start = 0
+  }
+  if (end === undefined) {
+    end = target ? target.length : 0
+  }
+  if (thisStart === undefined) {
+    thisStart = 0
+  }
+  if (thisEnd === undefined) {
+    thisEnd = this.length
+  }
+
+  if (start < 0 || end > target.length || thisStart < 0 || thisEnd > this.length) {
+    throw new RangeError('out of range index')
+  }
+
+  if (thisStart >= thisEnd && start >= end) {
+    return 0
+  }
+  if (thisStart >= thisEnd) {
+    return -1
+  }
+  if (start >= end) {
+    return 1
+  }
+
+  start >>>= 0
+  end >>>= 0
+  thisStart >>>= 0
+  thisEnd >>>= 0
+
+  if (this === target) return 0
+
+  var x = thisEnd - thisStart
+  var y = end - start
+  var len = Math.min(x, y)
+
+  var thisCopy = this.slice(thisStart, thisEnd)
+  var targetCopy = target.slice(start, end)
+
+  for (var i = 0; i < len; ++i) {
+    if (thisCopy[i] !== targetCopy[i]) {
+      x = thisCopy[i]
+      y = targetCopy[i]
+      break
+    }
+  }
+
+  if (x < y) return -1
+  if (y < x) return 1
+  return 0
+}
+
+// Finds either the first index of `val` in `buffer` at offset >= `byteOffset`,
+// OR the last index of `val` in `buffer` at offset <= `byteOffset`.
+//
+// Arguments:
+// - buffer - a Buffer to search
+// - val - a string, Buffer, or number
+// - byteOffset - an index into `buffer`; will be clamped to an int32
+// - encoding - an optional encoding, relevant is val is a string
+// - dir - true for indexOf, false for lastIndexOf
+function bidirectionalIndexOf (buffer, val, byteOffset, encoding, dir) {
+  // Empty buffer means no match
+  if (buffer.length === 0) return -1
+
+  // Normalize byteOffset
+  if (typeof byteOffset === 'string') {
+    encoding = byteOffset
+    byteOffset = 0
+  } else if (byteOffset > 0x7fffffff) {
+    byteOffset = 0x7fffffff
+  } else if (byteOffset < -0x80000000) {
+    byteOffset = -0x80000000
+  }
+  byteOffset = +byteOffset  // Coerce to Number.
+  if (isNaN(byteOffset)) {
+    // byteOffset: it it's undefined, null, NaN, "foo", etc, search whole buffer
+    byteOffset = dir ? 0 : (buffer.length - 1)
+  }
+
+  // Normalize byteOffset: negative offsets start from the end of the buffer
+  if (byteOffset < 0) byteOffset = buffer.length + byteOffset
+  if (byteOffset >= buffer.length) {
+    if (dir) return -1
+    else byteOffset = buffer.length - 1
+  } else if (byteOffset < 0) {
+    if (dir) byteOffset = 0
+    else return -1
+  }
+
+  // Normalize val
+  if (typeof val === 'string') {
+    val = Buffer.from(val, encoding)
+  }
+
+  // Finally, search either indexOf (if dir is true) or lastIndexOf
+  if (Buffer.isBuffer(val)) {
+    // Special case: looking for empty string/buffer always fails
+    if (val.length === 0) {
+      return -1
+    }
+    return arrayIndexOf(buffer, val, byteOffset, encoding, dir)
+  } else if (typeof val === 'number') {
+    val = val & 0xFF // Search for a byte value [0-255]
+    if (Buffer.TYPED_ARRAY_SUPPORT &&
+        typeof Uint8Array.prototype.indexOf === 'function') {
+      if (dir) {
+        return Uint8Array.prototype.indexOf.call(buffer, val, byteOffset)
+      } else {
+        return Uint8Array.prototype.lastIndexOf.call(buffer, val, byteOffset)
+      }
+    }
+    return arrayIndexOf(buffer, [ val ], byteOffset, encoding, dir)
+  }
+
+  throw new TypeError('val must be string, number or Buffer')
+}
+
+function arrayIndexOf (arr, val, byteOffset, encoding, dir) {
+  var indexSize = 1
+  var arrLength = arr.length
+  var valLength = val.length
+
+  if (encoding !== undefined) {
+    encoding = String(encoding).toLowerCase()
+    if (encoding === 'ucs2' || encoding === 'ucs-2' ||
+        encoding === 'utf16le' || encoding === 'utf-16le') {
+      if (arr.length < 2 || val.length < 2) {
+        return -1
+      }
+      indexSize = 2
+      arrLength /= 2
+      valLength /= 2
+      byteOffset /= 2
+    }
+  }
+
+  function read (buf, i) {
+    if (indexSize === 1) {
+      return buf[i]
+    } else {
+      return buf.readUInt16BE(i * indexSize)
+    }
+  }
+
+  var i
+  if (dir) {
+    var foundIndex = -1
+    for (i = byteOffset; i < arrLength; i++) {
+      if (read(arr, i) === read(val, foundIndex === -1 ? 0 : i - foundIndex)) {
+        if (foundIndex === -1) foundIndex = i
+        if (i - foundIndex + 1 === valLength) return foundIndex * indexSize
+      } else {
+        if (foundIndex !== -1) i -= i - foundIndex
+        foundIndex = -1
+      }
+    }
+  } else {
+    if (byteOffset + valLength > arrLength) byteOffset = arrLength - valLength
+    for (i = byteOffset; i >= 0; i--) {
+      var found = true
+      for (var j = 0; j < valLength; j++) {
+        if (read(arr, i + j) !== read(val, j)) {
+          found = false
+          break
+        }
+      }
+      if (found) return i
+    }
+  }
+
+  return -1
+}
+
+Buffer.prototype.includes = function includes (val, byteOffset, encoding) {
+  return this.indexOf(val, byteOffset, encoding) !== -1
+}
+
+Buffer.prototype.indexOf = function indexOf (val, byteOffset, encoding) {
+  return bidirectionalIndexOf(this, val, byteOffset, encoding, true)
+}
+
+Buffer.prototype.lastIndexOf = function lastIndexOf (val, byteOffset, encoding) {
+  return bidirectionalIndexOf(this, val, byteOffset, encoding, false)
+}
+
+function hexWrite (buf, string, offset, length) {
+  offset = Number(offset) || 0
+  var remaining = buf.length - offset
+  if (!length) {
+    length = remaining
+  } else {
+    length = Number(length)
+    if (length > remaining) {
+      length = remaining
+    }
+  }
+
+  // must be an even number of digits
+  var strLen = string.length
+  if (strLen % 2 !== 0) throw new TypeError('Invalid hex string')
+
+  if (length > strLen / 2) {
+    length = strLen / 2
+  }
+  for (var i = 0; i < length; ++i) {
+    var parsed = parseInt(string.substr(i * 2, 2), 16)
+    if (isNaN(parsed)) return i
+    buf[offset + i] = parsed
+  }
+  return i
+}
+
+function utf8Write (buf, string, offset, length) {
+  return blitBuffer(utf8ToBytes(string, buf.length - offset), buf, offset, length)
+}
+
+function asciiWrite (buf, string, offset, length) {
+  return blitBuffer(asciiToBytes(string), buf, offset, length)
+}
+
+function latin1Write (buf, string, offset, length) {
+  return asciiWrite(buf, string, offset, length)
+}
+
+function base64Write (buf, string, offset, length) {
+  return blitBuffer(base64ToBytes(string), buf, offset, length)
+}
+
+function ucs2Write (buf, string, offset, length) {
+  return blitBuffer(utf16leToBytes(string, buf.length - offset), buf, offset, length)
+}
+
+Buffer.prototype.write = function write (string, offset, length, encoding) {
+  // Buffer#write(string)
+  if (offset === undefined) {
+    encoding = 'utf8'
+    length = this.length
+    offset = 0
+  // Buffer#write(string, encoding)
+  } else if (length === undefined && typeof offset === 'string') {
+    encoding = offset
+    length = this.length
+    offset = 0
+  // Buffer#write(string, offset[, length][, encoding])
+  } else if (isFinite(offset)) {
+    offset = offset | 0
+    if (isFinite(length)) {
+      length = length | 0
+      if (encoding === undefined) encoding = 'utf8'
+    } else {
+      encoding = length
+      length = undefined
+    }
+  // legacy write(string, encoding, offset, length) - remove in v0.13
+  } else {
+    throw new Error(
+      'Buffer.write(string, encoding, offset[, length]) is no longer supported'
+    )
+  }
+
+  var remaining = this.length - offset
+  if (length === undefined || length > remaining) length = remaining
+
+  if ((string.length > 0 && (length < 0 || offset < 0)) || offset > this.length) {
+    throw new RangeError('Attempt to write outside buffer bounds')
+  }
+
+  if (!encoding) encoding = 'utf8'
+
+  var loweredCase = false
+  for (;;) {
+    switch (encoding) {
+      case 'hex':
+        return hexWrite(this, string, offset, length)
+
+      case 'utf8':
+      case 'utf-8':
+        return utf8Write(this, string, offset, length)
+
+      case 'ascii':
+        return asciiWrite(this, string, offset, length)
+
+      case 'latin1':
+      case 'binary':
+        return latin1Write(this, string, offset, length)
+
+      case 'base64':
+        // Warning: maxLength not taken into account in base64Write
+        return base64Write(this, string, offset, length)
+
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return ucs2Write(this, string, offset, length)
+
+      default:
+        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
+        encoding = ('' + encoding).toLowerCase()
+        loweredCase = true
+    }
+  }
+}
+
+Buffer.prototype.toJSON = function toJSON () {
+  return {
+    type: 'Buffer',
+    data: Array.prototype.slice.call(this._arr || this, 0)
+  }
+}
+
+function base64Slice (buf, start, end) {
+  if (start === 0 && end === buf.length) {
+    return base64.fromByteArray(buf)
+  } else {
+    return base64.fromByteArray(buf.slice(start, end))
+  }
+}
+
+function utf8Slice (buf, start, end) {
+  end = Math.min(buf.length, end)
+  var res = []
+
+  var i = start
+  while (i < end) {
+    var firstByte = buf[i]
+    var codePoint = null
+    var bytesPerSequence = (firstByte > 0xEF) ? 4
+      : (firstByte > 0xDF) ? 3
+      : (firstByte > 0xBF) ? 2
+      : 1
+
+    if (i + bytesPerSequence <= end) {
+      var secondByte, thirdByte, fourthByte, tempCodePoint
+
+      switch (bytesPerSequence) {
+        case 1:
+          if (firstByte < 0x80) {
+            codePoint = firstByte
+          }
+          break
+        case 2:
+          secondByte = buf[i + 1]
+          if ((secondByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0x1F) << 0x6 | (secondByte & 0x3F)
+            if (tempCodePoint > 0x7F) {
+              codePoint = tempCodePoint
+            }
+          }
+          break
+        case 3:
+          secondByte = buf[i + 1]
+          thirdByte = buf[i + 2]
+          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0xF) << 0xC | (secondByte & 0x3F) << 0x6 | (thirdByte & 0x3F)
+            if (tempCodePoint > 0x7FF && (tempCodePoint < 0xD800 || tempCodePoint > 0xDFFF)) {
+              codePoint = tempCodePoint
+            }
+          }
+          break
+        case 4:
+          secondByte = buf[i + 1]
+          thirdByte = buf[i + 2]
+          fourthByte = buf[i + 3]
+          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80 && (fourthByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0xF) << 0x12 | (secondByte & 0x3F) << 0xC | (thirdByte & 0x3F) << 0x6 | (fourthByte & 0x3F)
+            if (tempCodePoint > 0xFFFF && tempCodePoint < 0x110000) {
+              codePoint = tempCodePoint
+            }
+          }
+      }
+    }
+
+    if (codePoint === null) {
+      // we did not generate a valid codePoint so insert a
+      // replacement char (U+FFFD) and advance only 1 byte
+      codePoint = 0xFFFD
+      bytesPerSequence = 1
+    } else if (codePoint > 0xFFFF) {
+      // encode to utf16 (surrogate pair dance)
+      codePoint -= 0x10000
+      res.push(codePoint >>> 10 & 0x3FF | 0xD800)
+      codePoint = 0xDC00 | codePoint & 0x3FF
+    }
+
+    res.push(codePoint)
+    i += bytesPerSequence
+  }
+
+  return decodeCodePointsArray(res)
+}
+
+// Based on http://stackoverflow.com/a/22747272/680742, the browser with
+// the lowest limit is Chrome, with 0x10000 args.
+// We go 1 magnitude less, for safety
+var MAX_ARGUMENTS_LENGTH = 0x1000
+
+function decodeCodePointsArray (codePoints) {
+  var len = codePoints.length
+  if (len <= MAX_ARGUMENTS_LENGTH) {
+    return String.fromCharCode.apply(String, codePoints) // avoid extra slice()
+  }
+
+  // Decode in chunks to avoid "call stack size exceeded".
+  var res = ''
+  var i = 0
+  while (i < len) {
+    res += String.fromCharCode.apply(
+      String,
+      codePoints.slice(i, i += MAX_ARGUMENTS_LENGTH)
+    )
+  }
+  return res
+}
+
+function asciiSlice (buf, start, end) {
+  var ret = ''
+  end = Math.min(buf.length, end)
+
+  for (var i = start; i < end; ++i) {
+    ret += String.fromCharCode(buf[i] & 0x7F)
+  }
+  return ret
+}
+
+function latin1Slice (buf, start, end) {
+  var ret = ''
+  end = Math.min(buf.length, end)
+
+  for (var i = start; i < end; ++i) {
+    ret += String.fromCharCode(buf[i])
+  }
+  return ret
+}
+
+function hexSlice (buf, start, end) {
+  var len = buf.length
+
+  if (!start || start < 0) start = 0
+  if (!end || end < 0 || end > len) end = len
+
+  var out = ''
+  for (var i = start; i < end; ++i) {
+    out += toHex(buf[i])
+  }
+  return out
+}
+
+function utf16leSlice (buf, start, end) {
+  var bytes = buf.slice(start, end)
+  var res = ''
+  for (var i = 0; i < bytes.length; i += 2) {
+    res += String.fromCharCode(bytes[i] + bytes[i + 1] * 256)
+  }
+  return res
+}
+
+Buffer.prototype.slice = function slice (start, end) {
+  var len = this.length
+  start = ~~start
+  end = end === undefined ? len : ~~end
+
+  if (start < 0) {
+    start += len
+    if (start < 0) start = 0
+  } else if (start > len) {
+    start = len
+  }
+
+  if (end < 0) {
+    end += len
+    if (end < 0) end = 0
+  } else if (end > len) {
+    end = len
+  }
+
+  if (end < start) end = start
+
+  var newBuf
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    newBuf = this.subarray(start, end)
+    newBuf.__proto__ = Buffer.prototype
+  } else {
+    var sliceLen = end - start
+    newBuf = new Buffer(sliceLen, undefined)
+    for (var i = 0; i < sliceLen; ++i) {
+      newBuf[i] = this[i + start]
+    }
+  }
+
+  return newBuf
+}
+
+/*
+ * Need to make sure that buffer isn't trying to write out of bounds.
+ */
+function checkOffset (offset, ext, length) {
+  if ((offset % 1) !== 0 || offset < 0) throw new RangeError('offset is not uint')
+  if (offset + ext > length) throw new RangeError('Trying to access beyond buffer length')
+}
+
+Buffer.prototype.readUIntLE = function readUIntLE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) checkOffset(offset, byteLength, this.length)
+
+  var val = this[offset]
+  var mul = 1
+  var i = 0
+  while (++i < byteLength && (mul *= 0x100)) {
+    val += this[offset + i] * mul
+  }
+
+  return val
+}
+
+Buffer.prototype.readUIntBE = function readUIntBE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) {
+    checkOffset(offset, byteLength, this.length)
+  }
+
+  var val = this[offset + --byteLength]
+  var mul = 1
+  while (byteLength > 0 && (mul *= 0x100)) {
+    val += this[offset + --byteLength] * mul
+  }
+
+  return val
+}
+
+Buffer.prototype.readUInt8 = function readUInt8 (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 1, this.length)
+  return this[offset]
+}
+
+Buffer.prototype.readUInt16LE = function readUInt16LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  return this[offset] | (this[offset + 1] << 8)
+}
+
+Buffer.prototype.readUInt16BE = function readUInt16BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  return (this[offset] << 8) | this[offset + 1]
+}
+
+Buffer.prototype.readUInt32LE = function readUInt32LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return ((this[offset]) |
+      (this[offset + 1] << 8) |
+      (this[offset + 2] << 16)) +
+      (this[offset + 3] * 0x1000000)
+}
+
+Buffer.prototype.readUInt32BE = function readUInt32BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return (this[offset] * 0x1000000) +
+    ((this[offset + 1] << 16) |
+    (this[offset + 2] << 8) |
+    this[offset + 3])
+}
+
+Buffer.prototype.readIntLE = function readIntLE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) checkOffset(offset, byteLength, this.length)
+
+  var val = this[offset]
+  var mul = 1
+  var i = 0
+  while (++i < byteLength && (mul *= 0x100)) {
+    val += this[offset + i] * mul
+  }
+  mul *= 0x80
+
+  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
+
+  return val
+}
+
+Buffer.prototype.readIntBE = function readIntBE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) checkOffset(offset, byteLength, this.length)
+
+  var i = byteLength
+  var mul = 1
+  var val = this[offset + --i]
+  while (i > 0 && (mul *= 0x100)) {
+    val += this[offset + --i] * mul
+  }
+  mul *= 0x80
+
+  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
+
+  return val
+}
+
+Buffer.prototype.readInt8 = function readInt8 (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 1, this.length)
+  if (!(this[offset] & 0x80)) return (this[offset])
+  return ((0xff - this[offset] + 1) * -1)
+}
+
+Buffer.prototype.readInt16LE = function readInt16LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  var val = this[offset] | (this[offset + 1] << 8)
+  return (val & 0x8000) ? val | 0xFFFF0000 : val
+}
+
+Buffer.prototype.readInt16BE = function readInt16BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  var val = this[offset + 1] | (this[offset] << 8)
+  return (val & 0x8000) ? val | 0xFFFF0000 : val
+}
+
+Buffer.prototype.readInt32LE = function readInt32LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return (this[offset]) |
+    (this[offset + 1] << 8) |
+    (this[offset + 2] << 16) |
+    (this[offset + 3] << 24)
+}
+
+Buffer.prototype.readInt32BE = function readInt32BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return (this[offset] << 24) |
+    (this[offset + 1] << 16) |
+    (this[offset + 2] << 8) |
+    (this[offset + 3])
+}
+
+Buffer.prototype.readFloatLE = function readFloatLE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+  return ieee754.read(this, offset, true, 23, 4)
+}
+
+Buffer.prototype.readFloatBE = function readFloatBE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+  return ieee754.read(this, offset, false, 23, 4)
+}
+
+Buffer.prototype.readDoubleLE = function readDoubleLE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 8, this.length)
+  return ieee754.read(this, offset, true, 52, 8)
+}
+
+Buffer.prototype.readDoubleBE = function readDoubleBE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 8, this.length)
+  return ieee754.read(this, offset, false, 52, 8)
+}
+
+function checkInt (buf, value, offset, ext, max, min) {
+  if (!Buffer.isBuffer(buf)) throw new TypeError('"buffer" argument must be a Buffer instance')
+  if (value > max || value < min) throw new RangeError('"value" argument is out of bounds')
+  if (offset + ext > buf.length) throw new RangeError('Index out of range')
+}
+
+Buffer.prototype.writeUIntLE = function writeUIntLE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) {
+    var maxBytes = Math.pow(2, 8 * byteLength) - 1
+    checkInt(this, value, offset, byteLength, maxBytes, 0)
+  }
+
+  var mul = 1
+  var i = 0
+  this[offset] = value & 0xFF
+  while (++i < byteLength && (mul *= 0x100)) {
+    this[offset + i] = (value / mul) & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeUIntBE = function writeUIntBE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) {
+    var maxBytes = Math.pow(2, 8 * byteLength) - 1
+    checkInt(this, value, offset, byteLength, maxBytes, 0)
+  }
+
+  var i = byteLength - 1
+  var mul = 1
+  this[offset + i] = value & 0xFF
+  while (--i >= 0 && (mul *= 0x100)) {
+    this[offset + i] = (value / mul) & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeUInt8 = function writeUInt8 (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 1, 0xff, 0)
+  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
+  this[offset] = (value & 0xff)
+  return offset + 1
+}
+
+function objectWriteUInt16 (buf, value, offset, littleEndian) {
+  if (value < 0) value = 0xffff + value + 1
+  for (var i = 0, j = Math.min(buf.length - offset, 2); i < j; ++i) {
+    buf[offset + i] = (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
+      (littleEndian ? i : 1 - i) * 8
+  }
+}
+
+Buffer.prototype.writeUInt16LE = function writeUInt16LE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value & 0xff)
+    this[offset + 1] = (value >>> 8)
+  } else {
+    objectWriteUInt16(this, value, offset, true)
+  }
+  return offset + 2
+}
+
+Buffer.prototype.writeUInt16BE = function writeUInt16BE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 8)
+    this[offset + 1] = (value & 0xff)
+  } else {
+    objectWriteUInt16(this, value, offset, false)
+  }
+  return offset + 2
+}
+
+function objectWriteUInt32 (buf, value, offset, littleEndian) {
+  if (value < 0) value = 0xffffffff + value + 1
+  for (var i = 0, j = Math.min(buf.length - offset, 4); i < j; ++i) {
+    buf[offset + i] = (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
+  }
+}
+
+Buffer.prototype.writeUInt32LE = function writeUInt32LE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset + 3] = (value >>> 24)
+    this[offset + 2] = (value >>> 16)
+    this[offset + 1] = (value >>> 8)
+    this[offset] = (value & 0xff)
+  } else {
+    objectWriteUInt32(this, value, offset, true)
+  }
+  return offset + 4
+}
+
+Buffer.prototype.writeUInt32BE = function writeUInt32BE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 24)
+    this[offset + 1] = (value >>> 16)
+    this[offset + 2] = (value >>> 8)
+    this[offset + 3] = (value & 0xff)
+  } else {
+    objectWriteUInt32(this, value, offset, false)
+  }
+  return offset + 4
+}
+
+Buffer.prototype.writeIntLE = function writeIntLE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) {
+    var limit = Math.pow(2, 8 * byteLength - 1)
+
+    checkInt(this, value, offset, byteLength, limit - 1, -limit)
+  }
+
+  var i = 0
+  var mul = 1
+  var sub = 0
+  this[offset] = value & 0xFF
+  while (++i < byteLength && (mul *= 0x100)) {
+    if (value < 0 && sub === 0 && this[offset + i - 1] !== 0) {
+      sub = 1
+    }
+    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeIntBE = function writeIntBE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) {
+    var limit = Math.pow(2, 8 * byteLength - 1)
+
+    checkInt(this, value, offset, byteLength, limit - 1, -limit)
+  }
+
+  var i = byteLength - 1
+  var mul = 1
+  var sub = 0
+  this[offset + i] = value & 0xFF
+  while (--i >= 0 && (mul *= 0x100)) {
+    if (value < 0 && sub === 0 && this[offset + i + 1] !== 0) {
+      sub = 1
+    }
+    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeInt8 = function writeInt8 (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 1, 0x7f, -0x80)
+  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
+  if (value < 0) value = 0xff + value + 1
+  this[offset] = (value & 0xff)
+  return offset + 1
+}
+
+Buffer.prototype.writeInt16LE = function writeInt16LE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value & 0xff)
+    this[offset + 1] = (value >>> 8)
+  } else {
+    objectWriteUInt16(this, value, offset, true)
+  }
+  return offset + 2
+}
+
+Buffer.prototype.writeInt16BE = function writeInt16BE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 8)
+    this[offset + 1] = (value & 0xff)
+  } else {
+    objectWriteUInt16(this, value, offset, false)
+  }
+  return offset + 2
+}
+
+Buffer.prototype.writeInt32LE = function writeInt32LE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value & 0xff)
+    this[offset + 1] = (value >>> 8)
+    this[offset + 2] = (value >>> 16)
+    this[offset + 3] = (value >>> 24)
+  } else {
+    objectWriteUInt32(this, value, offset, true)
+  }
+  return offset + 4
+}
+
+Buffer.prototype.writeInt32BE = function writeInt32BE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
+  if (value < 0) value = 0xffffffff + value + 1
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 24)
+    this[offset + 1] = (value >>> 16)
+    this[offset + 2] = (value >>> 8)
+    this[offset + 3] = (value & 0xff)
+  } else {
+    objectWriteUInt32(this, value, offset, false)
+  }
+  return offset + 4
+}
+
+function checkIEEE754 (buf, value, offset, ext, max, min) {
+  if (offset + ext > buf.length) throw new RangeError('Index out of range')
+  if (offset < 0) throw new RangeError('Index out of range')
+}
+
+function writeFloat (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    checkIEEE754(buf, value, offset, 4, 3.4028234663852886e+38, -3.4028234663852886e+38)
+  }
+  ieee754.write(buf, value, offset, littleEndian, 23, 4)
+  return offset + 4
+}
+
+Buffer.prototype.writeFloatLE = function writeFloatLE (value, offset, noAssert) {
+  return writeFloat(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeFloatBE = function writeFloatBE (value, offset, noAssert) {
+  return writeFloat(this, value, offset, false, noAssert)
+}
+
+function writeDouble (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    checkIEEE754(buf, value, offset, 8, 1.7976931348623157E+308, -1.7976931348623157E+308)
+  }
+  ieee754.write(buf, value, offset, littleEndian, 52, 8)
+  return offset + 8
+}
+
+Buffer.prototype.writeDoubleLE = function writeDoubleLE (value, offset, noAssert) {
+  return writeDouble(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeDoubleBE = function writeDoubleBE (value, offset, noAssert) {
+  return writeDouble(this, value, offset, false, noAssert)
+}
+
+// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
+Buffer.prototype.copy = function copy (target, targetStart, start, end) {
+  if (!start) start = 0
+  if (!end && end !== 0) end = this.length
+  if (targetStart >= target.length) targetStart = target.length
+  if (!targetStart) targetStart = 0
+  if (end > 0 && end < start) end = start
+
+  // Copy 0 bytes; we're done
+  if (end === start) return 0
+  if (target.length === 0 || this.length === 0) return 0
+
+  // Fatal error conditions
+  if (targetStart < 0) {
+    throw new RangeError('targetStart out of bounds')
+  }
+  if (start < 0 || start >= this.length) throw new RangeError('sourceStart out of bounds')
+  if (end < 0) throw new RangeError('sourceEnd out of bounds')
+
+  // Are we oob?
+  if (end > this.length) end = this.length
+  if (target.length - targetStart < end - start) {
+    end = target.length - targetStart + start
+  }
+
+  var len = end - start
+  var i
+
+  if (this === target && start < targetStart && targetStart < end) {
+    // descending copy from end
+    for (i = len - 1; i >= 0; --i) {
+      target[i + targetStart] = this[i + start]
+    }
+  } else if (len < 1000 || !Buffer.TYPED_ARRAY_SUPPORT) {
+    // ascending copy from start
+    for (i = 0; i < len; ++i) {
+      target[i + targetStart] = this[i + start]
+    }
+  } else {
+    Uint8Array.prototype.set.call(
+      target,
+      this.subarray(start, start + len),
+      targetStart
+    )
+  }
+
+  return len
+}
+
+// Usage:
+//    buffer.fill(number[, offset[, end]])
+//    buffer.fill(buffer[, offset[, end]])
+//    buffer.fill(string[, offset[, end]][, encoding])
+Buffer.prototype.fill = function fill (val, start, end, encoding) {
+  // Handle string cases:
+  if (typeof val === 'string') {
+    if (typeof start === 'string') {
+      encoding = start
+      start = 0
+      end = this.length
+    } else if (typeof end === 'string') {
+      encoding = end
+      end = this.length
+    }
+    if (val.length === 1) {
+      var code = val.charCodeAt(0)
+      if (code < 256) {
+        val = code
+      }
+    }
+    if (encoding !== undefined && typeof encoding !== 'string') {
+      throw new TypeError('encoding must be a string')
+    }
+    if (typeof encoding === 'string' && !Buffer.isEncoding(encoding)) {
+      throw new TypeError('Unknown encoding: ' + encoding)
+    }
+  } else if (typeof val === 'number') {
+    val = val & 255
+  }
+
+  // Invalid ranges are not set to a default, so can range check early.
+  if (start < 0 || this.length < start || this.length < end) {
+    throw new RangeError('Out of range index')
+  }
+
+  if (end <= start) {
+    return this
+  }
+
+  start = start >>> 0
+  end = end === undefined ? this.length : end >>> 0
+
+  if (!val) val = 0
+
+  var i
+  if (typeof val === 'number') {
+    for (i = start; i < end; ++i) {
+      this[i] = val
+    }
+  } else {
+    var bytes = Buffer.isBuffer(val)
+      ? val
+      : utf8ToBytes(new Buffer(val, encoding).toString())
+    var len = bytes.length
+    for (i = 0; i < end - start; ++i) {
+      this[i + start] = bytes[i % len]
+    }
+  }
+
+  return this
+}
+
+// HELPER FUNCTIONS
+// ================
+
+var INVALID_BASE64_RE = /[^+\/0-9A-Za-z-_]/g
+
+function base64clean (str) {
+  // Node strips out invalid characters like \n and \t from the string, base64-js does not
+  str = stringtrim(str).replace(INVALID_BASE64_RE, '')
+  // Node converts strings with length < 2 to ''
+  if (str.length < 2) return ''
+  // Node allows for non-padded base64 strings (missing trailing ===), base64-js does not
+  while (str.length % 4 !== 0) {
+    str = str + '='
+  }
+  return str
+}
+
+function stringtrim (str) {
+  if (str.trim) return str.trim()
+  return str.replace(/^\s+|\s+$/g, '')
+}
+
+function toHex (n) {
+  if (n < 16) return '0' + n.toString(16)
+  return n.toString(16)
+}
+
+function utf8ToBytes (string, units) {
+  units = units || Infinity
+  var codePoint
+  var length = string.length
+  var leadSurrogate = null
+  var bytes = []
+
+  for (var i = 0; i < length; ++i) {
+    codePoint = string.charCodeAt(i)
+
+    // is surrogate component
+    if (codePoint > 0xD7FF && codePoint < 0xE000) {
+      // last char was a lead
+      if (!leadSurrogate) {
+        // no lead yet
+        if (codePoint > 0xDBFF) {
+          // unexpected trail
+          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+          continue
+        } else if (i + 1 === length) {
+          // unpaired lead
+          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+          continue
+        }
+
+        // valid lead
+        leadSurrogate = codePoint
+
+        continue
+      }
+
+      // 2 leads in a row
+      if (codePoint < 0xDC00) {
+        if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+        leadSurrogate = codePoint
+        continue
+      }
+
+      // valid surrogate pair
+      codePoint = (leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00) + 0x10000
+    } else if (leadSurrogate) {
+      // valid bmp char, but last char was a lead
+      if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+    }
+
+    leadSurrogate = null
+
+    // encode utf8
+    if (codePoint < 0x80) {
+      if ((units -= 1) < 0) break
+      bytes.push(codePoint)
+    } else if (codePoint < 0x800) {
+      if ((units -= 2) < 0) break
+      bytes.push(
+        codePoint >> 0x6 | 0xC0,
+        codePoint & 0x3F | 0x80
+      )
+    } else if (codePoint < 0x10000) {
+      if ((units -= 3) < 0) break
+      bytes.push(
+        codePoint >> 0xC | 0xE0,
+        codePoint >> 0x6 & 0x3F | 0x80,
+        codePoint & 0x3F | 0x80
+      )
+    } else if (codePoint < 0x110000) {
+      if ((units -= 4) < 0) break
+      bytes.push(
+        codePoint >> 0x12 | 0xF0,
+        codePoint >> 0xC & 0x3F | 0x80,
+        codePoint >> 0x6 & 0x3F | 0x80,
+        codePoint & 0x3F | 0x80
+      )
+    } else {
+      throw new Error('Invalid code point')
+    }
+  }
+
+  return bytes
+}
+
+function asciiToBytes (str) {
+  var byteArray = []
+  for (var i = 0; i < str.length; ++i) {
+    // Node's code seems to be doing this and not & 0x7F..
+    byteArray.push(str.charCodeAt(i) & 0xFF)
+  }
+  return byteArray
+}
+
+function utf16leToBytes (str, units) {
+  var c, hi, lo
+  var byteArray = []
+  for (var i = 0; i < str.length; ++i) {
+    if ((units -= 2) < 0) break
+
+    c = str.charCodeAt(i)
+    hi = c >> 8
+    lo = c % 256
+    byteArray.push(lo)
+    byteArray.push(hi)
+  }
+
+  return byteArray
+}
+
+function base64ToBytes (str) {
+  return base64.toByteArray(base64clean(str))
+}
+
+function blitBuffer (src, dst, offset, length) {
+  for (var i = 0; i < length; ++i) {
+    if ((i + offset >= dst.length) || (i >= src.length)) break
+    dst[i + offset] = src[i]
+  }
+  return i
+}
+
+function isnan (val) {
+  return val !== val // eslint-disable-line no-self-compare
+}
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(53)))
 
 /***/ }),
 /* 27 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-eval("/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__baseView__ = __webpack_require__(8);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_userModel__ = __webpack_require__(2);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(0);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_mainWindow_pug__ = __webpack_require__(51);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_mainWindow_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__templates_mainWindow_pug__);\n/**\n* Created by tlakatlekutl on 27.03.17.\n*/\n\n\n\n\n\n\nconst router = new __WEBPACK_IMPORTED_MODULE_2__modules_router_router__[\"a\" /* default */]();\nconst userModel = new __WEBPACK_IMPORTED_MODULE_1__models_userModel__[\"a\" /* default */]();\n\nclass MainView extends __WEBPACK_IMPORTED_MODULE_0__baseView__[\"a\" /* default */] {\n  constructor() {\n    super(['main-vindow-container'], __WEBPACK_IMPORTED_MODULE_3__templates_mainWindow_pug___default.a);\n  }\n  render() {\n    this.data = {\n      authorised: userModel.isAuthorised(),\n      nickname: userModel.getData().nickname,\n    };\n    super.render({ user: this.data });\n    this.addListeners();\n  }\n  show() {\n    if (this.data.authorised !== userModel.isAuthorised()) {\n      this.data = {\n        authorised: userModel.isAuthorised(),\n        nickname: userModel.getData().nickname,\n      };\n      this.setContent({ user: this.data });\n      this.addListeners();\n    }\n    super.show();\n  }\n  addListeners() {\n    document.querySelector('.btn-left').addEventListener('click', () => { router.go('/game'); });\n    document.querySelector('.btn-right').addEventListener('click', () => { router.go('/mp'); });\n    document.querySelector('.leaderboard-button').addEventListener('click', () => { router.go('/leaderboard'); });\n    document.querySelector('.footer-help-link').addEventListener('click', () => { router.go('/about'); });\n\n    if (this.data.authorised) {\n      document.querySelector('.profile-link').addEventListener('click', () => {\n        router.go('/profile');\n      });\n      document.querySelector('.logout-link').addEventListener('click', () => {\n        userModel.logout()\n          .then(() => {\n            // debugger;\n            this.show();\n          });\n      });\n    } else {\n      document.querySelector('.login-link').addEventListener('click', () => {\n        router.go('/login');\n      });\n      document.querySelector('.signup-link').addEventListener('click', () => {\n        router.go('/signup');\n      });\n    }\n  }\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = MainView;\n\n\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/views/mainWindowView.js\n// module id = 27\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/views/mainWindowView.js?");
+exports = module.exports = __webpack_require__(3)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, ".modal-header-title {\n    margin-top: 10px;\n    margin-bottom: 10px;\n}\n\n.concede-modal__text {\n    margin-top: 15px;\n    margin-bottom: 15px;\n    font-size: 24px;\n}\n\n.choose {\n    font-size: 24px;\n    margin-bottom: 25px;\n}\n\n.choose__yes, .choose__no {\n    display: inline-block;\n    font-size: 36px;\n}\n\n.choose__yes {\n    margin-left: 30%;\n    margin-right: 10%;\n}\n\n.choose__no {\n    margin-left: 10%;\n    margin-right: 30%;\n}\n\n.choose__yes:hover, .choose__no:hover {\n    color: mediumpurple;\n    text-decoration: underline;\n}", ""]);
+
+// exports
+
 
 /***/ }),
 /* 28 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-eval("/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_router_router__ = __webpack_require__(0);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__baseView__ = __webpack_require__(8);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_mp_pug__ = __webpack_require__(52);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_mp_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__templates_mp_pug__);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__models_gameModel__ = __webpack_require__(11);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__ = __webpack_require__(5);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__modules_game_play__ = __webpack_require__(17);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__models_userModel__ = __webpack_require__(2);\n/**\n * Created by tlakatlekutl on 27.03.17.\n */\n\n\n\n\n\n\n\n\n\nconst gm = new __WEBPACK_IMPORTED_MODULE_3__models_gameModel__[\"a\" /* default */]();\nconst ee = new __WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__[\"a\" /* default */]();\nconst router = new __WEBPACK_IMPORTED_MODULE_0__modules_router_router__[\"a\" /* default */]();\nconst us = new __WEBPACK_IMPORTED_MODULE_6__models_userModel__[\"a\" /* default */]();\n\nclass MpGameView extends __WEBPACK_IMPORTED_MODULE_1__baseView__[\"a\" /* default */] {\n  constructor() {\n    super(['multiplayer-game-view'], __WEBPACK_IMPORTED_MODULE_2__templates_mp_pug___default.a);\n    // this.render();\n    ee.on('com.aerohockey.mechanics.base.ServerSnap', (message) => {\n      this.x.innerHTML = JSON.stringify(message.content);\n      this.game.setStateGame(message.content);\n    });\n    ee.on('com.aerohockey.mechanics.requests.StartGame$Request', (message) => {\n      this.x.innerHTML = JSON.stringify(message.content);\n      this.game.setOpponent(message.content);\n    });\n    ee.on('com.aerohockey.mechanics.base.GameOverSnap', (message) => {\n      this.x.innerHTML = JSON.stringify(message.content);\n      this.state = JSON.parse(message.content);\n      console.log(this.state.newRating);\n      this.game.stop();\n      if(this.state.newRating > us.getData().rating) {\n        us.getData().newRating = this.state.newRating;\n        router.go('/victory');\n      } else {\n        us.getData().newRating = this.state.newRating;\n        router.go('/defeat');\n      }\n    });\n    ee.on('print', (message) => {\n      this.x.innerHTML = message;\n    });\n    ee.on('alert', (msg) => { alert(msg); });\n    this.alreadyInDOM = false;\n  }\n  render() {\n    super.render();\n    this.node.innerHTML = this.drawFunc();\n    this.parent.appendChild(this.node);\n    this.addEventListeners();\n    document.querySelector('.game-back-link').addEventListener('click', () => {\n      this.game.stop();\n      router.go('/concedemp');\n    });\n    ee.on('destroyGame', ()=> {\n      delete this.game;\n      const game = document.querySelector('canvas');\n      document.body.removeChild(game);\n    });\n    gm.findOpponent();\n  }\n  show() {\n    if (!this.alreadyInDOM) {\n      this.render();\n      this.alreadyInDOM = true;\n    }\n    if (this.game) {\n      this.game.resume();\n    } else {\n      this.game = new __WEBPACK_IMPORTED_MODULE_5__modules_game_play__[\"a\" /* default */]('multi');\n      this.game.gameProcess();\n    }\n\n    // const game = document.querySelector('canvas');\n    // game.hidden = false;\n    this.node.hidden = false;\n  }\n  hide() {\n    if (this.alreadyInDOM) {\n      // super.destruct();\n      // const game = document.querySelector('canvas');\n      // game.hidden = true;\n    }\n    super.hide();\n  }\n  addEventListeners() {\n    this.x = document.querySelector('.result');\n    document.querySelector('.goleft').addEventListener('click', () => {\n      gm.findOpponent();\n    });\n    document.querySelector('.goright').addEventListener('click', () => {\n      ee.emit('alert', 'OLOLOLO');\n    });\n  }\n\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = MpGameView;\n\n\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/views/mpGameView.js\n// module id = 28\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/views/mpGameView.js?");
+exports = module.exports = __webpack_require__(3)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, ".modal-content {\n    width: 50%;\n}\n\n.modal-header-title {\n    margin-top: 10px;\n    margin-bottom: 10px;\n}\n\n.defeat-modal__text {\n    margin-top: 15px;\n    margin-bottom: 15px;\n    font-size: 24px;\n}\n\n.defeat-modal__text {\n    margin-left: 30%;\n    font-size: 36px;\n    font-weight: bold;\n}\n\n.change, .rating_score {\n    display: inline-block;\n    margin-left: 15px;\n}\n\n.defeat-modal .change {\n    color: #8b1700;\n}\n\n.rating__change, .new__rating, .change, .rating_score {\n    font-weight: bold;\n    font-size: 28px;\n}\n\n.rating__change, .new__rating {\n    margin-left: 10%;\n    margin-top: 2%;\n}\n\n.rating {\n    margin-bottom: 10%;\n}", ""]);
+
+// exports
+
 
 /***/ }),
 /* 29 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-eval("/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__baseView__ = __webpack_require__(8);\n/**\n * Created by tlakatlekutl on 27.03.17.\n */\n\n\n\nclass Page404View extends __WEBPACK_IMPORTED_MODULE_0__baseView__[\"a\" /* default */] {\n  constructor() {\n    super(['page404-container'], () => '<h1> Not Found </h1>');\n    this.render();\n  }\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = Page404View;\n\n\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/views/page404view.js\n// module id = 29\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/views/page404view.js?");
+exports = module.exports = __webpack_require__(3)(undefined);
+// imports
+exports.i(__webpack_require__(34), "");
+exports.i(__webpack_require__(33), "");
+exports.i(__webpack_require__(32), "");
+exports.i(__webpack_require__(31), "");
+
+// module
+exports.push([module.i, "@media all  {\n    .main-page {\n        display: -webkit-box;\n        display: -ms-flexbox;\n        display: flex;\n        -webkit-box-orient: vertical;\n        -webkit-box-direction: normal;\n            -ms-flex-direction: column;\n                flex-direction: column;\n        height: 90vh;\n    }\n\n    .name-game {\n        -ms-flex-item-align: center;\n            align-self: center;\n        font-size: 120px;\n        margin-top: 5%;\n        margin-bottom: 4%;\n    }\n\n    .main-page-center {\n        -ms-flex-item-align: center;\n            align-self: center;\n    }\n\n    .start-game-buttons {\n        background-color: white;\n        display: -webkit-box;\n        display: -ms-flexbox;\n        display: flex;\n        /*align-self: center;*/\n    }\n\n    .button {\n        -webkit-transition-duration: 0.4s;\n        transition-duration: 0.4s;\n        border: none;\n        color: white;\n        padding: 15px 32px;\n        font-size: 48px;\n        float: left;\n        position: relative;\n        display: block;\n        -ms-flex-item-align: center;\n            align-self: center;\n        width: 225px;\n        -webkit-box-flex: 1;\n            -ms-flex-positive: 1;\n                flex-grow: 1;\n    }\n\n    .button:hover {\n        /*border: 6px solid darkcyan;*/\n        width: 280px;\n        height: 90px;\n        cursor: pointer;\n    }\n\n    .leaderboard-button {\n        background-image: url(" + __webpack_require__(52) + ");\n        width: 100px;\n        height: 110px;\n        margin-top: 10%;\n        color: black;\n        border: none;\n        font-size: 0.1px;\n        border-radius: 50px;\n        -webkit-box-flex: 1;\n            -ms-flex-positive: 1;\n                flex-grow: 1;\n    }\n\n    .leaderboard-button:hover {\n        background-color: darkcyan;\n        border: solid;\n        cursor: pointer;\n    }\n\n    .btn-left {\n        -webkit-box-flex: 1;\n            -ms-flex-positive: 1;\n                flex-grow: 1;\n        background-color: #4CAF50;\n        border-radius: 50px 0 0 50px;\n    }\n\n    .btn-right {\n        background-color: orange;\n        border-radius: 0 50px 50px 0;\n        -webkit-box-flex: 1;\n            -ms-flex-positive: 1;\n                flex-grow: 1;\n    }\n\n    .btn-right:hover {\n        -webkit-box-flex: 2;\n            -ms-flex-positive: 2;\n                flex-grow: 2;\n        cursor: pointer;\n    }\n\n    .main-page-leaderboard {\n        text-align: center;\n    }\n\n    .main-page-footer {\n        text-align: right;\n        font-size: 32px;\n        margin-right: 2%;\n    }\n\n    .user-state {\n        /*background-color: #0D47A1;*/\n        height: 50px;\n        width: 200px;\n        text-align: center;\n        -ms-flex-item-align: end;\n            align-self: flex-end;\n        position: relative;\n        display: inline-block;\n        font-size: 30px;\n        margin-right: 1%;\n        margin-top: 1%;\n    }\n\n    .dropdown-link {\n\n    }\n\n    .dropdown-content {\n        display: none;\n        position: absolute;\n        background-color: #f9f9f9;\n        min-width: 160px;\n        -webkit-box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);\n                box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);\n        z-index: 1;\n    }\n\n    .dropdown-content a {\n        color: black;\n        padding: 12px 16px;\n        text-decoration: none;\n        display: block;\n    }\n\n    .dropdown-content a:hover {\n        background-color: #f1f1f1\n    }\n\n    .user-state:hover .dropdown-content {\n        display: block;\n    }\n\n    .login-link:hover, .signup-link:hover, .footer-help-link:hover {\n        color: mediumpurple;\n        text-decoration: underline;\n        cursor: pointer;\n    }\n\n    .login-link {\n        width: 10%;\n    }\n\n    .signup-link {\n        padding-left: 12%;\n        margin-right: 30%;\n    }\n}\n\n@media screen and (min-device-width:480px) and (max-device-width:800px) {\n    .main-page {\n        display: -webkit-box;\n        display: -ms-flexbox;\n        display: flex;\n        -webkit-box-orient: vertical;\n        -webkit-box-direction: normal;\n            -ms-flex-direction: column;\n                flex-direction: column;\n        height: 75vh;\n    }\n\n    .name-game {\n        -ms-flex-item-align: center;\n            align-self: center;\n        font-size: 100px;\n        margin-top: 2%;\n        margin-bottom: 3%;\n    }\n}\n", ""]);
+
+// exports
+
 
 /***/ }),
 /* 30 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-eval("/**\n* Created by tlakatlekutl on 31.03.17.\n*/\nclass PreloaderView {\n  constructor() {\n    this.node = document.querySelector('.preloader-page');\n    this.onLoad = new Event('onUserStatusLoad');\n    this.node.addEventListener('onUserStatusLoad', this.hide);\n  }\n  hide() {\n    this.hidden = true;\n  }\n  dispatchLoadCompleted() {\n    this.node.dispatchEvent(this.onLoad);\n  }\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = PreloaderView;\n\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/views/preloaderView.js\n// module id = 30\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/views/preloaderView.js?");
+exports = module.exports = __webpack_require__(3)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, ".modal-content {\n    width: 50%;\n}\n\n.modal-header-title {\n    margin-top: 10px;\n    margin-bottom: 10px;\n}\n\n.victory-modal__text {\n    margin-top: 15px;\n    margin-bottom: 15px;\n    font-size: 24px;\n}\n\n.victory-modal__text {\n    margin-left: 35%;\n    font-size: 36px;\n    font-weight: bold;\n}\n\n.change, .rating_score {\n    display: inline-block;\n    margin-left: 15px;\n}\n\n.victory-modal .change {\n    color: darkgreen;\n}\n\n.rating__change, .new__rating, .change, .rating_score {\n    font-weight: bold;\n    font-size: 28px;\n}\n\n.rating__change, .new__rating {\n    margin-left: 10%;\n    margin-top: 2%;\n}\n\n.rating {\n    margin-bottom: 10%;\n}", ""]);
+
+// exports
+
 
 /***/ }),
 /* 31 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-eval("/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modalView__ = __webpack_require__(3);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_userModel__ = __webpack_require__(2);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(0);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_profile_pug__ = __webpack_require__(53);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_profile_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__templates_profile_pug__);\n/**\n * Created by tlakatlekutl on 04.04.17.\n */\n\n\n\n\n\n\n\nconst userModel = new __WEBPACK_IMPORTED_MODULE_1__models_userModel__[\"a\" /* default */]();\nconst router = new __WEBPACK_IMPORTED_MODULE_2__modules_router_router__[\"a\" /* default */]();\n\nclass ProfileModalView extends __WEBPACK_IMPORTED_MODULE_0__modalView__[\"a\" /* default */] {\n  constructor() {\n    super('Profile', __WEBPACK_IMPORTED_MODULE_3__templates_profile_pug___default.a);\n  }\n  show() {\n    if (userModel.isAuthorised()) {\n      if (!this.alreadyInDOM) {\n        this.alreadyInDOM = true;\n        this.render({ user: userModel.getData() });\n      }\n      this.bodyModal.innerHTML = this.drawFunc({ user: userModel.getData() });\n      this.modal.style.display = 'block';\n    } else {\n      router.go('/');\n    }\n  }\n\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = ProfileModalView;\n\n\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/views/profileModalView.js\n// module id = 31\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/views/profileModalView.js?");
+exports = module.exports = __webpack_require__(3)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "\n.game-header {\n    display: flex;\n    width: 100%;\n    flex-direction: row;\n    padding-top: 20px;\n    margin-bottom: 45px;\n}\n\n.game-back-link {\n    padding-left: 20px;\n    font-size: 28px;\n}\n\n.player1, .player2, .score {\n    text-align: center;\n    width: 20%;\n}\n\n.score {\n    padding-top: 30px;\n}\n\n.player1 {\n    padding-left: 10%;\n}\n\n.player1_score, .separate, .player2_score {\n    display: inline-block;\n    font-size: 64px;\n    padding-left: 5px;\n    padding-right: 5px;\n}\n\n.player_rating_score, .player_rating {\n    display: inline-block;\n}\n\n.player_rating_score {\n    font-size: 32px;\n    margin-left: 12px;\n}\n\n.player_nickname {\n    font-size: 52px;\n    padding-top: 20px;\n    padding-bottom: 20px;\n}\n\n.player_rating {\n    font-size: 24px;\n}\n\ncanvas {\n    margin-left: 10%;\n}\n\n.goleft, .goright, .result {\n    display: none;\n}\n\n@media screen and (min-width:650px) and (max-width:800px) {\n    .player1_score, .separate, .player2_score {\n        display: inline-block;\n        font-size: 48px;\n        padding-left: 5px;\n        padding-right: 5px;\n    }\n\n    .player_rating_score {\n        font-size: 24px;\n        margin-left: 12px;\n    }\n\n    .player_nickname {\n        font-size: 40px;\n        padding-top: 20px;\n        padding-bottom: 20px;\n    }\n\n    .player_rating {\n        font-size: 20px;\n    }\n}\n\n@media screen and (min-width:520px) and (max-width:650px) {\n    .player1_score, .separate, .player2_score {\n        display: inline-block;\n        font-size: 40px;\n        padding-left: 5px;\n        padding-right: 5px;\n    }\n\n    .player_rating_score {\n        font-size: 20px;\n        margin-left: 12px;\n    }\n\n    .player_nickname {\n        font-size: 32px;\n        padding-top: 20px;\n        padding-bottom: 20px;\n    }\n\n    .player_rating {\n        font-size: 16px;\n    }\n}\n\n@media screen and (min-width:400px) and (max-width:520px) {\n    .player1_score, .separate, .player2_score {\n        display: inline-block;\n        font-size: 36px;\n        padding-left: 5px;\n        padding-right: 5px;\n    }\n\n    .player_rating_score {\n        font-size: 16px;\n        margin-left: 12px;\n    }\n\n    .player_nickname {\n        font-size: 24px;\n        padding-top: 20px;\n        padding-bottom: 20px;\n    }\n\n    .player_rating {\n        font-size: 16px;\n    }\n}", ""]);
+
+// exports
+
 
 /***/ }),
 /* 32 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-eval("/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modalView__ = __webpack_require__(3);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_userModel__ = __webpack_require__(2);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(0);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_sign_up_pug__ = __webpack_require__(54);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_sign_up_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__templates_sign_up_pug__);\n/**\n* Created by tlakatlekutl on 03.04.17.\n*/\n\n\n\n\n\n\n\nconst userModel = new __WEBPACK_IMPORTED_MODULE_1__models_userModel__[\"a\" /* default */]();\nconst router = new __WEBPACK_IMPORTED_MODULE_2__modules_router_router__[\"a\" /* default */]();\n\nclass SignupModal extends __WEBPACK_IMPORTED_MODULE_0__modalView__[\"a\" /* default */] {\n  constructor() {\n    super('Signup', __WEBPACK_IMPORTED_MODULE_3__templates_sign_up_pug___default.a);\n  }\n  render() {\n    super.render();\n    this.errorField = document.querySelector('.danger-signup');\n    document.querySelector('.signup-submit-button').addEventListener('click', (event) => {\n      event.preventDefault();\n      if (this.isValid()) {\n        this.errorField.style.display = 'none';\n        userModel.signup(this.getFormData())\n          .then(() => {\n            router.go('/');\n            this.destruct();\n          })\n          .catch((error) => { this.showError(error.error); });\n      }\n    });\n  }\n  show() {\n    if (!userModel.isAuthorised()) {\n      super.show();\n      this.hideError();\n    } else {\n      router.go('/');\n    }\n  }\n  showError(errorText) {\n    this.errorField.innerHTML = errorText;\n    this.errorField.style.display = 'block';\n  }\n  hideError() {\n    this.errorField.style.display = 'none';\n  }\n  isValid() {\n    this.nickname = document.querySelector('.signup-nickname-input').value;\n    this.password = document.querySelector('.signup-password-input').value;\n    this.repeatPassword = document.querySelector('.signup-password-repeat').value;\n    this.email = document.querySelector('.signup-email-input').value;\n\n    if (this.nickname === '') {\n      this.showError('Имя не может быть пустым');\n      return false;\n    }\n    if (this.password === '') {\n      this.showError('Пароль не может быть пустым');\n      return false;\n    }\n    if (this.repeatPassword === '') {\n      this.showError('Повторите пароль');\n      return false;\n    }\n    if (this.password !== this.repeatPassword) {\n      this.showError('Пароли не совпадают');\n      return false;\n    }\n    if (this.email === '') {\n      this.showError('Email не может быть пустым');\n      return false;\n    }\n    return true;\n  }\n  getFormData() {\n    return {\n      login: this.nickname,\n      password: this.password,\n      email: this.email,\n    };\n  }\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = SignupModal;\n\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/views/signupModalVew.js\n// module id = 32\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/views/signupModalVew.js?");
+exports = module.exports = __webpack_require__(3)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, ".leaderboard-table {\n    border-collapse: collapse;\n    width: 100%;\n}\n\nth, td {\n    text-align: left;\n    padding: 8px;\n}\n.leaderboard-table th {\n    border-bottom: 3px solid black;\n}\n\n.leaderboard-table tr:nth-child(even){\n    background-color: #f2f2f2;\n}", ""]);
+
+// exports
+
 
 /***/ }),
 /* 33 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-eval("/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_victory_css__ = __webpack_require__(58);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_victory_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__css_victory_css__);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__modalView__ = __webpack_require__(3);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(0);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_victory_pug__ = __webpack_require__(55);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_victory_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__templates_victory_pug__);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__ = __webpack_require__(5);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__models_userModel__ = __webpack_require__(2);\n/**\n * Created by sergey on 01.05.17.\n */\n\n\n\n\n\n\n\n\n\nconst router = new __WEBPACK_IMPORTED_MODULE_2__modules_router_router__[\"a\" /* default */]();\nconst ee = new __WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__[\"a\" /* default */]();\nconst us = new __WEBPACK_IMPORTED_MODULE_5__models_userModel__[\"a\" /* default */]();\n\nclass VictoryModal extends __WEBPACK_IMPORTED_MODULE_1__modalView__[\"a\" /* default */] {\n  constructor() {\n    super('Завершение игры', __WEBPACK_IMPORTED_MODULE_3__templates_victory_pug___default.a);\n  }\n  render() {\n    super.render();\n    this.changeRating = document.querySelector('.victory-modal .change');\n    this.changeRating.innerHTML = us.getData().newRating - us.getData().rating;\n    this.newRating = document.querySelector('.victory-modal .rating_score');\n    this.newRating.innerHTML = us.getData().newRating;\n    // document.querySelector('.choose__yes').addEventListener('click', () => {\n    //   ee.emit('destroyGame');\n    //   router.go('/');\n    // });\n    // document.querySelector('.choose__no').addEventListener('click', () => {\n    //   router.go('/game');\n    // });\n    this.onClose(() => {\n      ee.emit('destroyGame');\n      router.go('/');\n    });\n  }\n\n  onClose(func) {\n    this.close.addEventListener('click', func);\n    this.close.addEventListener('click', () => {\n      this.modal.style.display = 'none';\n    });\n    return this;\n  }\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = VictoryModal;\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/views/victoryModalView.js\n// module id = 33\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/views/victoryModalView.js?");
+exports = module.exports = __webpack_require__(3)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "input, select {\n    width: 100%;\n    padding: 12px 20px;\n    margin: 8px 0;\n    display: inline-block;\n    border: 1px solid #ccc;\n    border-radius: 4px;\n    box-sizing: border-box;\n}\n\ninput[type=submit] {\n    width: 100%;\n    background-color: #4CAF50;\n    color: white;\n    padding: 14px 20px;\n    margin: 8px 0;\n    border: none;\n    border-radius: 4px;\n    cursor: pointer;\n}\n\ninput[type=submit]:hover {\n    background-color: #45a049;\n}\n\n.login-modal {\n    border-radius: 5px;\n    background-color: #f2f2f2;\n    padding: 20px;\n}\n\n.input-error {\n    color: red;\n}\n.danger {\n    display: none;\n    margin-top: 15px;\n    margin-bottom: 15px;\n    padding: 4px 12px;\n    background-color: #ffdddd;\n    border-left: 6px solid #f44336;\n}", ""]);
+
+// exports
+
 
 /***/ }),
 /* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-eval("\n\nexports.byteLength = byteLength\nexports.toByteArray = toByteArray\nexports.fromByteArray = fromByteArray\n\nvar lookup = []\nvar revLookup = []\nvar Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array\n\nvar code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'\nfor (var i = 0, len = code.length; i < len; ++i) {\n  lookup[i] = code[i]\n  revLookup[code.charCodeAt(i)] = i\n}\n\nrevLookup['-'.charCodeAt(0)] = 62\nrevLookup['_'.charCodeAt(0)] = 63\n\nfunction placeHoldersCount (b64) {\n  var len = b64.length\n  if (len % 4 > 0) {\n    throw new Error('Invalid string. Length must be a multiple of 4')\n  }\n\n  // the number of equal signs (place holders)\n  // if there are two placeholders, than the two characters before it\n  // represent one byte\n  // if there is only one, then the three characters before it represent 2 bytes\n  // this is just a cheap hack to not do indexOf twice\n  return b64[len - 2] === '=' ? 2 : b64[len - 1] === '=' ? 1 : 0\n}\n\nfunction byteLength (b64) {\n  // base64 is 4/3 + up to two characters of the original data\n  return b64.length * 3 / 4 - placeHoldersCount(b64)\n}\n\nfunction toByteArray (b64) {\n  var i, j, l, tmp, placeHolders, arr\n  var len = b64.length\n  placeHolders = placeHoldersCount(b64)\n\n  arr = new Arr(len * 3 / 4 - placeHolders)\n\n  // if there are placeholders, only get up to the last complete 4 chars\n  l = placeHolders > 0 ? len - 4 : len\n\n  var L = 0\n\n  for (i = 0, j = 0; i < l; i += 4, j += 3) {\n    tmp = (revLookup[b64.charCodeAt(i)] << 18) | (revLookup[b64.charCodeAt(i + 1)] << 12) | (revLookup[b64.charCodeAt(i + 2)] << 6) | revLookup[b64.charCodeAt(i + 3)]\n    arr[L++] = (tmp >> 16) & 0xFF\n    arr[L++] = (tmp >> 8) & 0xFF\n    arr[L++] = tmp & 0xFF\n  }\n\n  if (placeHolders === 2) {\n    tmp = (revLookup[b64.charCodeAt(i)] << 2) | (revLookup[b64.charCodeAt(i + 1)] >> 4)\n    arr[L++] = tmp & 0xFF\n  } else if (placeHolders === 1) {\n    tmp = (revLookup[b64.charCodeAt(i)] << 10) | (revLookup[b64.charCodeAt(i + 1)] << 4) | (revLookup[b64.charCodeAt(i + 2)] >> 2)\n    arr[L++] = (tmp >> 8) & 0xFF\n    arr[L++] = tmp & 0xFF\n  }\n\n  return arr\n}\n\nfunction tripletToBase64 (num) {\n  return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F]\n}\n\nfunction encodeChunk (uint8, start, end) {\n  var tmp\n  var output = []\n  for (var i = start; i < end; i += 3) {\n    tmp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])\n    output.push(tripletToBase64(tmp))\n  }\n  return output.join('')\n}\n\nfunction fromByteArray (uint8) {\n  var tmp\n  var len = uint8.length\n  var extraBytes = len % 3 // if we have 1 byte left, pad 2 bytes\n  var output = ''\n  var parts = []\n  var maxChunkLength = 16383 // must be multiple of 3\n\n  // go through the array every three bytes, we'll deal with trailing stuff later\n  for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {\n    parts.push(encodeChunk(uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)))\n  }\n\n  // pad the end with zeros, but make sure to not forget the extra bytes\n  if (extraBytes === 1) {\n    tmp = uint8[len - 1]\n    output += lookup[tmp >> 2]\n    output += lookup[(tmp << 4) & 0x3F]\n    output += '=='\n  } else if (extraBytes === 2) {\n    tmp = (uint8[len - 2] << 8) + (uint8[len - 1])\n    output += lookup[tmp >> 10]\n    output += lookup[(tmp >> 4) & 0x3F]\n    output += lookup[(tmp << 2) & 0x3F]\n    output += '='\n  }\n\n  parts.push(output)\n\n  return parts.join('')\n}\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./~/base64-js/index.js\n// module id = 34\n// module chunks = 0\n\n//# sourceURL=webpack:///./~/base64-js/index.js?");
+exports = module.exports = __webpack_require__(3)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, ".modal {\n    display: none; /* Hidden by default */\n    position: fixed; /* Stay in place */\n    z-index: 1; /* Sit on top */\n    padding-top: 100px; /* Location of the box */\n    left: 0;\n    top: 0;\n    width: 100%; /* Full width */\n    height: 100%; /* Full height */\n    overflow: auto; /* Enable scroll if needed */\n    background-color: rgb(0,0,0); /* Fallback color */\n    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */\n}\n\n/* Modal Content */\n.modal-content {\n    position: relative;\n    background-color: #fefefe;\n    margin: auto;\n    padding: 0;\n    border: 1px solid #888;\n    width: 80%;\n    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);\n    -webkit-animation-name: animatetop;\n    -webkit-animation-duration: 0.4s;\n    animation-name: animatetop;\n    animation-duration: 0.4s;\n    max-width: 636px;\n}\n\n/* Add Animation */\n@-webkit-keyframes animatetop {\n    from {top:-300px; opacity:0}\n    to {top:0; opacity:1}\n}\n\n@keyframes animatetop {\n    from {top:-300px; opacity:0}\n    to {top:0; opacity:1}\n}\n\n/* The Close Button */\n.close {\n    color: white;\n    float: right;\n    font-size: 28px;\n    font-weight: bold;\n}\n\n.close:hover,\n.close:focus {\n    color: #000;\n    text-decoration: none;\n    cursor: pointer;\n}\n\n.modal-header {\n    padding: 2px 16px;\n    background-color: #5cb85c;\n    color: white;\n}\n\n.modal-body {padding: 2px 16px;}\n\n.modal-footer {\n    padding: 2px 16px;\n    background-color: #5cb85c;\n    color: white;\n}", ""]);
+
+// exports
+
 
 /***/ }),
 /* 35 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-"use strict";
-eval("/* WEBPACK VAR INJECTION */(function(global) {/*!\n * The buffer module from node.js, for the browser.\n *\n * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>\n * @license  MIT\n */\n/* eslint-disable no-proto */\n\n\n\nvar base64 = __webpack_require__(34)\nvar ieee754 = __webpack_require__(44)\nvar isArray = __webpack_require__(45)\n\nexports.Buffer = Buffer\nexports.SlowBuffer = SlowBuffer\nexports.INSPECT_MAX_BYTES = 50\n\n/**\n * If `Buffer.TYPED_ARRAY_SUPPORT`:\n *   === true    Use Uint8Array implementation (fastest)\n *   === false   Use Object implementation (most compatible, even IE6)\n *\n * Browsers that support typed arrays are IE 10+, Firefox 4+, Chrome 7+, Safari 5.1+,\n * Opera 11.6+, iOS 4.2+.\n *\n * Due to various browser bugs, sometimes the Object implementation will be used even\n * when the browser supports typed arrays.\n *\n * Note:\n *\n *   - Firefox 4-29 lacks support for adding new properties to `Uint8Array` instances,\n *     See: https://bugzilla.mozilla.org/show_bug.cgi?id=695438.\n *\n *   - Chrome 9-10 is missing the `TypedArray.prototype.subarray` function.\n *\n *   - IE10 has a broken `TypedArray.prototype.subarray` function which returns arrays of\n *     incorrect length in some situations.\n\n * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they\n * get the Object implementation, which is slower but behaves correctly.\n */\nBuffer.TYPED_ARRAY_SUPPORT = global.TYPED_ARRAY_SUPPORT !== undefined\n  ? global.TYPED_ARRAY_SUPPORT\n  : typedArraySupport()\n\n/*\n * Export kMaxLength after typed array support is determined.\n */\nexports.kMaxLength = kMaxLength()\n\nfunction typedArraySupport () {\n  try {\n    var arr = new Uint8Array(1)\n    arr.__proto__ = {__proto__: Uint8Array.prototype, foo: function () { return 42 }}\n    return arr.foo() === 42 && // typed array instances can be augmented\n        typeof arr.subarray === 'function' && // chrome 9-10 lack `subarray`\n        arr.subarray(1, 1).byteLength === 0 // ie10 has broken `subarray`\n  } catch (e) {\n    return false\n  }\n}\n\nfunction kMaxLength () {\n  return Buffer.TYPED_ARRAY_SUPPORT\n    ? 0x7fffffff\n    : 0x3fffffff\n}\n\nfunction createBuffer (that, length) {\n  if (kMaxLength() < length) {\n    throw new RangeError('Invalid typed array length')\n  }\n  if (Buffer.TYPED_ARRAY_SUPPORT) {\n    // Return an augmented `Uint8Array` instance, for best performance\n    that = new Uint8Array(length)\n    that.__proto__ = Buffer.prototype\n  } else {\n    // Fallback: Return an object instance of the Buffer class\n    if (that === null) {\n      that = new Buffer(length)\n    }\n    that.length = length\n  }\n\n  return that\n}\n\n/**\n * The Buffer constructor returns instances of `Uint8Array` that have their\n * prototype changed to `Buffer.prototype`. Furthermore, `Buffer` is a subclass of\n * `Uint8Array`, so the returned instances will have all the node `Buffer` methods\n * and the `Uint8Array` methods. Square bracket notation works as expected -- it\n * returns a single octet.\n *\n * The `Uint8Array` prototype remains unmodified.\n */\n\nfunction Buffer (arg, encodingOrOffset, length) {\n  if (!Buffer.TYPED_ARRAY_SUPPORT && !(this instanceof Buffer)) {\n    return new Buffer(arg, encodingOrOffset, length)\n  }\n\n  // Common case.\n  if (typeof arg === 'number') {\n    if (typeof encodingOrOffset === 'string') {\n      throw new Error(\n        'If encoding is specified then the first argument must be a string'\n      )\n    }\n    return allocUnsafe(this, arg)\n  }\n  return from(this, arg, encodingOrOffset, length)\n}\n\nBuffer.poolSize = 8192 // not used by this implementation\n\n// TODO: Legacy, not needed anymore. Remove in next major version.\nBuffer._augment = function (arr) {\n  arr.__proto__ = Buffer.prototype\n  return arr\n}\n\nfunction from (that, value, encodingOrOffset, length) {\n  if (typeof value === 'number') {\n    throw new TypeError('\"value\" argument must not be a number')\n  }\n\n  if (typeof ArrayBuffer !== 'undefined' && value instanceof ArrayBuffer) {\n    return fromArrayBuffer(that, value, encodingOrOffset, length)\n  }\n\n  if (typeof value === 'string') {\n    return fromString(that, value, encodingOrOffset)\n  }\n\n  return fromObject(that, value)\n}\n\n/**\n * Functionally equivalent to Buffer(arg, encoding) but throws a TypeError\n * if value is a number.\n * Buffer.from(str[, encoding])\n * Buffer.from(array)\n * Buffer.from(buffer)\n * Buffer.from(arrayBuffer[, byteOffset[, length]])\n **/\nBuffer.from = function (value, encodingOrOffset, length) {\n  return from(null, value, encodingOrOffset, length)\n}\n\nif (Buffer.TYPED_ARRAY_SUPPORT) {\n  Buffer.prototype.__proto__ = Uint8Array.prototype\n  Buffer.__proto__ = Uint8Array\n  if (typeof Symbol !== 'undefined' && Symbol.species &&\n      Buffer[Symbol.species] === Buffer) {\n    // Fix subarray() in ES2016. See: https://github.com/feross/buffer/pull/97\n    Object.defineProperty(Buffer, Symbol.species, {\n      value: null,\n      configurable: true\n    })\n  }\n}\n\nfunction assertSize (size) {\n  if (typeof size !== 'number') {\n    throw new TypeError('\"size\" argument must be a number')\n  } else if (size < 0) {\n    throw new RangeError('\"size\" argument must not be negative')\n  }\n}\n\nfunction alloc (that, size, fill, encoding) {\n  assertSize(size)\n  if (size <= 0) {\n    return createBuffer(that, size)\n  }\n  if (fill !== undefined) {\n    // Only pay attention to encoding if it's a string. This\n    // prevents accidentally sending in a number that would\n    // be interpretted as a start offset.\n    return typeof encoding === 'string'\n      ? createBuffer(that, size).fill(fill, encoding)\n      : createBuffer(that, size).fill(fill)\n  }\n  return createBuffer(that, size)\n}\n\n/**\n * Creates a new filled Buffer instance.\n * alloc(size[, fill[, encoding]])\n **/\nBuffer.alloc = function (size, fill, encoding) {\n  return alloc(null, size, fill, encoding)\n}\n\nfunction allocUnsafe (that, size) {\n  assertSize(size)\n  that = createBuffer(that, size < 0 ? 0 : checked(size) | 0)\n  if (!Buffer.TYPED_ARRAY_SUPPORT) {\n    for (var i = 0; i < size; ++i) {\n      that[i] = 0\n    }\n  }\n  return that\n}\n\n/**\n * Equivalent to Buffer(num), by default creates a non-zero-filled Buffer instance.\n * */\nBuffer.allocUnsafe = function (size) {\n  return allocUnsafe(null, size)\n}\n/**\n * Equivalent to SlowBuffer(num), by default creates a non-zero-filled Buffer instance.\n */\nBuffer.allocUnsafeSlow = function (size) {\n  return allocUnsafe(null, size)\n}\n\nfunction fromString (that, string, encoding) {\n  if (typeof encoding !== 'string' || encoding === '') {\n    encoding = 'utf8'\n  }\n\n  if (!Buffer.isEncoding(encoding)) {\n    throw new TypeError('\"encoding\" must be a valid string encoding')\n  }\n\n  var length = byteLength(string, encoding) | 0\n  that = createBuffer(that, length)\n\n  var actual = that.write(string, encoding)\n\n  if (actual !== length) {\n    // Writing a hex string, for example, that contains invalid characters will\n    // cause everything after the first invalid character to be ignored. (e.g.\n    // 'abxxcd' will be treated as 'ab')\n    that = that.slice(0, actual)\n  }\n\n  return that\n}\n\nfunction fromArrayLike (that, array) {\n  var length = array.length < 0 ? 0 : checked(array.length) | 0\n  that = createBuffer(that, length)\n  for (var i = 0; i < length; i += 1) {\n    that[i] = array[i] & 255\n  }\n  return that\n}\n\nfunction fromArrayBuffer (that, array, byteOffset, length) {\n  array.byteLength // this throws if `array` is not a valid ArrayBuffer\n\n  if (byteOffset < 0 || array.byteLength < byteOffset) {\n    throw new RangeError('\\'offset\\' is out of bounds')\n  }\n\n  if (array.byteLength < byteOffset + (length || 0)) {\n    throw new RangeError('\\'length\\' is out of bounds')\n  }\n\n  if (byteOffset === undefined && length === undefined) {\n    array = new Uint8Array(array)\n  } else if (length === undefined) {\n    array = new Uint8Array(array, byteOffset)\n  } else {\n    array = new Uint8Array(array, byteOffset, length)\n  }\n\n  if (Buffer.TYPED_ARRAY_SUPPORT) {\n    // Return an augmented `Uint8Array` instance, for best performance\n    that = array\n    that.__proto__ = Buffer.prototype\n  } else {\n    // Fallback: Return an object instance of the Buffer class\n    that = fromArrayLike(that, array)\n  }\n  return that\n}\n\nfunction fromObject (that, obj) {\n  if (Buffer.isBuffer(obj)) {\n    var len = checked(obj.length) | 0\n    that = createBuffer(that, len)\n\n    if (that.length === 0) {\n      return that\n    }\n\n    obj.copy(that, 0, 0, len)\n    return that\n  }\n\n  if (obj) {\n    if ((typeof ArrayBuffer !== 'undefined' &&\n        obj.buffer instanceof ArrayBuffer) || 'length' in obj) {\n      if (typeof obj.length !== 'number' || isnan(obj.length)) {\n        return createBuffer(that, 0)\n      }\n      return fromArrayLike(that, obj)\n    }\n\n    if (obj.type === 'Buffer' && isArray(obj.data)) {\n      return fromArrayLike(that, obj.data)\n    }\n  }\n\n  throw new TypeError('First argument must be a string, Buffer, ArrayBuffer, Array, or array-like object.')\n}\n\nfunction checked (length) {\n  // Note: cannot use `length < kMaxLength()` here because that fails when\n  // length is NaN (which is otherwise coerced to zero.)\n  if (length >= kMaxLength()) {\n    throw new RangeError('Attempt to allocate Buffer larger than maximum ' +\n                         'size: 0x' + kMaxLength().toString(16) + ' bytes')\n  }\n  return length | 0\n}\n\nfunction SlowBuffer (length) {\n  if (+length != length) { // eslint-disable-line eqeqeq\n    length = 0\n  }\n  return Buffer.alloc(+length)\n}\n\nBuffer.isBuffer = function isBuffer (b) {\n  return !!(b != null && b._isBuffer)\n}\n\nBuffer.compare = function compare (a, b) {\n  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) {\n    throw new TypeError('Arguments must be Buffers')\n  }\n\n  if (a === b) return 0\n\n  var x = a.length\n  var y = b.length\n\n  for (var i = 0, len = Math.min(x, y); i < len; ++i) {\n    if (a[i] !== b[i]) {\n      x = a[i]\n      y = b[i]\n      break\n    }\n  }\n\n  if (x < y) return -1\n  if (y < x) return 1\n  return 0\n}\n\nBuffer.isEncoding = function isEncoding (encoding) {\n  switch (String(encoding).toLowerCase()) {\n    case 'hex':\n    case 'utf8':\n    case 'utf-8':\n    case 'ascii':\n    case 'latin1':\n    case 'binary':\n    case 'base64':\n    case 'ucs2':\n    case 'ucs-2':\n    case 'utf16le':\n    case 'utf-16le':\n      return true\n    default:\n      return false\n  }\n}\n\nBuffer.concat = function concat (list, length) {\n  if (!isArray(list)) {\n    throw new TypeError('\"list\" argument must be an Array of Buffers')\n  }\n\n  if (list.length === 0) {\n    return Buffer.alloc(0)\n  }\n\n  var i\n  if (length === undefined) {\n    length = 0\n    for (i = 0; i < list.length; ++i) {\n      length += list[i].length\n    }\n  }\n\n  var buffer = Buffer.allocUnsafe(length)\n  var pos = 0\n  for (i = 0; i < list.length; ++i) {\n    var buf = list[i]\n    if (!Buffer.isBuffer(buf)) {\n      throw new TypeError('\"list\" argument must be an Array of Buffers')\n    }\n    buf.copy(buffer, pos)\n    pos += buf.length\n  }\n  return buffer\n}\n\nfunction byteLength (string, encoding) {\n  if (Buffer.isBuffer(string)) {\n    return string.length\n  }\n  if (typeof ArrayBuffer !== 'undefined' && typeof ArrayBuffer.isView === 'function' &&\n      (ArrayBuffer.isView(string) || string instanceof ArrayBuffer)) {\n    return string.byteLength\n  }\n  if (typeof string !== 'string') {\n    string = '' + string\n  }\n\n  var len = string.length\n  if (len === 0) return 0\n\n  // Use a for loop to avoid recursion\n  var loweredCase = false\n  for (;;) {\n    switch (encoding) {\n      case 'ascii':\n      case 'latin1':\n      case 'binary':\n        return len\n      case 'utf8':\n      case 'utf-8':\n      case undefined:\n        return utf8ToBytes(string).length\n      case 'ucs2':\n      case 'ucs-2':\n      case 'utf16le':\n      case 'utf-16le':\n        return len * 2\n      case 'hex':\n        return len >>> 1\n      case 'base64':\n        return base64ToBytes(string).length\n      default:\n        if (loweredCase) return utf8ToBytes(string).length // assume utf8\n        encoding = ('' + encoding).toLowerCase()\n        loweredCase = true\n    }\n  }\n}\nBuffer.byteLength = byteLength\n\nfunction slowToString (encoding, start, end) {\n  var loweredCase = false\n\n  // No need to verify that \"this.length <= MAX_UINT32\" since it's a read-only\n  // property of a typed array.\n\n  // This behaves neither like String nor Uint8Array in that we set start/end\n  // to their upper/lower bounds if the value passed is out of range.\n  // undefined is handled specially as per ECMA-262 6th Edition,\n  // Section 13.3.3.7 Runtime Semantics: KeyedBindingInitialization.\n  if (start === undefined || start < 0) {\n    start = 0\n  }\n  // Return early if start > this.length. Done here to prevent potential uint32\n  // coercion fail below.\n  if (start > this.length) {\n    return ''\n  }\n\n  if (end === undefined || end > this.length) {\n    end = this.length\n  }\n\n  if (end <= 0) {\n    return ''\n  }\n\n  // Force coersion to uint32. This will also coerce falsey/NaN values to 0.\n  end >>>= 0\n  start >>>= 0\n\n  if (end <= start) {\n    return ''\n  }\n\n  if (!encoding) encoding = 'utf8'\n\n  while (true) {\n    switch (encoding) {\n      case 'hex':\n        return hexSlice(this, start, end)\n\n      case 'utf8':\n      case 'utf-8':\n        return utf8Slice(this, start, end)\n\n      case 'ascii':\n        return asciiSlice(this, start, end)\n\n      case 'latin1':\n      case 'binary':\n        return latin1Slice(this, start, end)\n\n      case 'base64':\n        return base64Slice(this, start, end)\n\n      case 'ucs2':\n      case 'ucs-2':\n      case 'utf16le':\n      case 'utf-16le':\n        return utf16leSlice(this, start, end)\n\n      default:\n        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)\n        encoding = (encoding + '').toLowerCase()\n        loweredCase = true\n    }\n  }\n}\n\n// The property is used by `Buffer.isBuffer` and `is-buffer` (in Safari 5-7) to detect\n// Buffer instances.\nBuffer.prototype._isBuffer = true\n\nfunction swap (b, n, m) {\n  var i = b[n]\n  b[n] = b[m]\n  b[m] = i\n}\n\nBuffer.prototype.swap16 = function swap16 () {\n  var len = this.length\n  if (len % 2 !== 0) {\n    throw new RangeError('Buffer size must be a multiple of 16-bits')\n  }\n  for (var i = 0; i < len; i += 2) {\n    swap(this, i, i + 1)\n  }\n  return this\n}\n\nBuffer.prototype.swap32 = function swap32 () {\n  var len = this.length\n  if (len % 4 !== 0) {\n    throw new RangeError('Buffer size must be a multiple of 32-bits')\n  }\n  for (var i = 0; i < len; i += 4) {\n    swap(this, i, i + 3)\n    swap(this, i + 1, i + 2)\n  }\n  return this\n}\n\nBuffer.prototype.swap64 = function swap64 () {\n  var len = this.length\n  if (len % 8 !== 0) {\n    throw new RangeError('Buffer size must be a multiple of 64-bits')\n  }\n  for (var i = 0; i < len; i += 8) {\n    swap(this, i, i + 7)\n    swap(this, i + 1, i + 6)\n    swap(this, i + 2, i + 5)\n    swap(this, i + 3, i + 4)\n  }\n  return this\n}\n\nBuffer.prototype.toString = function toString () {\n  var length = this.length | 0\n  if (length === 0) return ''\n  if (arguments.length === 0) return utf8Slice(this, 0, length)\n  return slowToString.apply(this, arguments)\n}\n\nBuffer.prototype.equals = function equals (b) {\n  if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')\n  if (this === b) return true\n  return Buffer.compare(this, b) === 0\n}\n\nBuffer.prototype.inspect = function inspect () {\n  var str = ''\n  var max = exports.INSPECT_MAX_BYTES\n  if (this.length > 0) {\n    str = this.toString('hex', 0, max).match(/.{2}/g).join(' ')\n    if (this.length > max) str += ' ... '\n  }\n  return '<Buffer ' + str + '>'\n}\n\nBuffer.prototype.compare = function compare (target, start, end, thisStart, thisEnd) {\n  if (!Buffer.isBuffer(target)) {\n    throw new TypeError('Argument must be a Buffer')\n  }\n\n  if (start === undefined) {\n    start = 0\n  }\n  if (end === undefined) {\n    end = target ? target.length : 0\n  }\n  if (thisStart === undefined) {\n    thisStart = 0\n  }\n  if (thisEnd === undefined) {\n    thisEnd = this.length\n  }\n\n  if (start < 0 || end > target.length || thisStart < 0 || thisEnd > this.length) {\n    throw new RangeError('out of range index')\n  }\n\n  if (thisStart >= thisEnd && start >= end) {\n    return 0\n  }\n  if (thisStart >= thisEnd) {\n    return -1\n  }\n  if (start >= end) {\n    return 1\n  }\n\n  start >>>= 0\n  end >>>= 0\n  thisStart >>>= 0\n  thisEnd >>>= 0\n\n  if (this === target) return 0\n\n  var x = thisEnd - thisStart\n  var y = end - start\n  var len = Math.min(x, y)\n\n  var thisCopy = this.slice(thisStart, thisEnd)\n  var targetCopy = target.slice(start, end)\n\n  for (var i = 0; i < len; ++i) {\n    if (thisCopy[i] !== targetCopy[i]) {\n      x = thisCopy[i]\n      y = targetCopy[i]\n      break\n    }\n  }\n\n  if (x < y) return -1\n  if (y < x) return 1\n  return 0\n}\n\n// Finds either the first index of `val` in `buffer` at offset >= `byteOffset`,\n// OR the last index of `val` in `buffer` at offset <= `byteOffset`.\n//\n// Arguments:\n// - buffer - a Buffer to search\n// - val - a string, Buffer, or number\n// - byteOffset - an index into `buffer`; will be clamped to an int32\n// - encoding - an optional encoding, relevant is val is a string\n// - dir - true for indexOf, false for lastIndexOf\nfunction bidirectionalIndexOf (buffer, val, byteOffset, encoding, dir) {\n  // Empty buffer means no match\n  if (buffer.length === 0) return -1\n\n  // Normalize byteOffset\n  if (typeof byteOffset === 'string') {\n    encoding = byteOffset\n    byteOffset = 0\n  } else if (byteOffset > 0x7fffffff) {\n    byteOffset = 0x7fffffff\n  } else if (byteOffset < -0x80000000) {\n    byteOffset = -0x80000000\n  }\n  byteOffset = +byteOffset  // Coerce to Number.\n  if (isNaN(byteOffset)) {\n    // byteOffset: it it's undefined, null, NaN, \"foo\", etc, search whole buffer\n    byteOffset = dir ? 0 : (buffer.length - 1)\n  }\n\n  // Normalize byteOffset: negative offsets start from the end of the buffer\n  if (byteOffset < 0) byteOffset = buffer.length + byteOffset\n  if (byteOffset >= buffer.length) {\n    if (dir) return -1\n    else byteOffset = buffer.length - 1\n  } else if (byteOffset < 0) {\n    if (dir) byteOffset = 0\n    else return -1\n  }\n\n  // Normalize val\n  if (typeof val === 'string') {\n    val = Buffer.from(val, encoding)\n  }\n\n  // Finally, search either indexOf (if dir is true) or lastIndexOf\n  if (Buffer.isBuffer(val)) {\n    // Special case: looking for empty string/buffer always fails\n    if (val.length === 0) {\n      return -1\n    }\n    return arrayIndexOf(buffer, val, byteOffset, encoding, dir)\n  } else if (typeof val === 'number') {\n    val = val & 0xFF // Search for a byte value [0-255]\n    if (Buffer.TYPED_ARRAY_SUPPORT &&\n        typeof Uint8Array.prototype.indexOf === 'function') {\n      if (dir) {\n        return Uint8Array.prototype.indexOf.call(buffer, val, byteOffset)\n      } else {\n        return Uint8Array.prototype.lastIndexOf.call(buffer, val, byteOffset)\n      }\n    }\n    return arrayIndexOf(buffer, [ val ], byteOffset, encoding, dir)\n  }\n\n  throw new TypeError('val must be string, number or Buffer')\n}\n\nfunction arrayIndexOf (arr, val, byteOffset, encoding, dir) {\n  var indexSize = 1\n  var arrLength = arr.length\n  var valLength = val.length\n\n  if (encoding !== undefined) {\n    encoding = String(encoding).toLowerCase()\n    if (encoding === 'ucs2' || encoding === 'ucs-2' ||\n        encoding === 'utf16le' || encoding === 'utf-16le') {\n      if (arr.length < 2 || val.length < 2) {\n        return -1\n      }\n      indexSize = 2\n      arrLength /= 2\n      valLength /= 2\n      byteOffset /= 2\n    }\n  }\n\n  function read (buf, i) {\n    if (indexSize === 1) {\n      return buf[i]\n    } else {\n      return buf.readUInt16BE(i * indexSize)\n    }\n  }\n\n  var i\n  if (dir) {\n    var foundIndex = -1\n    for (i = byteOffset; i < arrLength; i++) {\n      if (read(arr, i) === read(val, foundIndex === -1 ? 0 : i - foundIndex)) {\n        if (foundIndex === -1) foundIndex = i\n        if (i - foundIndex + 1 === valLength) return foundIndex * indexSize\n      } else {\n        if (foundIndex !== -1) i -= i - foundIndex\n        foundIndex = -1\n      }\n    }\n  } else {\n    if (byteOffset + valLength > arrLength) byteOffset = arrLength - valLength\n    for (i = byteOffset; i >= 0; i--) {\n      var found = true\n      for (var j = 0; j < valLength; j++) {\n        if (read(arr, i + j) !== read(val, j)) {\n          found = false\n          break\n        }\n      }\n      if (found) return i\n    }\n  }\n\n  return -1\n}\n\nBuffer.prototype.includes = function includes (val, byteOffset, encoding) {\n  return this.indexOf(val, byteOffset, encoding) !== -1\n}\n\nBuffer.prototype.indexOf = function indexOf (val, byteOffset, encoding) {\n  return bidirectionalIndexOf(this, val, byteOffset, encoding, true)\n}\n\nBuffer.prototype.lastIndexOf = function lastIndexOf (val, byteOffset, encoding) {\n  return bidirectionalIndexOf(this, val, byteOffset, encoding, false)\n}\n\nfunction hexWrite (buf, string, offset, length) {\n  offset = Number(offset) || 0\n  var remaining = buf.length - offset\n  if (!length) {\n    length = remaining\n  } else {\n    length = Number(length)\n    if (length > remaining) {\n      length = remaining\n    }\n  }\n\n  // must be an even number of digits\n  var strLen = string.length\n  if (strLen % 2 !== 0) throw new TypeError('Invalid hex string')\n\n  if (length > strLen / 2) {\n    length = strLen / 2\n  }\n  for (var i = 0; i < length; ++i) {\n    var parsed = parseInt(string.substr(i * 2, 2), 16)\n    if (isNaN(parsed)) return i\n    buf[offset + i] = parsed\n  }\n  return i\n}\n\nfunction utf8Write (buf, string, offset, length) {\n  return blitBuffer(utf8ToBytes(string, buf.length - offset), buf, offset, length)\n}\n\nfunction asciiWrite (buf, string, offset, length) {\n  return blitBuffer(asciiToBytes(string), buf, offset, length)\n}\n\nfunction latin1Write (buf, string, offset, length) {\n  return asciiWrite(buf, string, offset, length)\n}\n\nfunction base64Write (buf, string, offset, length) {\n  return blitBuffer(base64ToBytes(string), buf, offset, length)\n}\n\nfunction ucs2Write (buf, string, offset, length) {\n  return blitBuffer(utf16leToBytes(string, buf.length - offset), buf, offset, length)\n}\n\nBuffer.prototype.write = function write (string, offset, length, encoding) {\n  // Buffer#write(string)\n  if (offset === undefined) {\n    encoding = 'utf8'\n    length = this.length\n    offset = 0\n  // Buffer#write(string, encoding)\n  } else if (length === undefined && typeof offset === 'string') {\n    encoding = offset\n    length = this.length\n    offset = 0\n  // Buffer#write(string, offset[, length][, encoding])\n  } else if (isFinite(offset)) {\n    offset = offset | 0\n    if (isFinite(length)) {\n      length = length | 0\n      if (encoding === undefined) encoding = 'utf8'\n    } else {\n      encoding = length\n      length = undefined\n    }\n  // legacy write(string, encoding, offset, length) - remove in v0.13\n  } else {\n    throw new Error(\n      'Buffer.write(string, encoding, offset[, length]) is no longer supported'\n    )\n  }\n\n  var remaining = this.length - offset\n  if (length === undefined || length > remaining) length = remaining\n\n  if ((string.length > 0 && (length < 0 || offset < 0)) || offset > this.length) {\n    throw new RangeError('Attempt to write outside buffer bounds')\n  }\n\n  if (!encoding) encoding = 'utf8'\n\n  var loweredCase = false\n  for (;;) {\n    switch (encoding) {\n      case 'hex':\n        return hexWrite(this, string, offset, length)\n\n      case 'utf8':\n      case 'utf-8':\n        return utf8Write(this, string, offset, length)\n\n      case 'ascii':\n        return asciiWrite(this, string, offset, length)\n\n      case 'latin1':\n      case 'binary':\n        return latin1Write(this, string, offset, length)\n\n      case 'base64':\n        // Warning: maxLength not taken into account in base64Write\n        return base64Write(this, string, offset, length)\n\n      case 'ucs2':\n      case 'ucs-2':\n      case 'utf16le':\n      case 'utf-16le':\n        return ucs2Write(this, string, offset, length)\n\n      default:\n        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)\n        encoding = ('' + encoding).toLowerCase()\n        loweredCase = true\n    }\n  }\n}\n\nBuffer.prototype.toJSON = function toJSON () {\n  return {\n    type: 'Buffer',\n    data: Array.prototype.slice.call(this._arr || this, 0)\n  }\n}\n\nfunction base64Slice (buf, start, end) {\n  if (start === 0 && end === buf.length) {\n    return base64.fromByteArray(buf)\n  } else {\n    return base64.fromByteArray(buf.slice(start, end))\n  }\n}\n\nfunction utf8Slice (buf, start, end) {\n  end = Math.min(buf.length, end)\n  var res = []\n\n  var i = start\n  while (i < end) {\n    var firstByte = buf[i]\n    var codePoint = null\n    var bytesPerSequence = (firstByte > 0xEF) ? 4\n      : (firstByte > 0xDF) ? 3\n      : (firstByte > 0xBF) ? 2\n      : 1\n\n    if (i + bytesPerSequence <= end) {\n      var secondByte, thirdByte, fourthByte, tempCodePoint\n\n      switch (bytesPerSequence) {\n        case 1:\n          if (firstByte < 0x80) {\n            codePoint = firstByte\n          }\n          break\n        case 2:\n          secondByte = buf[i + 1]\n          if ((secondByte & 0xC0) === 0x80) {\n            tempCodePoint = (firstByte & 0x1F) << 0x6 | (secondByte & 0x3F)\n            if (tempCodePoint > 0x7F) {\n              codePoint = tempCodePoint\n            }\n          }\n          break\n        case 3:\n          secondByte = buf[i + 1]\n          thirdByte = buf[i + 2]\n          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80) {\n            tempCodePoint = (firstByte & 0xF) << 0xC | (secondByte & 0x3F) << 0x6 | (thirdByte & 0x3F)\n            if (tempCodePoint > 0x7FF && (tempCodePoint < 0xD800 || tempCodePoint > 0xDFFF)) {\n              codePoint = tempCodePoint\n            }\n          }\n          break\n        case 4:\n          secondByte = buf[i + 1]\n          thirdByte = buf[i + 2]\n          fourthByte = buf[i + 3]\n          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80 && (fourthByte & 0xC0) === 0x80) {\n            tempCodePoint = (firstByte & 0xF) << 0x12 | (secondByte & 0x3F) << 0xC | (thirdByte & 0x3F) << 0x6 | (fourthByte & 0x3F)\n            if (tempCodePoint > 0xFFFF && tempCodePoint < 0x110000) {\n              codePoint = tempCodePoint\n            }\n          }\n      }\n    }\n\n    if (codePoint === null) {\n      // we did not generate a valid codePoint so insert a\n      // replacement char (U+FFFD) and advance only 1 byte\n      codePoint = 0xFFFD\n      bytesPerSequence = 1\n    } else if (codePoint > 0xFFFF) {\n      // encode to utf16 (surrogate pair dance)\n      codePoint -= 0x10000\n      res.push(codePoint >>> 10 & 0x3FF | 0xD800)\n      codePoint = 0xDC00 | codePoint & 0x3FF\n    }\n\n    res.push(codePoint)\n    i += bytesPerSequence\n  }\n\n  return decodeCodePointsArray(res)\n}\n\n// Based on http://stackoverflow.com/a/22747272/680742, the browser with\n// the lowest limit is Chrome, with 0x10000 args.\n// We go 1 magnitude less, for safety\nvar MAX_ARGUMENTS_LENGTH = 0x1000\n\nfunction decodeCodePointsArray (codePoints) {\n  var len = codePoints.length\n  if (len <= MAX_ARGUMENTS_LENGTH) {\n    return String.fromCharCode.apply(String, codePoints) // avoid extra slice()\n  }\n\n  // Decode in chunks to avoid \"call stack size exceeded\".\n  var res = ''\n  var i = 0\n  while (i < len) {\n    res += String.fromCharCode.apply(\n      String,\n      codePoints.slice(i, i += MAX_ARGUMENTS_LENGTH)\n    )\n  }\n  return res\n}\n\nfunction asciiSlice (buf, start, end) {\n  var ret = ''\n  end = Math.min(buf.length, end)\n\n  for (var i = start; i < end; ++i) {\n    ret += String.fromCharCode(buf[i] & 0x7F)\n  }\n  return ret\n}\n\nfunction latin1Slice (buf, start, end) {\n  var ret = ''\n  end = Math.min(buf.length, end)\n\n  for (var i = start; i < end; ++i) {\n    ret += String.fromCharCode(buf[i])\n  }\n  return ret\n}\n\nfunction hexSlice (buf, start, end) {\n  var len = buf.length\n\n  if (!start || start < 0) start = 0\n  if (!end || end < 0 || end > len) end = len\n\n  var out = ''\n  for (var i = start; i < end; ++i) {\n    out += toHex(buf[i])\n  }\n  return out\n}\n\nfunction utf16leSlice (buf, start, end) {\n  var bytes = buf.slice(start, end)\n  var res = ''\n  for (var i = 0; i < bytes.length; i += 2) {\n    res += String.fromCharCode(bytes[i] + bytes[i + 1] * 256)\n  }\n  return res\n}\n\nBuffer.prototype.slice = function slice (start, end) {\n  var len = this.length\n  start = ~~start\n  end = end === undefined ? len : ~~end\n\n  if (start < 0) {\n    start += len\n    if (start < 0) start = 0\n  } else if (start > len) {\n    start = len\n  }\n\n  if (end < 0) {\n    end += len\n    if (end < 0) end = 0\n  } else if (end > len) {\n    end = len\n  }\n\n  if (end < start) end = start\n\n  var newBuf\n  if (Buffer.TYPED_ARRAY_SUPPORT) {\n    newBuf = this.subarray(start, end)\n    newBuf.__proto__ = Buffer.prototype\n  } else {\n    var sliceLen = end - start\n    newBuf = new Buffer(sliceLen, undefined)\n    for (var i = 0; i < sliceLen; ++i) {\n      newBuf[i] = this[i + start]\n    }\n  }\n\n  return newBuf\n}\n\n/*\n * Need to make sure that buffer isn't trying to write out of bounds.\n */\nfunction checkOffset (offset, ext, length) {\n  if ((offset % 1) !== 0 || offset < 0) throw new RangeError('offset is not uint')\n  if (offset + ext > length) throw new RangeError('Trying to access beyond buffer length')\n}\n\nBuffer.prototype.readUIntLE = function readUIntLE (offset, byteLength, noAssert) {\n  offset = offset | 0\n  byteLength = byteLength | 0\n  if (!noAssert) checkOffset(offset, byteLength, this.length)\n\n  var val = this[offset]\n  var mul = 1\n  var i = 0\n  while (++i < byteLength && (mul *= 0x100)) {\n    val += this[offset + i] * mul\n  }\n\n  return val\n}\n\nBuffer.prototype.readUIntBE = function readUIntBE (offset, byteLength, noAssert) {\n  offset = offset | 0\n  byteLength = byteLength | 0\n  if (!noAssert) {\n    checkOffset(offset, byteLength, this.length)\n  }\n\n  var val = this[offset + --byteLength]\n  var mul = 1\n  while (byteLength > 0 && (mul *= 0x100)) {\n    val += this[offset + --byteLength] * mul\n  }\n\n  return val\n}\n\nBuffer.prototype.readUInt8 = function readUInt8 (offset, noAssert) {\n  if (!noAssert) checkOffset(offset, 1, this.length)\n  return this[offset]\n}\n\nBuffer.prototype.readUInt16LE = function readUInt16LE (offset, noAssert) {\n  if (!noAssert) checkOffset(offset, 2, this.length)\n  return this[offset] | (this[offset + 1] << 8)\n}\n\nBuffer.prototype.readUInt16BE = function readUInt16BE (offset, noAssert) {\n  if (!noAssert) checkOffset(offset, 2, this.length)\n  return (this[offset] << 8) | this[offset + 1]\n}\n\nBuffer.prototype.readUInt32LE = function readUInt32LE (offset, noAssert) {\n  if (!noAssert) checkOffset(offset, 4, this.length)\n\n  return ((this[offset]) |\n      (this[offset + 1] << 8) |\n      (this[offset + 2] << 16)) +\n      (this[offset + 3] * 0x1000000)\n}\n\nBuffer.prototype.readUInt32BE = function readUInt32BE (offset, noAssert) {\n  if (!noAssert) checkOffset(offset, 4, this.length)\n\n  return (this[offset] * 0x1000000) +\n    ((this[offset + 1] << 16) |\n    (this[offset + 2] << 8) |\n    this[offset + 3])\n}\n\nBuffer.prototype.readIntLE = function readIntLE (offset, byteLength, noAssert) {\n  offset = offset | 0\n  byteLength = byteLength | 0\n  if (!noAssert) checkOffset(offset, byteLength, this.length)\n\n  var val = this[offset]\n  var mul = 1\n  var i = 0\n  while (++i < byteLength && (mul *= 0x100)) {\n    val += this[offset + i] * mul\n  }\n  mul *= 0x80\n\n  if (val >= mul) val -= Math.pow(2, 8 * byteLength)\n\n  return val\n}\n\nBuffer.prototype.readIntBE = function readIntBE (offset, byteLength, noAssert) {\n  offset = offset | 0\n  byteLength = byteLength | 0\n  if (!noAssert) checkOffset(offset, byteLength, this.length)\n\n  var i = byteLength\n  var mul = 1\n  var val = this[offset + --i]\n  while (i > 0 && (mul *= 0x100)) {\n    val += this[offset + --i] * mul\n  }\n  mul *= 0x80\n\n  if (val >= mul) val -= Math.pow(2, 8 * byteLength)\n\n  return val\n}\n\nBuffer.prototype.readInt8 = function readInt8 (offset, noAssert) {\n  if (!noAssert) checkOffset(offset, 1, this.length)\n  if (!(this[offset] & 0x80)) return (this[offset])\n  return ((0xff - this[offset] + 1) * -1)\n}\n\nBuffer.prototype.readInt16LE = function readInt16LE (offset, noAssert) {\n  if (!noAssert) checkOffset(offset, 2, this.length)\n  var val = this[offset] | (this[offset + 1] << 8)\n  return (val & 0x8000) ? val | 0xFFFF0000 : val\n}\n\nBuffer.prototype.readInt16BE = function readInt16BE (offset, noAssert) {\n  if (!noAssert) checkOffset(offset, 2, this.length)\n  var val = this[offset + 1] | (this[offset] << 8)\n  return (val & 0x8000) ? val | 0xFFFF0000 : val\n}\n\nBuffer.prototype.readInt32LE = function readInt32LE (offset, noAssert) {\n  if (!noAssert) checkOffset(offset, 4, this.length)\n\n  return (this[offset]) |\n    (this[offset + 1] << 8) |\n    (this[offset + 2] << 16) |\n    (this[offset + 3] << 24)\n}\n\nBuffer.prototype.readInt32BE = function readInt32BE (offset, noAssert) {\n  if (!noAssert) checkOffset(offset, 4, this.length)\n\n  return (this[offset] << 24) |\n    (this[offset + 1] << 16) |\n    (this[offset + 2] << 8) |\n    (this[offset + 3])\n}\n\nBuffer.prototype.readFloatLE = function readFloatLE (offset, noAssert) {\n  if (!noAssert) checkOffset(offset, 4, this.length)\n  return ieee754.read(this, offset, true, 23, 4)\n}\n\nBuffer.prototype.readFloatBE = function readFloatBE (offset, noAssert) {\n  if (!noAssert) checkOffset(offset, 4, this.length)\n  return ieee754.read(this, offset, false, 23, 4)\n}\n\nBuffer.prototype.readDoubleLE = function readDoubleLE (offset, noAssert) {\n  if (!noAssert) checkOffset(offset, 8, this.length)\n  return ieee754.read(this, offset, true, 52, 8)\n}\n\nBuffer.prototype.readDoubleBE = function readDoubleBE (offset, noAssert) {\n  if (!noAssert) checkOffset(offset, 8, this.length)\n  return ieee754.read(this, offset, false, 52, 8)\n}\n\nfunction checkInt (buf, value, offset, ext, max, min) {\n  if (!Buffer.isBuffer(buf)) throw new TypeError('\"buffer\" argument must be a Buffer instance')\n  if (value > max || value < min) throw new RangeError('\"value\" argument is out of bounds')\n  if (offset + ext > buf.length) throw new RangeError('Index out of range')\n}\n\nBuffer.prototype.writeUIntLE = function writeUIntLE (value, offset, byteLength, noAssert) {\n  value = +value\n  offset = offset | 0\n  byteLength = byteLength | 0\n  if (!noAssert) {\n    var maxBytes = Math.pow(2, 8 * byteLength) - 1\n    checkInt(this, value, offset, byteLength, maxBytes, 0)\n  }\n\n  var mul = 1\n  var i = 0\n  this[offset] = value & 0xFF\n  while (++i < byteLength && (mul *= 0x100)) {\n    this[offset + i] = (value / mul) & 0xFF\n  }\n\n  return offset + byteLength\n}\n\nBuffer.prototype.writeUIntBE = function writeUIntBE (value, offset, byteLength, noAssert) {\n  value = +value\n  offset = offset | 0\n  byteLength = byteLength | 0\n  if (!noAssert) {\n    var maxBytes = Math.pow(2, 8 * byteLength) - 1\n    checkInt(this, value, offset, byteLength, maxBytes, 0)\n  }\n\n  var i = byteLength - 1\n  var mul = 1\n  this[offset + i] = value & 0xFF\n  while (--i >= 0 && (mul *= 0x100)) {\n    this[offset + i] = (value / mul) & 0xFF\n  }\n\n  return offset + byteLength\n}\n\nBuffer.prototype.writeUInt8 = function writeUInt8 (value, offset, noAssert) {\n  value = +value\n  offset = offset | 0\n  if (!noAssert) checkInt(this, value, offset, 1, 0xff, 0)\n  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)\n  this[offset] = (value & 0xff)\n  return offset + 1\n}\n\nfunction objectWriteUInt16 (buf, value, offset, littleEndian) {\n  if (value < 0) value = 0xffff + value + 1\n  for (var i = 0, j = Math.min(buf.length - offset, 2); i < j; ++i) {\n    buf[offset + i] = (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>\n      (littleEndian ? i : 1 - i) * 8\n  }\n}\n\nBuffer.prototype.writeUInt16LE = function writeUInt16LE (value, offset, noAssert) {\n  value = +value\n  offset = offset | 0\n  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)\n  if (Buffer.TYPED_ARRAY_SUPPORT) {\n    this[offset] = (value & 0xff)\n    this[offset + 1] = (value >>> 8)\n  } else {\n    objectWriteUInt16(this, value, offset, true)\n  }\n  return offset + 2\n}\n\nBuffer.prototype.writeUInt16BE = function writeUInt16BE (value, offset, noAssert) {\n  value = +value\n  offset = offset | 0\n  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)\n  if (Buffer.TYPED_ARRAY_SUPPORT) {\n    this[offset] = (value >>> 8)\n    this[offset + 1] = (value & 0xff)\n  } else {\n    objectWriteUInt16(this, value, offset, false)\n  }\n  return offset + 2\n}\n\nfunction objectWriteUInt32 (buf, value, offset, littleEndian) {\n  if (value < 0) value = 0xffffffff + value + 1\n  for (var i = 0, j = Math.min(buf.length - offset, 4); i < j; ++i) {\n    buf[offset + i] = (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff\n  }\n}\n\nBuffer.prototype.writeUInt32LE = function writeUInt32LE (value, offset, noAssert) {\n  value = +value\n  offset = offset | 0\n  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)\n  if (Buffer.TYPED_ARRAY_SUPPORT) {\n    this[offset + 3] = (value >>> 24)\n    this[offset + 2] = (value >>> 16)\n    this[offset + 1] = (value >>> 8)\n    this[offset] = (value & 0xff)\n  } else {\n    objectWriteUInt32(this, value, offset, true)\n  }\n  return offset + 4\n}\n\nBuffer.prototype.writeUInt32BE = function writeUInt32BE (value, offset, noAssert) {\n  value = +value\n  offset = offset | 0\n  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)\n  if (Buffer.TYPED_ARRAY_SUPPORT) {\n    this[offset] = (value >>> 24)\n    this[offset + 1] = (value >>> 16)\n    this[offset + 2] = (value >>> 8)\n    this[offset + 3] = (value & 0xff)\n  } else {\n    objectWriteUInt32(this, value, offset, false)\n  }\n  return offset + 4\n}\n\nBuffer.prototype.writeIntLE = function writeIntLE (value, offset, byteLength, noAssert) {\n  value = +value\n  offset = offset | 0\n  if (!noAssert) {\n    var limit = Math.pow(2, 8 * byteLength - 1)\n\n    checkInt(this, value, offset, byteLength, limit - 1, -limit)\n  }\n\n  var i = 0\n  var mul = 1\n  var sub = 0\n  this[offset] = value & 0xFF\n  while (++i < byteLength && (mul *= 0x100)) {\n    if (value < 0 && sub === 0 && this[offset + i - 1] !== 0) {\n      sub = 1\n    }\n    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF\n  }\n\n  return offset + byteLength\n}\n\nBuffer.prototype.writeIntBE = function writeIntBE (value, offset, byteLength, noAssert) {\n  value = +value\n  offset = offset | 0\n  if (!noAssert) {\n    var limit = Math.pow(2, 8 * byteLength - 1)\n\n    checkInt(this, value, offset, byteLength, limit - 1, -limit)\n  }\n\n  var i = byteLength - 1\n  var mul = 1\n  var sub = 0\n  this[offset + i] = value & 0xFF\n  while (--i >= 0 && (mul *= 0x100)) {\n    if (value < 0 && sub === 0 && this[offset + i + 1] !== 0) {\n      sub = 1\n    }\n    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF\n  }\n\n  return offset + byteLength\n}\n\nBuffer.prototype.writeInt8 = function writeInt8 (value, offset, noAssert) {\n  value = +value\n  offset = offset | 0\n  if (!noAssert) checkInt(this, value, offset, 1, 0x7f, -0x80)\n  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)\n  if (value < 0) value = 0xff + value + 1\n  this[offset] = (value & 0xff)\n  return offset + 1\n}\n\nBuffer.prototype.writeInt16LE = function writeInt16LE (value, offset, noAssert) {\n  value = +value\n  offset = offset | 0\n  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)\n  if (Buffer.TYPED_ARRAY_SUPPORT) {\n    this[offset] = (value & 0xff)\n    this[offset + 1] = (value >>> 8)\n  } else {\n    objectWriteUInt16(this, value, offset, true)\n  }\n  return offset + 2\n}\n\nBuffer.prototype.writeInt16BE = function writeInt16BE (value, offset, noAssert) {\n  value = +value\n  offset = offset | 0\n  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)\n  if (Buffer.TYPED_ARRAY_SUPPORT) {\n    this[offset] = (value >>> 8)\n    this[offset + 1] = (value & 0xff)\n  } else {\n    objectWriteUInt16(this, value, offset, false)\n  }\n  return offset + 2\n}\n\nBuffer.prototype.writeInt32LE = function writeInt32LE (value, offset, noAssert) {\n  value = +value\n  offset = offset | 0\n  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)\n  if (Buffer.TYPED_ARRAY_SUPPORT) {\n    this[offset] = (value & 0xff)\n    this[offset + 1] = (value >>> 8)\n    this[offset + 2] = (value >>> 16)\n    this[offset + 3] = (value >>> 24)\n  } else {\n    objectWriteUInt32(this, value, offset, true)\n  }\n  return offset + 4\n}\n\nBuffer.prototype.writeInt32BE = function writeInt32BE (value, offset, noAssert) {\n  value = +value\n  offset = offset | 0\n  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)\n  if (value < 0) value = 0xffffffff + value + 1\n  if (Buffer.TYPED_ARRAY_SUPPORT) {\n    this[offset] = (value >>> 24)\n    this[offset + 1] = (value >>> 16)\n    this[offset + 2] = (value >>> 8)\n    this[offset + 3] = (value & 0xff)\n  } else {\n    objectWriteUInt32(this, value, offset, false)\n  }\n  return offset + 4\n}\n\nfunction checkIEEE754 (buf, value, offset, ext, max, min) {\n  if (offset + ext > buf.length) throw new RangeError('Index out of range')\n  if (offset < 0) throw new RangeError('Index out of range')\n}\n\nfunction writeFloat (buf, value, offset, littleEndian, noAssert) {\n  if (!noAssert) {\n    checkIEEE754(buf, value, offset, 4, 3.4028234663852886e+38, -3.4028234663852886e+38)\n  }\n  ieee754.write(buf, value, offset, littleEndian, 23, 4)\n  return offset + 4\n}\n\nBuffer.prototype.writeFloatLE = function writeFloatLE (value, offset, noAssert) {\n  return writeFloat(this, value, offset, true, noAssert)\n}\n\nBuffer.prototype.writeFloatBE = function writeFloatBE (value, offset, noAssert) {\n  return writeFloat(this, value, offset, false, noAssert)\n}\n\nfunction writeDouble (buf, value, offset, littleEndian, noAssert) {\n  if (!noAssert) {\n    checkIEEE754(buf, value, offset, 8, 1.7976931348623157E+308, -1.7976931348623157E+308)\n  }\n  ieee754.write(buf, value, offset, littleEndian, 52, 8)\n  return offset + 8\n}\n\nBuffer.prototype.writeDoubleLE = function writeDoubleLE (value, offset, noAssert) {\n  return writeDouble(this, value, offset, true, noAssert)\n}\n\nBuffer.prototype.writeDoubleBE = function writeDoubleBE (value, offset, noAssert) {\n  return writeDouble(this, value, offset, false, noAssert)\n}\n\n// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)\nBuffer.prototype.copy = function copy (target, targetStart, start, end) {\n  if (!start) start = 0\n  if (!end && end !== 0) end = this.length\n  if (targetStart >= target.length) targetStart = target.length\n  if (!targetStart) targetStart = 0\n  if (end > 0 && end < start) end = start\n\n  // Copy 0 bytes; we're done\n  if (end === start) return 0\n  if (target.length === 0 || this.length === 0) return 0\n\n  // Fatal error conditions\n  if (targetStart < 0) {\n    throw new RangeError('targetStart out of bounds')\n  }\n  if (start < 0 || start >= this.length) throw new RangeError('sourceStart out of bounds')\n  if (end < 0) throw new RangeError('sourceEnd out of bounds')\n\n  // Are we oob?\n  if (end > this.length) end = this.length\n  if (target.length - targetStart < end - start) {\n    end = target.length - targetStart + start\n  }\n\n  var len = end - start\n  var i\n\n  if (this === target && start < targetStart && targetStart < end) {\n    // descending copy from end\n    for (i = len - 1; i >= 0; --i) {\n      target[i + targetStart] = this[i + start]\n    }\n  } else if (len < 1000 || !Buffer.TYPED_ARRAY_SUPPORT) {\n    // ascending copy from start\n    for (i = 0; i < len; ++i) {\n      target[i + targetStart] = this[i + start]\n    }\n  } else {\n    Uint8Array.prototype.set.call(\n      target,\n      this.subarray(start, start + len),\n      targetStart\n    )\n  }\n\n  return len\n}\n\n// Usage:\n//    buffer.fill(number[, offset[, end]])\n//    buffer.fill(buffer[, offset[, end]])\n//    buffer.fill(string[, offset[, end]][, encoding])\nBuffer.prototype.fill = function fill (val, start, end, encoding) {\n  // Handle string cases:\n  if (typeof val === 'string') {\n    if (typeof start === 'string') {\n      encoding = start\n      start = 0\n      end = this.length\n    } else if (typeof end === 'string') {\n      encoding = end\n      end = this.length\n    }\n    if (val.length === 1) {\n      var code = val.charCodeAt(0)\n      if (code < 256) {\n        val = code\n      }\n    }\n    if (encoding !== undefined && typeof encoding !== 'string') {\n      throw new TypeError('encoding must be a string')\n    }\n    if (typeof encoding === 'string' && !Buffer.isEncoding(encoding)) {\n      throw new TypeError('Unknown encoding: ' + encoding)\n    }\n  } else if (typeof val === 'number') {\n    val = val & 255\n  }\n\n  // Invalid ranges are not set to a default, so can range check early.\n  if (start < 0 || this.length < start || this.length < end) {\n    throw new RangeError('Out of range index')\n  }\n\n  if (end <= start) {\n    return this\n  }\n\n  start = start >>> 0\n  end = end === undefined ? this.length : end >>> 0\n\n  if (!val) val = 0\n\n  var i\n  if (typeof val === 'number') {\n    for (i = start; i < end; ++i) {\n      this[i] = val\n    }\n  } else {\n    var bytes = Buffer.isBuffer(val)\n      ? val\n      : utf8ToBytes(new Buffer(val, encoding).toString())\n    var len = bytes.length\n    for (i = 0; i < end - start; ++i) {\n      this[i + start] = bytes[i % len]\n    }\n  }\n\n  return this\n}\n\n// HELPER FUNCTIONS\n// ================\n\nvar INVALID_BASE64_RE = /[^+\\/0-9A-Za-z-_]/g\n\nfunction base64clean (str) {\n  // Node strips out invalid characters like \\n and \\t from the string, base64-js does not\n  str = stringtrim(str).replace(INVALID_BASE64_RE, '')\n  // Node converts strings with length < 2 to ''\n  if (str.length < 2) return ''\n  // Node allows for non-padded base64 strings (missing trailing ===), base64-js does not\n  while (str.length % 4 !== 0) {\n    str = str + '='\n  }\n  return str\n}\n\nfunction stringtrim (str) {\n  if (str.trim) return str.trim()\n  return str.replace(/^\\s+|\\s+$/g, '')\n}\n\nfunction toHex (n) {\n  if (n < 16) return '0' + n.toString(16)\n  return n.toString(16)\n}\n\nfunction utf8ToBytes (string, units) {\n  units = units || Infinity\n  var codePoint\n  var length = string.length\n  var leadSurrogate = null\n  var bytes = []\n\n  for (var i = 0; i < length; ++i) {\n    codePoint = string.charCodeAt(i)\n\n    // is surrogate component\n    if (codePoint > 0xD7FF && codePoint < 0xE000) {\n      // last char was a lead\n      if (!leadSurrogate) {\n        // no lead yet\n        if (codePoint > 0xDBFF) {\n          // unexpected trail\n          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)\n          continue\n        } else if (i + 1 === length) {\n          // unpaired lead\n          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)\n          continue\n        }\n\n        // valid lead\n        leadSurrogate = codePoint\n\n        continue\n      }\n\n      // 2 leads in a row\n      if (codePoint < 0xDC00) {\n        if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)\n        leadSurrogate = codePoint\n        continue\n      }\n\n      // valid surrogate pair\n      codePoint = (leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00) + 0x10000\n    } else if (leadSurrogate) {\n      // valid bmp char, but last char was a lead\n      if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)\n    }\n\n    leadSurrogate = null\n\n    // encode utf8\n    if (codePoint < 0x80) {\n      if ((units -= 1) < 0) break\n      bytes.push(codePoint)\n    } else if (codePoint < 0x800) {\n      if ((units -= 2) < 0) break\n      bytes.push(\n        codePoint >> 0x6 | 0xC0,\n        codePoint & 0x3F | 0x80\n      )\n    } else if (codePoint < 0x10000) {\n      if ((units -= 3) < 0) break\n      bytes.push(\n        codePoint >> 0xC | 0xE0,\n        codePoint >> 0x6 & 0x3F | 0x80,\n        codePoint & 0x3F | 0x80\n      )\n    } else if (codePoint < 0x110000) {\n      if ((units -= 4) < 0) break\n      bytes.push(\n        codePoint >> 0x12 | 0xF0,\n        codePoint >> 0xC & 0x3F | 0x80,\n        codePoint >> 0x6 & 0x3F | 0x80,\n        codePoint & 0x3F | 0x80\n      )\n    } else {\n      throw new Error('Invalid code point')\n    }\n  }\n\n  return bytes\n}\n\nfunction asciiToBytes (str) {\n  var byteArray = []\n  for (var i = 0; i < str.length; ++i) {\n    // Node's code seems to be doing this and not & 0x7F..\n    byteArray.push(str.charCodeAt(i) & 0xFF)\n  }\n  return byteArray\n}\n\nfunction utf16leToBytes (str, units) {\n  var c, hi, lo\n  var byteArray = []\n  for (var i = 0; i < str.length; ++i) {\n    if ((units -= 2) < 0) break\n\n    c = str.charCodeAt(i)\n    hi = c >> 8\n    lo = c % 256\n    byteArray.push(lo)\n    byteArray.push(hi)\n  }\n\n  return byteArray\n}\n\nfunction base64ToBytes (str) {\n  return base64.toByteArray(base64clean(str))\n}\n\nfunction blitBuffer (src, dst, offset, length) {\n  for (var i = 0; i < length; ++i) {\n    if ((i + offset >= dst.length) || (i >= src.length)) break\n    dst[i + offset] = src[i]\n  }\n  return i\n}\n\nfunction isnan (val) {\n  return val !== val // eslint-disable-line no-self-compare\n}\n\n/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(60)))\n\n//////////////////\n// WEBPACK FOOTER\n// ./~/buffer/index.js\n// module id = 35\n// module chunks = 0\n\n//# sourceURL=webpack:///./~/buffer/index.js?");
+exports.read = function (buffer, offset, isLE, mLen, nBytes) {
+  var e, m
+  var eLen = nBytes * 8 - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var nBits = -7
+  var i = isLE ? (nBytes - 1) : 0
+  var d = isLE ? -1 : 1
+  var s = buffer[offset + i]
+
+  i += d
+
+  e = s & ((1 << (-nBits)) - 1)
+  s >>= (-nBits)
+  nBits += eLen
+  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+
+  m = e & ((1 << (-nBits)) - 1)
+  e >>= (-nBits)
+  nBits += mLen
+  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+
+  if (e === 0) {
+    e = 1 - eBias
+  } else if (e === eMax) {
+    return m ? NaN : ((s ? -1 : 1) * Infinity)
+  } else {
+    m = m + Math.pow(2, mLen)
+    e = e - eBias
+  }
+  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
+}
+
+exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
+  var e, m, c
+  var eLen = nBytes * 8 - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
+  var i = isLE ? 0 : (nBytes - 1)
+  var d = isLE ? 1 : -1
+  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
+
+  value = Math.abs(value)
+
+  if (isNaN(value) || value === Infinity) {
+    m = isNaN(value) ? 1 : 0
+    e = eMax
+  } else {
+    e = Math.floor(Math.log(value) / Math.LN2)
+    if (value * (c = Math.pow(2, -e)) < 1) {
+      e--
+      c *= 2
+    }
+    if (e + eBias >= 1) {
+      value += rt / c
+    } else {
+      value += rt * Math.pow(2, 1 - eBias)
+    }
+    if (value * c >= 2) {
+      e++
+      c /= 2
+    }
+
+    if (e + eBias >= eMax) {
+      m = 0
+      e = eMax
+    } else if (e + eBias >= 1) {
+      m = (value * c - 1) * Math.pow(2, mLen)
+      e = e + eBias
+    } else {
+      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
+      e = 0
+    }
+  }
+
+  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
+
+  e = (e << mLen) | m
+  eLen += mLen
+  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
+
+  buffer[offset + i - d] |= s * 128
+}
+
 
 /***/ }),
 /* 36 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-eval("exports = module.exports = __webpack_require__(4)(undefined);\n// imports\n\n\n// module\nexports.push([module.i, \".modal-header-title {\\n    margin-top: 10px;\\n    margin-bottom: 10px;\\n}\\n\\n.concede-modal__text {\\n    margin-top: 15px;\\n    margin-bottom: 15px;\\n    font-size: 24px;\\n}\\n\\n.choose {\\n    font-size: 24px;\\n    margin-bottom: 25px;\\n}\\n\\n.choose__yes, .choose__no {\\n    display: inline-block;\\n    font-size: 36px;\\n}\\n\\n.choose__yes {\\n    margin-left: 30%;\\n    margin-right: 10%;\\n}\\n\\n.choose__no {\\n    margin-left: 10%;\\n    margin-right: 30%;\\n}\\n\\n.choose__yes:hover, .choose__no:hover {\\n    color: mediumpurple;\\n    text-decoration: underline;\\n}\", \"\"]);\n\n// exports\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./~/css-loader!./static/css/concede.css\n// module id = 36\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/css/concede.css?./~/css-loader");
+var toString = {}.toString;
+
+module.exports = Array.isArray || function (arr) {
+  return toString.call(arr) == '[object Array]';
+};
+
 
 /***/ }),
 /* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("exports = module.exports = __webpack_require__(4)(undefined);\n// imports\n\n\n// module\nexports.push([module.i, \".modal-content {\\n    width: 50%;\\n}\\n\\n.modal-header-title {\\n    margin-top: 10px;\\n    margin-bottom: 10px;\\n}\\n\\n.defeat-modal__text {\\n    margin-top: 15px;\\n    margin-bottom: 15px;\\n    font-size: 24px;\\n}\\n\\n.defeat-modal__text {\\n    margin-left: 30%;\\n    font-size: 36px;\\n    font-weight: bold;\\n}\\n\\n.change, .rating_score {\\n    display: inline-block;\\n    margin-left: 15px;\\n}\\n\\n.defeat-modal .change {\\n    color: #8b1700;\\n}\\n\\n.rating__change, .new__rating, .change, .rating_score {\\n    font-weight: bold;\\n    font-size: 28px;\\n}\\n\\n.rating__change, .new__rating {\\n    margin-left: 10%;\\n    margin-top: 2%;\\n}\\n\\n.rating {\\n    margin-bottom: 10%;\\n}\", \"\"]);\n\n// exports\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./~/css-loader!./static/css/defeat.css\n// module id = 37\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/css/defeat.css?./~/css-loader");
+var pug = __webpack_require__(2);
+
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"about-modal\"\u003E\u003Cp\u003EТут какой-то текст\u003C\u002Fp\u003E\u003Cp\u003EАвторы этого безобразия:\u003C\u002Fp\u003E\u003Cul\u003E\u003Cli\u003EБуклин Сергей\u003C\u002Fli\u003E\u003Cli\u003EБуторин Сергей\u003C\u002Fli\u003E\u003Cli\u003EЯкубов Алексей\u003C\u002Fli\u003E\u003C\u002Ful\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
+module.exports = template;
 
 /***/ }),
 /* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("exports = module.exports = __webpack_require__(4)(undefined);\n// imports\n\n\n// module\nexports.push([module.i, \".game-header {\\n    display: flex;\\n    width: 100%;\\n    flex-direction: row;\\n    padding-top: 20px;\\n    margin-bottom: 45px;\\n}\\n\\n.game-back-link {\\n    padding-left: 20px;\\n    font-size: 28px;\\n}\\n\\n.player1, .player2, .score {\\n    text-align: center;\\n    width: 20%;\\n}\\n\\n.score {\\n    padding-top: 30px;\\n}\\n\\n.player1 {\\n    padding-left: 10%;\\n}\\n\\n.player1_score, .separate, .player2_score {\\n    display: inline-block;\\n    font-size: 64px;\\n    padding-left: 5px;\\n    padding-right: 5px;\\n}\\n\\n.player_rating_score, .player_rating {\\n    display: inline-block;\\n}\\n\\n.player_rating_score {\\n    font-size: 32px;\\n    margin-left: 12px;\\n}\\n\\n.player_nickname {\\n    font-size: 52px;\\n    padding-top: 20px;\\n    padding-bottom: 20px;\\n}\\n\\n.player_rating {\\n    font-size: 24px;\\n}\\n\\ncanvas {\\n    margin-left: 10%;\\n}\\n\\n.goleft, .goright, .result {\\n    display: none;\\n}\\n\\n@media screen and (min-width:650px) and (max-width:800px) {\\n    .player1_score, .separate, .player2_score {\\n        display: inline-block;\\n        font-size: 48px;\\n        padding-left: 5px;\\n        padding-right: 5px;\\n    }\\n\\n    .player_rating_score {\\n        font-size: 24px;\\n        margin-left: 12px;\\n    }\\n\\n    .player_nickname {\\n        font-size: 40px;\\n        padding-top: 20px;\\n        padding-bottom: 20px;\\n    }\\n\\n    .player_rating {\\n        font-size: 20px;\\n    }\\n}\\n\\n@media screen and (min-width:520px) and (max-width:650px) {\\n    .player1_score, .separate, .player2_score {\\n        display: inline-block;\\n        font-size: 40px;\\n        padding-left: 5px;\\n        padding-right: 5px;\\n    }\\n\\n    .player_rating_score {\\n        font-size: 20px;\\n        margin-left: 12px;\\n    }\\n\\n    .player_nickname {\\n        font-size: 32px;\\n        padding-top: 20px;\\n        padding-bottom: 20px;\\n    }\\n\\n    .player_rating {\\n        font-size: 16px;\\n    }\\n}\\n\\n@media screen and (min-width:400px) and (max-width:520px) {\\n    .player1_score, .separate, .player2_score {\\n        display: inline-block;\\n        font-size: 36px;\\n        padding-left: 5px;\\n        padding-right: 5px;\\n    }\\n\\n    .player_rating_score {\\n        font-size: 16px;\\n        margin-left: 12px;\\n    }\\n\\n    .player_nickname {\\n        font-size: 24px;\\n        padding-top: 20px;\\n        padding-bottom: 20px;\\n    }\\n\\n    .player_rating {\\n        font-size: 16px;\\n    }\\n}\", \"\"]);\n\n// exports\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./~/css-loader!./static/css/game.css\n// module id = 38\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/css/game.css?./~/css-loader");
+var pug = __webpack_require__(2);
+
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"concede-modal\"\u003E\u003Cdiv class=\"concede-modal__text\"\u003EВы собираетесь покинуть игру! Вам будет засчитано поражение!\u003C\u002Fdiv\u003E\u003Cdiv class=\"choose\"\u003E\u003Cdiv class=\"choose__yes\"\u003EДА\u003C\u002Fdiv\u003E\u003Cdiv class=\"choose__no\"\u003EНЕТ\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
+module.exports = template;
 
 /***/ }),
 /* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("exports = module.exports = __webpack_require__(4)(undefined);\n// imports\nexports.i(__webpack_require__(42), \"\");\nexports.i(__webpack_require__(41), \"\");\nexports.i(__webpack_require__(40), \"\");\nexports.i(__webpack_require__(38), \"\");\n\n// module\nexports.push([module.i, \"@media all  {\\n    .main-page {\\n        display: flex;\\n        flex-direction: column;\\n        height: 90vh;\\n    }\\n\\n    .name-game {\\n        align-self: center;\\n        font-size: 120px;\\n        margin-top: 5%;\\n        margin-bottom: 4%;\\n    }\\n\\n    .main-page-center {\\n        align-self: center;\\n    }\\n\\n    .start-game-buttons {\\n        background-color: white;\\n        display: flex;\\n        /*align-self: center;*/\\n    }\\n\\n    .button {\\n        -webkit-transition-duration: 0.4s;\\n        transition-duration: 0.4s;\\n        border: none;\\n        color: white;\\n        padding: 15px 32px;\\n        font-size: 48px;\\n        float: left;\\n        position: relative;\\n        display: block;\\n        align-self: center;\\n        width: 225px;\\n        flex-grow: 1;\\n    }\\n\\n    .button:hover {\\n        /*border: 6px solid darkcyan;*/\\n        width: 280px;\\n        height: 90px;\\n        cursor: pointer;\\n    }\\n\\n    /*.btn-left:hover {*/\\n    /*transition: 3s;*/\\n    /*flex-grow: 2;*/\\n    /*}*/\\n    /*.btn-left:hover ~ .btn-right{*/\\n    /*!*transition: 3s;*!*/\\n    /*!*width: 25px;*!*/\\n    /*}*/\\n    /*.btn-right:hover {*/\\n    /*transition: 3s;*/\\n    /*flex-grow: 2;*/\\n    /*}*/\\n    /*.btn-right:hover ~ .btn-left{*/\\n    /*transition: 3s;*/\\n    /*width: 25px;*/\\n    /*}*/\\n    .leaderboard-button {\\n        background-image: url(\" + __webpack_require__(59) + \");\\n        width: 100px;\\n        height: 110px;\\n        margin-top: 10%;\\n        color: black;\\n        border: none;\\n        font-size: 0.1px;\\n        border-radius: 50px;\\n        flex-grow: 1;\\n    }\\n\\n    .leaderboard-button:hover {\\n        background-color: darkcyan;\\n        border: solid;\\n        cursor: pointer;\\n    }\\n\\n    .btn-left {\\n        flex-grow: 1;\\n        background-color: #4CAF50;\\n        border-radius: 50px 0 0 50px;\\n    }\\n\\n    .btn-right {\\n        background-color: orange;\\n        border-radius: 0 50px 50px 0;\\n        flex-grow: 1;\\n    }\\n\\n    .btn-right:hover {\\n        flex-grow: 2;\\n        cursor: pointer;\\n    }\\n\\n    .main-page-leaderboard {\\n        text-align: center;\\n    }\\n\\n    .main-page-footer {\\n        text-align: right;\\n        font-size: 32px;\\n        margin-right: 2%;\\n    }\\n\\n    .user-state {\\n        /*background-color: #0D47A1;*/\\n        height: 50px;\\n        width: 200px;\\n        text-align: center;\\n        align-self: flex-end;\\n        position: relative;\\n        display: inline-block;\\n        font-size: 30px;\\n        margin-right: 1%;\\n        margin-top: 1%;\\n    }\\n\\n    .dropdown-link {\\n\\n    }\\n\\n    .dropdown-content {\\n        display: none;\\n        position: absolute;\\n        background-color: #f9f9f9;\\n        min-width: 160px;\\n        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);\\n        z-index: 1;\\n    }\\n\\n    .dropdown-content a {\\n        color: black;\\n        padding: 12px 16px;\\n        text-decoration: none;\\n        display: block;\\n    }\\n\\n    .dropdown-content a:hover {\\n        background-color: #f1f1f1\\n    }\\n\\n    .user-state:hover .dropdown-content {\\n        display: block;\\n    }\\n\\n    .login-link:hover, .signup-link:hover, .footer-help-link:hover {\\n        color: mediumpurple;\\n        text-decoration: underline;\\n        cursor: pointer;\\n    }\\n\\n    .login-link {\\n        width: 10%;\\n    }\\n\\n    .signup-link {\\n        padding-left: 12%;\\n        margin-right: 30%;\\n    }\\n}\\n\\n@media screen and (min-device-width:480px) and (max-device-width:800px) {\\n    .main-page {\\n        display: flex;\\n        flex-direction: column;\\n        height: 75vh;\\n    }\\n\\n    .name-game {\\n        align-self: center;\\n        font-size: 100px;\\n        margin-top: 2%;\\n        margin-bottom: 3%;\\n    }\\n}\\n\", \"\"]);\n\n// exports\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./~/css-loader!./static/css/index.css\n// module id = 39\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/css/index.css?./~/css-loader");
+var pug = __webpack_require__(2);
+
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003C!--Created by sergey on 01.05.17.\n--\u003E\u003Cdiv class=\"defeat-modal\"\u003E\u003Cdiv class=\"defeat-modal__text\"\u003EПоражение\u003C\u002Fdiv\u003E\u003Cdiv class=\"rating\"\u003E\u003Cdiv class=\"rating__change\"\u003EИзменение:\u003Cdiv class=\"change\"\u003E0\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"new__rating\"\u003EРейтинг:\u003Cdiv class=\"rating_score\"\u003E0\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
+module.exports = template;
 
 /***/ }),
 /* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("exports = module.exports = __webpack_require__(4)(undefined);\n// imports\n\n\n// module\nexports.push([module.i, \".leaderboard-table {\\n    border-collapse: collapse;\\n    width: 100%;\\n}\\n\\nth, td {\\n    text-align: left;\\n    padding: 8px;\\n}\\n.leaderboard-table th {\\n    border-bottom: 3px solid black;\\n}\\n\\n.leaderboard-table tr:nth-child(even){\\n    background-color: #f2f2f2;\\n}\", \"\"]);\n\n// exports\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./~/css-loader!./static/css/leaderboard.css\n// module id = 40\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/css/leaderboard.css?./~/css-loader");
+var pug = __webpack_require__(2);
+
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"game-header\"\u003E\u003Cdiv class=\"game-back-link\"\u003E\u003C Back\u003C\u002Fdiv\u003E\u003Cdiv class=\"player1\"\u003E\u003Cdiv class=\"player_nickname\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"player_rating\"\u003EРейтинг:\u003C\u002Fdiv\u003E\u003Cdiv class=\"player_rating_score\"\u003E0\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"score\"\u003E\u003Cdiv class=\"player1_score\"\u003E0\u003C\u002Fdiv\u003E\u003Cdiv class=\"separate\"\u003E:\u003C\u002Fdiv\u003E\u003Cdiv class=\"player2_score\"\u003E0\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"player2\"\u003E\u003Cdiv class=\"player_nickname\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"player_rating\"\u003EРейтинг:\u003C\u002Fdiv\u003E\u003Cdiv class=\"player_rating_score\"\u003E0\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
+module.exports = template;
 
 /***/ }),
 /* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("exports = module.exports = __webpack_require__(4)(undefined);\n// imports\n\n\n// module\nexports.push([module.i, \"input, select {\\n    width: 100%;\\n    padding: 12px 20px;\\n    margin: 8px 0;\\n    display: inline-block;\\n    border: 1px solid #ccc;\\n    border-radius: 4px;\\n    box-sizing: border-box;\\n}\\n\\ninput[type=submit] {\\n    width: 100%;\\n    background-color: #4CAF50;\\n    color: white;\\n    padding: 14px 20px;\\n    margin: 8px 0;\\n    border: none;\\n    border-radius: 4px;\\n    cursor: pointer;\\n}\\n\\ninput[type=submit]:hover {\\n    background-color: #45a049;\\n}\\n\\n.login-modal {\\n    border-radius: 5px;\\n    background-color: #f2f2f2;\\n    padding: 20px;\\n}\\n\\n.input-error {\\n    color: red;\\n}\\n.danger {\\n    display: none;\\n    margin-top: 15px;\\n    margin-bottom: 15px;\\n    padding: 4px 12px;\\n    background-color: #ffdddd;\\n    border-left: 6px solid #f44336;\\n}\", \"\"]);\n\n// exports\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./~/css-loader!./static/css/login.css\n// module id = 41\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/css/login.css?./~/css-loader");
+var pug = __webpack_require__(2);
+
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;;var locals_for_with = (locals || {});(function (data) {pug_html = pug_html + "\u003Cdiv class=\"leaderboard-modal\" style=\"overflow-y:auto;\"\u003E\u003Ctable class=\"leaderboard-table\"\u003E\u003Ctr\u003E\u003Cth\u003EМесто\u003C\u002Fth\u003E\u003Cth\u003ENickname\u003C\u002Fth\u003E\u003Cth\u003EСчет\u003C\u002Fth\u003E\u003C\u002Ftr\u003E";
+// iterate data
+;(function(){
+  var $$obj = data;
+  if ('number' == typeof $$obj.length) {
+      for (var index = 0, $$l = $$obj.length; index < $$l; index++) {
+        var user = $$obj[index];
+pug_html = pug_html + "\u003Ctr\u003E\u003Ctd\u003E" + (pug.escape(null == (pug_interp = index+1) ? "" : pug_interp)) + "\u003C\u002Ftd\u003E\u003Ctd\u003E" + (pug.escape(null == (pug_interp = user.login) ? "" : pug_interp)) + "\u003C\u002Ftd\u003E\u003Ctd\u003E" + (pug.escape(null == (pug_interp = user.rating) ? "" : pug_interp)) + "\u003C\u002Ftd\u003E\u003C\u002Ftr\u003E";
+      }
+  } else {
+    var $$l = 0;
+    for (var index in $$obj) {
+      $$l++;
+      var user = $$obj[index];
+pug_html = pug_html + "\u003Ctr\u003E\u003Ctd\u003E" + (pug.escape(null == (pug_interp = index+1) ? "" : pug_interp)) + "\u003C\u002Ftd\u003E\u003Ctd\u003E" + (pug.escape(null == (pug_interp = user.login) ? "" : pug_interp)) + "\u003C\u002Ftd\u003E\u003Ctd\u003E" + (pug.escape(null == (pug_interp = user.rating) ? "" : pug_interp)) + "\u003C\u002Ftd\u003E\u003C\u002Ftr\u003E";
+    }
+  }
+}).call(this);
+
+pug_html = pug_html + "\u003C\u002Ftable\u003E\u003C\u002Fdiv\u003E";}.call(this,"data" in locals_for_with?locals_for_with.data:typeof data!=="undefined"?data:undefined));;return pug_html;};
+module.exports = template;
 
 /***/ }),
 /* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("exports = module.exports = __webpack_require__(4)(undefined);\n// imports\n\n\n// module\nexports.push([module.i, \".modal {\\n    display: none; /* Hidden by default */\\n    position: fixed; /* Stay in place */\\n    z-index: 1; /* Sit on top */\\n    padding-top: 100px; /* Location of the box */\\n    left: 0;\\n    top: 0;\\n    width: 100%; /* Full width */\\n    height: 100%; /* Full height */\\n    overflow: auto; /* Enable scroll if needed */\\n    background-color: rgb(0,0,0); /* Fallback color */\\n    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */\\n}\\n\\n/* Modal Content */\\n.modal-content {\\n    position: relative;\\n    background-color: #fefefe;\\n    margin: auto;\\n    padding: 0;\\n    border: 1px solid #888;\\n    width: 80%;\\n    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);\\n    -webkit-animation-name: animatetop;\\n    -webkit-animation-duration: 0.4s;\\n    animation-name: animatetop;\\n    animation-duration: 0.4s;\\n    max-width: 636px;\\n}\\n\\n/* Add Animation */\\n@-webkit-keyframes animatetop {\\n    from {top:-300px; opacity:0}\\n    to {top:0; opacity:1}\\n}\\n\\n@keyframes animatetop {\\n    from {top:-300px; opacity:0}\\n    to {top:0; opacity:1}\\n}\\n\\n/* The Close Button */\\n.close {\\n    color: white;\\n    float: right;\\n    font-size: 28px;\\n    font-weight: bold;\\n}\\n\\n.close:hover,\\n.close:focus {\\n    color: #000;\\n    text-decoration: none;\\n    cursor: pointer;\\n}\\n\\n.modal-header {\\n    padding: 2px 16px;\\n    background-color: #5cb85c;\\n    color: white;\\n}\\n\\n.modal-body {padding: 2px 16px;}\\n\\n.modal-footer {\\n    padding: 2px 16px;\\n    background-color: #5cb85c;\\n    color: white;\\n}\", \"\"]);\n\n// exports\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./~/css-loader!./static/css/modal.css\n// module id = 42\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/css/modal.css?./~/css-loader");
+var pug = __webpack_require__(2);
+
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"danger\"\u003E\u003Cp\u003E\u003Cstrong\u003EОшибка:\u003C\u002Fstrong\u003E неверный логин или пароль\u003C\u002Fp\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"login-modal\"\u003E\u003Cform\u003E\u003Clabel for=\"login-input\"\u003ENickname\u003C\u002Flabel\u003E\u003Cinput class=\"login-nickname-input\" type=\"text\" id=\"login-input\" placeholder=\"Your nickname..\" required=\"true\"\u003E\u003Clabel for=\"password-input\"\u003EPassword\u003C\u002Flabel\u003E\u003Cinput class=\"login-password-input\" type=\"password\" id=\"password-input\" placeholder=\"Your password..\" required=\"true\"\u003E\u003Cinput class=\"login-submit-button\" type=\"submit\" value=\"Enter the game\"\u003E\u003C\u002Fform\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
+module.exports = template;
 
 /***/ }),
 /* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("exports = module.exports = __webpack_require__(4)(undefined);\n// imports\n\n\n// module\nexports.push([module.i, \".modal-content {\\n    width: 50%;\\n}\\n\\n.modal-header-title {\\n    margin-top: 10px;\\n    margin-bottom: 10px;\\n}\\n\\n.victory-modal__text {\\n    margin-top: 15px;\\n    margin-bottom: 15px;\\n    font-size: 24px;\\n}\\n\\n.victory-modal__text {\\n    margin-left: 35%;\\n    font-size: 36px;\\n    font-weight: bold;\\n}\\n\\n.change, .rating_score {\\n    display: inline-block;\\n    margin-left: 15px;\\n}\\n\\n.victory-modal .change {\\n    color: darkgreen;\\n}\\n\\n.rating__change, .new__rating, .change, .rating_score {\\n    font-weight: bold;\\n    font-size: 28px;\\n}\\n\\n.rating__change, .new__rating {\\n    margin-left: 10%;\\n    margin-top: 2%;\\n}\\n\\n.rating {\\n    margin-bottom: 10%;\\n}\", \"\"]);\n\n// exports\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./~/css-loader!./static/css/victory.css\n// module id = 43\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/css/victory.css?./~/css-loader");
+var pug = __webpack_require__(2);
+
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;;var locals_for_with = (locals || {});(function (user) {pug_html = pug_html + "\u003C!--Created by tlakatlekutl on 27.03.17.\n--\u003E\u003Cdiv class=\"main-page\"\u003E\u003Cdiv class=\"user-state\"\u003E";
+if (user.authorised) {
+pug_html = pug_html + "\u003Ca class=\"dropdown-link\"\u003E" + (pug.escape(null == (pug_interp = user.nickname) ? "" : pug_interp)) + " \\\u002F\u003C\u002Fa\u003E\u003Cdiv class=\"dropdown-content\"\u003E\u003Ca class=\"profile-link\"\u003EProfile\u003C\u002Fa\u003E\u003Ca class=\"logout-link\"\u003ELogout\u003C\u002Fa\u003E\u003C\u002Fdiv\u003E";
+}
+else {
+pug_html = pug_html + "\u003Ca class=\"login-link\"\u003ELogin\u003C\u002Fa\u003E\u003Ca class=\"signup-link\"\u003ESign up\u003C\u002Fa\u003E";
+}
+pug_html = pug_html + "\u003C\u002Fdiv\u003E\u003Cdiv class=\"name-game\"\u003EFastBall\u003C\u002Fdiv\u003E\u003Cdiv class=\"main-page-center\"\u003E\u003Cdiv class=\"start-game-buttons\"\u003E\u003Cbutton class=\"button btn-left\"\u003ESingle\u003C\u002Fbutton\u003E\u003Cbutton class=\"button btn-right\"\u003EMulti\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"main-page-leaderboard\"\u003E\u003Cbutton class=\"leaderboard-button\"\u003ELeaderboard\u003C\u002Fbutton\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cfooter class=\"main-page-footer\"\u003E\u003Ca class=\"footer-help-link\"\u003Ehelp\u003C\u002Fa\u003E\u003C\u002Ffooter\u003E";}.call(this,"user" in locals_for_with?locals_for_with.user:typeof user!=="undefined"?user:undefined));;return pug_html;};
+module.exports = template;
 
 /***/ }),
 /* 44 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-eval("exports.read = function (buffer, offset, isLE, mLen, nBytes) {\n  var e, m\n  var eLen = nBytes * 8 - mLen - 1\n  var eMax = (1 << eLen) - 1\n  var eBias = eMax >> 1\n  var nBits = -7\n  var i = isLE ? (nBytes - 1) : 0\n  var d = isLE ? -1 : 1\n  var s = buffer[offset + i]\n\n  i += d\n\n  e = s & ((1 << (-nBits)) - 1)\n  s >>= (-nBits)\n  nBits += eLen\n  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}\n\n  m = e & ((1 << (-nBits)) - 1)\n  e >>= (-nBits)\n  nBits += mLen\n  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}\n\n  if (e === 0) {\n    e = 1 - eBias\n  } else if (e === eMax) {\n    return m ? NaN : ((s ? -1 : 1) * Infinity)\n  } else {\n    m = m + Math.pow(2, mLen)\n    e = e - eBias\n  }\n  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)\n}\n\nexports.write = function (buffer, value, offset, isLE, mLen, nBytes) {\n  var e, m, c\n  var eLen = nBytes * 8 - mLen - 1\n  var eMax = (1 << eLen) - 1\n  var eBias = eMax >> 1\n  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)\n  var i = isLE ? 0 : (nBytes - 1)\n  var d = isLE ? 1 : -1\n  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0\n\n  value = Math.abs(value)\n\n  if (isNaN(value) || value === Infinity) {\n    m = isNaN(value) ? 1 : 0\n    e = eMax\n  } else {\n    e = Math.floor(Math.log(value) / Math.LN2)\n    if (value * (c = Math.pow(2, -e)) < 1) {\n      e--\n      c *= 2\n    }\n    if (e + eBias >= 1) {\n      value += rt / c\n    } else {\n      value += rt * Math.pow(2, 1 - eBias)\n    }\n    if (value * c >= 2) {\n      e++\n      c /= 2\n    }\n\n    if (e + eBias >= eMax) {\n      m = 0\n      e = eMax\n    } else if (e + eBias >= 1) {\n      m = (value * c - 1) * Math.pow(2, mLen)\n      e = e + eBias\n    } else {\n      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)\n      e = 0\n    }\n  }\n\n  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}\n\n  e = (e << mLen) | m\n  eLen += mLen\n  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}\n\n  buffer[offset + i - d] |= s * 128\n}\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./~/ieee754/index.js\n// module id = 44\n// module chunks = 0\n\n//# sourceURL=webpack:///./~/ieee754/index.js?");
+var pug = __webpack_require__(2);
+
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cbutton class=\"goleft\"\u003ELeft\u003C\u002Fbutton\u003E\u003Cspan class=\"result\"\u003E50\u003C\u002Fspan\u003E\u003Cbutton class=\"goright\"\u003ERight\u003C\u002Fbutton\u003E\u003Cdiv class=\"game-header\"\u003E\u003Cdiv class=\"game-back-link\"\u003E\u003C Back\u003C\u002Fdiv\u003E\u003Cdiv class=\"player1\"\u003E\u003Cdiv class=\"player_nickname\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"player_rating\"\u003EРейтинг:\u003C\u002Fdiv\u003E\u003Cdiv class=\"player_rating_score\"\u003E0\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"score\"\u003E\u003Cdiv class=\"player1_score\"\u003E0\u003C\u002Fdiv\u003E\u003Cdiv class=\"separate\"\u003E:\u003C\u002Fdiv\u003E\u003Cdiv class=\"player2_score\"\u003E0\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"player2\"\u003E\u003Cdiv class=\"player_nickname\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"player_rating\"\u003EРейтинг:\u003C\u002Fdiv\u003E\u003Cdiv class=\"player_rating_score\"\u003E0\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
+module.exports = template;
 
 /***/ }),
 /* 45 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-eval("var toString = {}.toString;\n\nmodule.exports = Array.isArray || function (arr) {\n  return toString.call(arr) == '[object Array]';\n};\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./~/isarray/index.js\n// module id = 45\n// module chunks = 0\n\n//# sourceURL=webpack:///./~/isarray/index.js?");
+var pug = __webpack_require__(2);
+
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;;var locals_for_with = (locals || {});(function (user) {pug_html = pug_html + "\u003Cdiv class=\"profile-modal\"\u003E\u003Ctable class=\"profile-table\"\u003E\u003Ctr\u003E\u003Cth\u003ENickname\u003C\u002Fth\u003E\u003Ctd\u003E" + (pug.escape(null == (pug_interp = user.nickname) ? "" : pug_interp)) + "\u003C\u002Ftd\u003E\u003C\u002Ftr\u003E\u003Ctr\u003E\u003Cth\u003EEmail\u003C\u002Fth\u003E\u003Ctd\u003E" + (pug.escape(null == (pug_interp = user.email) ? "" : pug_interp)) + "\u003C\u002Ftd\u003E\u003C\u002Ftr\u003E\u003C\u002Ftable\u003E\u003C\u002Fdiv\u003E";}.call(this,"user" in locals_for_with?locals_for_with.user:typeof user!=="undefined"?user:undefined));;return pug_html;};
+module.exports = template;
 
 /***/ }),
 /* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("var pug = __webpack_require__(1);\n\nfunction template(locals) {var pug_html = \"\", pug_mixins = {}, pug_interp;pug_html = pug_html + \"\\u003Cdiv class=\\\"about-modal\\\"\\u003E\\u003Cp\\u003EТут какой-то текст\\u003C\\u002Fp\\u003E\\u003Cp\\u003EАвторы этого безобразия:\\u003C\\u002Fp\\u003E\\u003Cul\\u003E\\u003Cli\\u003EБуклин Сергей\\u003C\\u002Fli\\u003E\\u003Cli\\u003EБуторин Сергей\\u003C\\u002Fli\\u003E\\u003Cli\\u003EЯкубов Алексей\\u003C\\u002Fli\\u003E\\u003C\\u002Ful\\u003E\\u003C\\u002Fdiv\\u003E\";;return pug_html;};\nmodule.exports = template;\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/templates/about.pug\n// module id = 46\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/templates/about.pug?");
+var pug = __webpack_require__(2);
+
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"danger danger-signup\"\u003E\u003Cp\u003E\u003Cstrong\u003EОшибка:\u003C\u002Fstrong\u003E\u003C\u002Fp\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"signup-modal\"\u003E\u003Cform\u003E\u003Clabel for=\"signup-nickname-input\"\u003ENickname\u003C\u002Flabel\u003E\u003Cinput class=\"signup-nickname-input\" type=\"text\" id=\"signup-nickname-input\" placeholder=\"Your nickname..\" required=\"true\"\u003E\u003Clabel for=\"signup-password-input\"\u003EPassword\u003C\u002Flabel\u003E\u003Cinput class=\"signup-password-input\" type=\"password\" id=\"signup-password-input\" placeholder=\"Your password..\" required=\"true\"\u003E\u003Cinput class=\"signup-password-repeat\" type=\"password\" id=\"signup-password-repeat\" placeholder=\"Repeat password..\" required=\"true\"\u003E\u003Clabel for=\"signup-email-input\"\u003EE-mail\u003C\u002Flabel\u003E\u003Cinput class=\"signup-email-input\" type=\"email\" id=\"signup-email-input\" placeholder=\"Your email..\" required=\"true\"\u003E\u003Cinput class=\"signup-submit-button\" type=\"submit\" value=\"Signup and play!\"\u003E\u003C\u002Fform\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
+module.exports = template;
 
 /***/ }),
 /* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("var pug = __webpack_require__(1);\n\nfunction template(locals) {var pug_html = \"\", pug_mixins = {}, pug_interp;pug_html = pug_html + \"\\u003C!--Created by sergey on 01.05.17.\\n--\\u003E\\u003Cdiv class=\\\"defeat-modal\\\"\\u003E\\u003Cdiv class=\\\"defeat-modal__text\\\"\\u003EПоражение\\u003C\\u002Fdiv\\u003E\\u003Cdiv class=\\\"rating\\\"\\u003E\\u003Cdiv class=\\\"rating__change\\\"\\u003EИзменение:\\u003Cdiv class=\\\"change\\\"\\u003E0\\u003C\\u002Fdiv\\u003E\\u003C\\u002Fdiv\\u003E\\u003Cdiv class=\\\"new__rating\\\"\\u003EРейтинг:\\u003Cdiv class=\\\"rating_score\\\"\\u003E0\\u003C\\u002Fdiv\\u003E\\u003C\\u002Fdiv\\u003E\\u003C\\u002Fdiv\\u003E\\u003C\\u002Fdiv\\u003E\";;return pug_html;};\nmodule.exports = template;\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/templates/defeat.pug\n// module id = 47\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/templates/defeat.pug?");
+var pug = __webpack_require__(2);
+
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003C!-- Created by sergey on 01.05.17.--\u003E\u003Cdiv class=\"victory-modal\"\u003E\u003Cdiv class=\"victory-modal__text\"\u003EПобеда\u003C\u002Fdiv\u003E\u003Cdiv class=\"rating\"\u003E\u003Cdiv class=\"rating__change\"\u003EИзменение:\u003Cdiv class=\"change\"\u003E0\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"new__rating\"\u003EРейтинг:\u003Cdiv class=\"rating_score\"\u003E0\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
+module.exports = template;
 
 /***/ }),
 /* 48 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-eval("var pug = __webpack_require__(1);\n\nfunction template(locals) {var pug_html = \"\", pug_mixins = {}, pug_interp;pug_html = pug_html + \"\\u003Cdiv class=\\\"game-header\\\"\\u003E\\u003Cdiv class=\\\"game-back-link\\\"\\u003E\\u003C Back\\u003C\\u002Fdiv\\u003E\\u003Cdiv class=\\\"player1\\\"\\u003E\\u003Cdiv class=\\\"player_nickname\\\"\\u003E\\u003C\\u002Fdiv\\u003E\\u003Cdiv class=\\\"player_rating\\\"\\u003EРейтинг:\\u003C\\u002Fdiv\\u003E\\u003Cdiv class=\\\"player_rating_score\\\"\\u003E0\\u003C\\u002Fdiv\\u003E\\u003C\\u002Fdiv\\u003E\\u003Cdiv class=\\\"score\\\"\\u003E\\u003Cdiv class=\\\"player1_score\\\"\\u003E0\\u003C\\u002Fdiv\\u003E\\u003Cdiv class=\\\"separate\\\"\\u003E:\\u003C\\u002Fdiv\\u003E\\u003Cdiv class=\\\"player2_score\\\"\\u003E0\\u003C\\u002Fdiv\\u003E\\u003C\\u002Fdiv\\u003E\\u003Cdiv class=\\\"player2\\\"\\u003E\\u003Cdiv class=\\\"player_nickname\\\"\\u003E\\u003C\\u002Fdiv\\u003E\\u003Cdiv class=\\\"player_rating\\\"\\u003EРейтинг:\\u003C\\u002Fdiv\\u003E\\u003Cdiv class=\\\"player_rating_score\\\"\\u003E0\\u003C\\u002Fdiv\\u003E\\u003C\\u002Fdiv\\u003E\\u003C\\u002Fdiv\\u003E\";;return pug_html;};\nmodule.exports = template;\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/templates/gameTemplate.pug\n// module id = 48\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/templates/gameTemplate.pug?");
+
+/**
+ * When source maps are enabled, `style-loader` uses a link element with a data-uri to
+ * embed the css on the page. This breaks all relative urls because now they are relative to a
+ * bundle instead of the current page.
+ *
+ * One solution is to only use full urls, but that may be impossible.
+ *
+ * Instead, this function "fixes" the relative urls to be absolute according to the current page location.
+ *
+ * A rudimentary test suite is located at `test/fixUrls.js` and can be run via the `npm test` command.
+ *
+ */
+
+module.exports = function (css) {
+  // get current location
+  var location = typeof window !== "undefined" && window.location;
+
+  if (!location) {
+    throw new Error("fixUrls requires window.location");
+  }
+
+	// blank or null?
+	if (!css || typeof css !== "string") {
+	  return css;
+  }
+
+  var baseUrl = location.protocol + "//" + location.host;
+  var currentDir = baseUrl + location.pathname.replace(/\/[^\/]*$/, "/");
+
+	// convert each url(...)
+	/*
+	This regular expression is just a way to recursively match brackets within
+	a string.
+
+	 /url\s*\(  = Match on the word "url" with any whitespace after it and then a parens
+	   (  = Start a capturing group
+	     (?:  = Start a non-capturing group
+	         [^)(]  = Match anything that isn't a parentheses
+	         |  = OR
+	         \(  = Match a start parentheses
+	             (?:  = Start another non-capturing groups
+	                 [^)(]+  = Match anything that isn't a parentheses
+	                 |  = OR
+	                 \(  = Match a start parentheses
+	                     [^)(]*  = Match anything that isn't a parentheses
+	                 \)  = Match a end parentheses
+	             )  = End Group
+              *\) = Match anything and then a close parens
+          )  = Close non-capturing group
+          *  = Match anything
+       )  = Close capturing group
+	 \)  = Match a close parens
+
+	 /gi  = Get all matches, not the first.  Be case insensitive.
+	 */
+	var fixedCss = css.replace(/url\s*\(((?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)\)/gi, function(fullMatch, origUrl) {
+		// strip quotes (if they exist)
+		var unquotedOrigUrl = origUrl
+			.trim()
+			.replace(/^"(.*)"$/, function(o, $1){ return $1; })
+			.replace(/^'(.*)'$/, function(o, $1){ return $1; });
+
+		// already a full url? no change
+		if (/^(#|data:|http:\/\/|https:\/\/|file:\/\/\/)/i.test(unquotedOrigUrl)) {
+		  return fullMatch;
+		}
+
+		// convert the url to a full url
+		var newUrl;
+
+		if (unquotedOrigUrl.indexOf("//") === 0) {
+		  	//TODO: should we add protocol?
+			newUrl = unquotedOrigUrl;
+		} else if (unquotedOrigUrl.indexOf("/") === 0) {
+			// path should be relative to the base url
+			newUrl = baseUrl + unquotedOrigUrl; // already starts with '/'
+		} else {
+			// path should be relative to current directory
+			newUrl = currentDir + unquotedOrigUrl.replace(/^\.\//, ""); // Strip leading './'
+		}
+
+		// send back the fixed url(...)
+		return "url(" + JSON.stringify(newUrl) + ")";
+	});
+
+	// send back the fixed css
+	return fixedCss;
+};
+
 
 /***/ }),
 /* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("var pug = __webpack_require__(1);\n\nfunction template(locals) {var pug_html = \"\", pug_mixins = {}, pug_interp;;var locals_for_with = (locals || {});(function (data) {pug_html = pug_html + \"\\u003Cdiv class=\\\"leaderboard-modal\\\" style=\\\"overflow-y:auto;\\\"\\u003E\\u003Ctable class=\\\"leaderboard-table\\\"\\u003E\\u003Ctr\\u003E\\u003Cth\\u003EМесто\\u003C\\u002Fth\\u003E\\u003Cth\\u003ENickname\\u003C\\u002Fth\\u003E\\u003Cth\\u003EСчет\\u003C\\u002Fth\\u003E\\u003C\\u002Ftr\\u003E\";\n// iterate data\n;(function(){\n  var $$obj = data;\n  if ('number' == typeof $$obj.length) {\n      for (var index = 0, $$l = $$obj.length; index < $$l; index++) {\n        var user = $$obj[index];\npug_html = pug_html + \"\\u003Ctr\\u003E\\u003Ctd\\u003E\" + (pug.escape(null == (pug_interp = index) ? \"\" : pug_interp)) + \"\\u003C\\u002Ftd\\u003E\\u003Ctd\\u003E\" + (pug.escape(null == (pug_interp = user.login) ? \"\" : pug_interp)) + \"\\u003C\\u002Ftd\\u003E\\u003Ctd\\u003E\" + (pug.escape(null == (pug_interp = user.rating) ? \"\" : pug_interp)) + \"\\u003C\\u002Ftd\\u003E\\u003C\\u002Ftr\\u003E\";\n      }\n  } else {\n    var $$l = 0;\n    for (var index in $$obj) {\n      $$l++;\n      var user = $$obj[index];\npug_html = pug_html + \"\\u003Ctr\\u003E\\u003Ctd\\u003E\" + (pug.escape(null == (pug_interp = index) ? \"\" : pug_interp)) + \"\\u003C\\u002Ftd\\u003E\\u003Ctd\\u003E\" + (pug.escape(null == (pug_interp = user.login) ? \"\" : pug_interp)) + \"\\u003C\\u002Ftd\\u003E\\u003Ctd\\u003E\" + (pug.escape(null == (pug_interp = user.rating) ? \"\" : pug_interp)) + \"\\u003C\\u002Ftd\\u003E\\u003C\\u002Ftr\\u003E\";\n    }\n  }\n}).call(this);\n\npug_html = pug_html + \"\\u003C\\u002Ftable\\u003E\\u003C\\u002Fdiv\\u003E\";}.call(this,\"data\" in locals_for_with?locals_for_with.data:typeof data!==\"undefined\"?data:undefined));;return pug_html;};\nmodule.exports = template;\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/templates/leaderboard.pug\n// module id = 49\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/templates/leaderboard.pug?");
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(27);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// add the styles to the DOM
+var update = __webpack_require__(7)(content, {});
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!../../node_modules/css-loader/index.js!../../node_modules/postcss-loader/lib/index.js!./concede.css", function() {
+			var newContent = require("!!../../node_modules/css-loader/index.js!../../node_modules/postcss-loader/lib/index.js!./concede.css");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
 
 /***/ }),
 /* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("var pug = __webpack_require__(1);\n\nfunction template(locals) {var pug_html = \"\", pug_mixins = {}, pug_interp;pug_html = pug_html + \"\\u003Cdiv class=\\\"danger\\\"\\u003E\\u003Cp\\u003E\\u003Cstrong\\u003EОшибка:\\u003C\\u002Fstrong\\u003E неверный логин или пароль\\u003C\\u002Fp\\u003E\\u003C\\u002Fdiv\\u003E\\u003Cdiv class=\\\"login-modal\\\"\\u003E\\u003Cform\\u003E\\u003Clabel for=\\\"login-input\\\"\\u003ENickname\\u003C\\u002Flabel\\u003E\\u003Cinput class=\\\"login-nickname-input\\\" type=\\\"text\\\" id=\\\"login-input\\\" placeholder=\\\"Your nickname..\\\" required=\\\"true\\\"\\u003E\\u003Clabel for=\\\"password-input\\\"\\u003EPassword\\u003C\\u002Flabel\\u003E\\u003Cinput class=\\\"login-password-input\\\" type=\\\"password\\\" id=\\\"password-input\\\" placeholder=\\\"Your password..\\\" required=\\\"true\\\"\\u003E\\u003Cinput class=\\\"login-submit-button\\\" type=\\\"submit\\\" value=\\\"Enter the game\\\"\\u003E\\u003C\\u002Fform\\u003E\\u003C\\u002Fdiv\\u003E\";;return pug_html;};\nmodule.exports = template;\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/templates/login.pug\n// module id = 50\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/templates/login.pug?");
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(28);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// add the styles to the DOM
+var update = __webpack_require__(7)(content, {});
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!../../node_modules/css-loader/index.js!../../node_modules/postcss-loader/lib/index.js!./defeat.css", function() {
+			var newContent = require("!!../../node_modules/css-loader/index.js!../../node_modules/postcss-loader/lib/index.js!./defeat.css");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
 
 /***/ }),
 /* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("var pug = __webpack_require__(1);\n\nfunction template(locals) {var pug_html = \"\", pug_mixins = {}, pug_interp;;var locals_for_with = (locals || {});(function (user) {pug_html = pug_html + \"\\u003C!--Created by tlakatlekutl on 27.03.17.\\n--\\u003E\\u003Cdiv class=\\\"main-page\\\"\\u003E\\u003Cdiv class=\\\"user-state\\\"\\u003E\";\nif (user.authorised) {\npug_html = pug_html + \"\\u003Ca class=\\\"dropdown-link\\\"\\u003E\" + (pug.escape(null == (pug_interp = user.nickname) ? \"\" : pug_interp)) + \" \\\\\\u002F\\u003C\\u002Fa\\u003E\\u003Cdiv class=\\\"dropdown-content\\\"\\u003E\\u003Ca class=\\\"profile-link\\\"\\u003EProfile\\u003C\\u002Fa\\u003E\\u003Ca class=\\\"logout-link\\\"\\u003ELogout\\u003C\\u002Fa\\u003E\\u003C\\u002Fdiv\\u003E\";\n}\nelse {\npug_html = pug_html + \"\\u003Ca class=\\\"login-link\\\"\\u003ELogin\\u003C\\u002Fa\\u003E\\u003Ca class=\\\"signup-link\\\"\\u003ESign up\\u003C\\u002Fa\\u003E\";\n}\npug_html = pug_html + \"\\u003C\\u002Fdiv\\u003E\\u003Cdiv class=\\\"name-game\\\"\\u003EFastBall\\u003C\\u002Fdiv\\u003E\\u003Cdiv class=\\\"main-page-center\\\"\\u003E\\u003Cdiv class=\\\"start-game-buttons\\\"\\u003E\\u003Cbutton class=\\\"button btn-left\\\"\\u003ESingle\\u003C\\u002Fbutton\\u003E\\u003Cbutton class=\\\"button btn-right\\\"\\u003EMulti\\u003C\\u002Fbutton\\u003E\\u003C\\u002Fdiv\\u003E\\u003Cdiv class=\\\"main-page-leaderboard\\\"\\u003E\\u003Cbutton class=\\\"leaderboard-button\\\"\\u003ELeaderboard\\u003C\\u002Fbutton\\u003E\\u003C\\u002Fdiv\\u003E\\u003C\\u002Fdiv\\u003E\\u003C\\u002Fdiv\\u003E\\u003Cfooter class=\\\"main-page-footer\\\"\\u003E\\u003Ca class=\\\"footer-help-link\\\"\\u003Ehelp\\u003C\\u002Fa\\u003E\\u003C\\u002Ffooter\\u003E\";}.call(this,\"user\" in locals_for_with?locals_for_with.user:typeof user!==\"undefined\"?user:undefined));;return pug_html;};\nmodule.exports = template;\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/templates/mainWindow.pug\n// module id = 51\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/templates/mainWindow.pug?");
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(30);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// add the styles to the DOM
+var update = __webpack_require__(7)(content, {});
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!../../node_modules/css-loader/index.js!../../node_modules/postcss-loader/lib/index.js!./victory.css", function() {
+			var newContent = require("!!../../node_modules/css-loader/index.js!../../node_modules/postcss-loader/lib/index.js!./victory.css");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
 
 /***/ }),
 /* 52 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-eval("var pug = __webpack_require__(1);\n\nfunction template(locals) {var pug_html = \"\", pug_mixins = {}, pug_interp;pug_html = pug_html + \"\\u003Cbutton class=\\\"goleft\\\"\\u003ELeft\\u003C\\u002Fbutton\\u003E\\u003Cspan class=\\\"result\\\"\\u003E50\\u003C\\u002Fspan\\u003E\\u003Cbutton class=\\\"goright\\\"\\u003ERight\\u003C\\u002Fbutton\\u003E\\u003Cdiv class=\\\"game-header\\\"\\u003E\\u003Cdiv class=\\\"game-back-link\\\"\\u003E\\u003C Back\\u003C\\u002Fdiv\\u003E\\u003Cdiv class=\\\"player1\\\"\\u003E\\u003Cdiv class=\\\"player_nickname\\\"\\u003E\\u003C\\u002Fdiv\\u003E\\u003Cdiv class=\\\"player_rating\\\"\\u003EРейтинг:\\u003C\\u002Fdiv\\u003E\\u003Cdiv class=\\\"player_rating_score\\\"\\u003E0\\u003C\\u002Fdiv\\u003E\\u003C\\u002Fdiv\\u003E\\u003Cdiv class=\\\"score\\\"\\u003E\\u003Cdiv class=\\\"player1_score\\\"\\u003E0\\u003C\\u002Fdiv\\u003E\\u003Cdiv class=\\\"separate\\\"\\u003E:\\u003C\\u002Fdiv\\u003E\\u003Cdiv class=\\\"player2_score\\\"\\u003E0\\u003C\\u002Fdiv\\u003E\\u003C\\u002Fdiv\\u003E\\u003Cdiv class=\\\"player2\\\"\\u003E\\u003Cdiv class=\\\"player_nickname\\\"\\u003E\\u003C\\u002Fdiv\\u003E\\u003Cdiv class=\\\"player_rating\\\"\\u003EРейтинг:\\u003C\\u002Fdiv\\u003E\\u003Cdiv class=\\\"player_rating_score\\\"\\u003E0\\u003C\\u002Fdiv\\u003E\\u003C\\u002Fdiv\\u003E\\u003C\\u002Fdiv\\u003E\";;return pug_html;};\nmodule.exports = template;\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/templates/mp.pug\n// module id = 52\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/templates/mp.pug?");
+module.exports = "data:image/png;base64,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"
 
 /***/ }),
 /* 53 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-eval("var pug = __webpack_require__(1);\n\nfunction template(locals) {var pug_html = \"\", pug_mixins = {}, pug_interp;;var locals_for_with = (locals || {});(function (user) {pug_html = pug_html + \"\\u003Cdiv class=\\\"profile-modal\\\"\\u003E\\u003Ctable class=\\\"profile-table\\\"\\u003E\\u003Ctr\\u003E\\u003Cth\\u003ENickname\\u003C\\u002Fth\\u003E\\u003Ctd\\u003E\" + (pug.escape(null == (pug_interp = user.nickname) ? \"\" : pug_interp)) + \"\\u003C\\u002Ftd\\u003E\\u003C\\u002Ftr\\u003E\\u003Ctr\\u003E\\u003Cth\\u003EEmail\\u003C\\u002Fth\\u003E\\u003Ctd\\u003E\" + (pug.escape(null == (pug_interp = user.email) ? \"\" : pug_interp)) + \"\\u003C\\u002Ftd\\u003E\\u003C\\u002Ftr\\u003E\\u003C\\u002Ftable\\u003E\\u003C\\u002Fdiv\\u003E\";}.call(this,\"user\" in locals_for_with?locals_for_with.user:typeof user!==\"undefined\"?user:undefined));;return pug_html;};\nmodule.exports = template;\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/templates/profile.pug\n// module id = 53\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/templates/profile.pug?");
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
 
 /***/ }),
 /* 54 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-eval("var pug = __webpack_require__(1);\n\nfunction template(locals) {var pug_html = \"\", pug_mixins = {}, pug_interp;pug_html = pug_html + \"\\u003Cdiv class=\\\"danger danger-signup\\\"\\u003E\\u003Cp\\u003E\\u003Cstrong\\u003EОшибка:\\u003C\\u002Fstrong\\u003E\\u003C\\u002Fp\\u003E\\u003C\\u002Fdiv\\u003E\\u003Cdiv class=\\\"signup-modal\\\"\\u003E\\u003Cform\\u003E\\u003Clabel for=\\\"signup-nickname-input\\\"\\u003ENickname\\u003C\\u002Flabel\\u003E\\u003Cinput class=\\\"signup-nickname-input\\\" type=\\\"text\\\" id=\\\"signup-nickname-input\\\" placeholder=\\\"Your nickname..\\\" required=\\\"true\\\"\\u003E\\u003Clabel for=\\\"signup-password-input\\\"\\u003EPassword\\u003C\\u002Flabel\\u003E\\u003Cinput class=\\\"signup-password-input\\\" type=\\\"password\\\" id=\\\"signup-password-input\\\" placeholder=\\\"Your password..\\\" required=\\\"true\\\"\\u003E\\u003Cinput class=\\\"signup-password-repeat\\\" type=\\\"password\\\" id=\\\"signup-password-repeat\\\" placeholder=\\\"Repeat password..\\\" required=\\\"true\\\"\\u003E\\u003Clabel for=\\\"signup-email-input\\\"\\u003EE-mail\\u003C\\u002Flabel\\u003E\\u003Cinput class=\\\"signup-email-input\\\" type=\\\"email\\\" id=\\\"signup-email-input\\\" placeholder=\\\"Your email..\\\" required=\\\"true\\\"\\u003E\\u003Cinput class=\\\"signup-submit-button\\\" type=\\\"submit\\\" value=\\\"Signup and play!\\\"\\u003E\\u003C\\u002Fform\\u003E\\u003C\\u002Fdiv\\u003E\";;return pug_html;};\nmodule.exports = template;\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/templates/sign_up.pug\n// module id = 54\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/templates/sign_up.pug?");
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_index_css__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_index_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__css_index_css__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__eventsHandlers__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__models_userModel__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__modules_router_router__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__views_preloaderView__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__views_mainWindowView__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__views_leaderBoardModalView__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__views_aboutModalVIew__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__views_gameView__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__views_page404view__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__modules_eventEmitter_eventEmitter__ = __webpack_require__(1);
+/**
+ * Created by tlakatlekutl on 31.03.17.
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const ee = new __WEBPACK_IMPORTED_MODULE_10__modules_eventEmitter_eventEmitter__["a" /* default */]();
+
+// views
+const preloaderView = new __WEBPACK_IMPORTED_MODULE_4__views_preloaderView__["a" /* default */]();
+const mainView = new __WEBPACK_IMPORTED_MODULE_5__views_mainWindowView__["a" /* default */]();
+const p404 = new __WEBPACK_IMPORTED_MODULE_9__views_page404view__["a" /* default */]();
+const leaderBoardModal = new __WEBPACK_IMPORTED_MODULE_6__views_leaderBoardModalView__["a" /* default */]();
+const aboutModalView = new __WEBPACK_IMPORTED_MODULE_7__views_aboutModalVIew__["a" /* default */]();
+const gameView = new __WEBPACK_IMPORTED_MODULE_8__views_gameView__["a" /* default */]();
+
+// init router
+const router = new __WEBPACK_IMPORTED_MODULE_3__modules_router_router__["a" /* default */]();
+router.addRoute(/\/$/, mainView)
+  .addRoute(/leaderboard$/, leaderBoardModal)
+  .addRoute(/about$/, aboutModalView)
+  .addRoute(/game$/, gameView)
+  .set404(p404);
+
+// global user profile
+const userModel = new __WEBPACK_IMPORTED_MODULE_2__models_userModel__["a" /* default */]();
+
+// if ('serviceWorker' in navigator) {
+//   navigator.serviceWorker.register('sw.js')
+//     .then( (registration) => {
+//       console.log('ServiceWorker registration', registration);
+//     })
+//     .catch((err) => {
+//       console.log('Registration failed with ', err);
+//     });
+// }
+
+
+leaderBoardModal.render();
+aboutModalView.render();
+
+router.start()
+  .then(() => {
+    if (userModel.isAuthorised()) {
+      ee.emit(__WEBPACK_IMPORTED_MODULE_10__modules_eventEmitter_eventEmitter__["b" /* START_USER_AUTHORISED */]);
+    } else {
+      ee.emit(__WEBPACK_IMPORTED_MODULE_10__modules_eventEmitter_eventEmitter__["c" /* START_USER_UNAUTHORISED */]);
+    }
+    mainView.render();
+    router.go(window.location.href);
+    preloaderView.dispatchLoadCompleted();
+  });
+
 
 /***/ }),
 /* 55 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-eval("var pug = __webpack_require__(1);\n\nfunction template(locals) {var pug_html = \"\", pug_mixins = {}, pug_interp;pug_html = pug_html + \"\\u003C!-- Created by sergey on 01.05.17.--\\u003E\\u003Cdiv class=\\\"victory-modal\\\"\\u003E\\u003Cdiv class=\\\"victory-modal__text\\\"\\u003EПобеда\\u003C\\u002Fdiv\\u003E\\u003Cdiv class=\\\"rating\\\"\\u003E\\u003Cdiv class=\\\"rating__change\\\"\\u003EИзменение:\\u003Cdiv class=\\\"change\\\"\\u003E0\\u003C\\u002Fdiv\\u003E\\u003C\\u002Fdiv\\u003E\\u003Cdiv class=\\\"new__rating\\\"\\u003EРейтинг:\\u003Cdiv class=\\\"rating_score\\\"\\u003E0\\u003C\\u002Fdiv\\u003E\\u003C\\u002Fdiv\\u003E\\u003C\\u002Fdiv\\u003E\\u003C\\u002Fdiv\\u003E\";;return pug_html;};\nmodule.exports = template;\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/templates/victory.pug\n// module id = 55\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/templates/victory.pug?");
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object__ = __webpack_require__(6);
+/**
+ * Created by sergey on 16.05.17.
+ */
+
+
+class Bonus extends __WEBPACK_IMPORTED_MODULE_0__object__["a" /* GameObject */] {
+  constructor(type, pos, radius) {
+    super(pos);
+
+    this.radius = radius;
+
+    this.Geometry = new THREE.SphereGeometry(this.radius, 30, 30);
+    this.Material = new THREE.MeshLambertMaterial({ color: 0x54FF9F });
+
+    if (type === 'BALL_INCREASE') {
+      this.Geometry = new THREE.SphereGeometry(this.radius, 30, 30);
+      this.Material = new THREE.MeshLambertMaterial({ color: 0x54FF9F });
+    } else if (type === 'BALL_DECREASE') {
+      this.Geometry = new THREE.SphereGeometry(this.radius, 30, 30);
+      this.Material = new THREE.MeshLambertMaterial({ color: 0xFE28A2 });
+    } else if (type === 'BALL_MULTIPLY') {
+      console.log("multiply");
+      this.Geometry = new THREE.SphereGeometry(this.radius, 30, 30);
+      this.Material = new THREE.MeshLambertMaterial({ color: 0xF4C430 });
+    } else if (type === 'PLATFORM_INCREASE') {
+      this.Geometry = new THREE.SphereGeometry(this.radius, 30, 30);
+      this.Material = new THREE.MeshLambertMaterial({ color: 0x4FFF18 });
+    } else if (type === 'PLATFORM_DECREASE') {
+      this.Geometry = new THREE.SphereGeometry(this.radius, 30, 30);
+      this.Material = new THREE.MeshLambertMaterial({ color: 0xFF4F18 });
+    }
+
+    this.model = new THREE.Mesh(this.Geometry, this.Material);
+    this.model.position.set(this.X, this.Y, this.Z);
+  }
+
+  getSize() {
+    return this.radius;
+  }
+
+  getModel() {
+    return this.model;
+  }
+
+  setPosition(pos) {
+    super.setPosition(pos);
+    this.model.position.set(this.X, this.Y, this.Z);
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Bonus;
+
 
 /***/ }),
 /* 56 */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-eval("\n/**\n * When source maps are enabled, `style-loader` uses a link element with a data-uri to\n * embed the css on the page. This breaks all relative urls because now they are relative to a\n * bundle instead of the current page.\n *\n * One solution is to only use full urls, but that may be impossible.\n *\n * Instead, this function \"fixes\" the relative urls to be absolute according to the current page location.\n *\n * A rudimentary test suite is located at `test/fixUrls.js` and can be run via the `npm test` command.\n *\n */\n\nmodule.exports = function (css) {\n  // get current location\n  var location = typeof window !== \"undefined\" && window.location;\n\n  if (!location) {\n    throw new Error(\"fixUrls requires window.location\");\n  }\n\n\t// blank or null?\n\tif (!css || typeof css !== \"string\") {\n\t  return css;\n  }\n\n  var baseUrl = location.protocol + \"//\" + location.host;\n  var currentDir = baseUrl + location.pathname.replace(/\\/[^\\/]*$/, \"/\");\n\n\t// convert each url(...)\n\t/*\n\tThis regular expression is just a way to recursively match brackets within\n\ta string.\n\n\t /url\\s*\\(  = Match on the word \"url\" with any whitespace after it and then a parens\n\t   (  = Start a capturing group\n\t     (?:  = Start a non-capturing group\n\t         [^)(]  = Match anything that isn't a parentheses\n\t         |  = OR\n\t         \\(  = Match a start parentheses\n\t             (?:  = Start another non-capturing groups\n\t                 [^)(]+  = Match anything that isn't a parentheses\n\t                 |  = OR\n\t                 \\(  = Match a start parentheses\n\t                     [^)(]*  = Match anything that isn't a parentheses\n\t                 \\)  = Match a end parentheses\n\t             )  = End Group\n              *\\) = Match anything and then a close parens\n          )  = Close non-capturing group\n          *  = Match anything\n       )  = Close capturing group\n\t \\)  = Match a close parens\n\n\t /gi  = Get all matches, not the first.  Be case insensitive.\n\t */\n\tvar fixedCss = css.replace(/url\\s*\\(((?:[^)(]|\\((?:[^)(]+|\\([^)(]*\\))*\\))*)\\)/gi, function(fullMatch, origUrl) {\n\t\t// strip quotes (if they exist)\n\t\tvar unquotedOrigUrl = origUrl\n\t\t\t.trim()\n\t\t\t.replace(/^\"(.*)\"$/, function(o, $1){ return $1; })\n\t\t\t.replace(/^'(.*)'$/, function(o, $1){ return $1; });\n\n\t\t// already a full url? no change\n\t\tif (/^(#|data:|http:\\/\\/|https:\\/\\/|file:\\/\\/\\/)/i.test(unquotedOrigUrl)) {\n\t\t  return fullMatch;\n\t\t}\n\n\t\t// convert the url to a full url\n\t\tvar newUrl;\n\n\t\tif (unquotedOrigUrl.indexOf(\"//\") === 0) {\n\t\t  \t//TODO: should we add protocol?\n\t\t\tnewUrl = unquotedOrigUrl;\n\t\t} else if (unquotedOrigUrl.indexOf(\"/\") === 0) {\n\t\t\t// path should be relative to the base url\n\t\t\tnewUrl = baseUrl + unquotedOrigUrl; // already starts with '/'\n\t\t} else {\n\t\t\t// path should be relative to current directory\n\t\t\tnewUrl = currentDir + unquotedOrigUrl.replace(/^\\.\\//, \"\"); // Strip leading './'\n\t\t}\n\n\t\t// send back the fixed url(...)\n\t\treturn \"url(\" + JSON.stringify(newUrl) + \")\";\n\t});\n\n\t// send back the fixed css\n\treturn fixedCss;\n};\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./~/style-loader/fixUrls.js\n// module id = 56\n// module chunks = 0\n\n//# sourceURL=webpack:///./~/style-loader/fixUrls.js?");
+"use strict";
+/**
+ * Created by sergey on 20.04.17.
+ */
+
+class Bot {
+    constructor(pos) {
+        this.active = false;
+
+        this.x = pos.x;
+        this.y = pos.y;
+        this.z = pos.z;
+        this.del = 0.2;
+        this.move = { xd: 0, yd: 0, zd: 0};
+    }
+
+    getState() {
+        return this.active;
+    }
+
+    setState(state) {
+        this.active = state;
+    }
+
+    setPosition(pos) {
+        this.x = pos.x;
+        this.y = pos.y;
+        this.z = pos.z;
+    }
+
+    getBehavior(posBall) {
+        this.move = { xd: 0, yd: 0, zd: 0};
+        if(posBall.x - this.x >= this.del) {
+            this.move.xd = this.del;
+        } else if (this.x - posBall.x  >= this.del) {
+            this.move.xd = -this.del;
+        }
+        return this.move;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Bot;
+
 
 /***/ }),
 /* 57 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-eval("// style-loader: Adds some css to the DOM by adding a <style> tag\n\n// load the styles\nvar content = __webpack_require__(37);\nif(typeof content === 'string') content = [[module.i, content, '']];\n// add the styles to the DOM\nvar update = __webpack_require__(6)(content, {});\nif(content.locals) module.exports = content.locals;\n// Hot Module Replacement\nif(false) {\n\t// When the styles change, update the <style> tags\n\tif(!content.locals) {\n\t\tmodule.hot.accept(\"!!../../node_modules/css-loader/index.js!./defeat.css\", function() {\n\t\t\tvar newContent = require(\"!!../../node_modules/css-loader/index.js!./defeat.css\");\n\t\t\tif(typeof newContent === 'string') newContent = [[module.id, newContent, '']];\n\t\t\tupdate(newContent);\n\t\t});\n\t}\n\t// When the module is disposed, remove the <style> tags\n\tmodule.hot.dispose(function() { update(); });\n}\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/css/defeat.css\n// module id = 57\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/css/defeat.css?");
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ball__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__barrier__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ground__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__bonus__ = __webpack_require__(55);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__models_gameModel__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__eventEmitter_eventEmitter__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__models_userModel__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__player__ = __webpack_require__(16);
+/**
+ * Created by sergey on 21.04.17.
+ */
+
+
+
+
+
+
+
+
+
+
+
+const ee = new __WEBPACK_IMPORTED_MODULE_6__eventEmitter_eventEmitter__["a" /* default */]();
+const us = new __WEBPACK_IMPORTED_MODULE_7__models_userModel__["a" /* default */]();
+
+class MultiStrategy {
+
+  constructor() {
+
+    this.gm = new __WEBPACK_IMPORTED_MODULE_5__models_gameModel__["a" /* default */]();
+
+    this.play = true;
+    this.time = (new Date).getTime();
+
+    this.timepr = 0;
+    this.time_st = 0;
+    this.timen = 0;
+    this.speed = 0;
+    this.dist = 0;
+
+    this.pres = 0;
+    this.timeLast = (new Date).getTime();
+
+    this.player1 = new __WEBPACK_IMPORTED_MODULE_8__player__["a" /* default */](us.getData().nickname, 0, us.getData().rating);
+
+    this.nick1 = document.querySelector('.player1 .player_nickname');
+    this.nick1.innerHTML = this.player1.getNickname();
+    this.rat1 = document.querySelector('.player1 .player_rating_score');
+    this.rat1.innerHTML = this.player1.getRating();
+
+    this.score1 = document.querySelector('.player1_score');
+    this.score1.innerHTML = this.player1.getScore();
+
+    this.scene = new THREE.Scene();
+    this.clock = new THREE.Clock();
+    this.keyboard2 = new KeyboardState();
+    this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    this.spotLight = new THREE.SpotLight(0xffffff);
+    this.spotLight.position.set(0, 340, 340);
+    this.scene.add(this.spotLight);
+
+    this.x = window.innerWidth * 0.8;
+    this.y = this.x * 0.56;
+
+    this.renderer = new THREE.WebGLRenderer();
+    this.renderer.setSize(this.x, this.y);
+    document.body.appendChild(this.renderer.domElement);
+
+    this.pos = { x: 0, y: 0, z: 0 };
+    this.size = { width: 180, height: 10, depth: 240 };
+    this.ground = new __WEBPACK_IMPORTED_MODULE_3__ground__["a" /* Ground */](this.pos, this.size);
+    this.scene.add(this.ground.getModel());
+
+    this.barriers = [];
+
+    this.pos = { x: -85, y: 10, z: 0 };
+    this.size = { width: 10, height: 10, depth: 240 };
+    this.angle = Math.PI / 2;
+    this.borderLeft = new __WEBPACK_IMPORTED_MODULE_2__barrier__["a" /* Barrier */](this.pos, this.size, this.angle);
+    this.barriers.push(this.borderLeft);
+    this.scene.add(this.borderLeft.getModel());
+
+    this.pos = { x: 85, y: 10, z: 0 };
+    this.size = { width: 10, height: 10, depth: 240 };
+    this.angle = Math.PI / 2;
+    this.borderRight = new __WEBPACK_IMPORTED_MODULE_2__barrier__["a" /* Barrier */](this.pos, this.size, this.angle);
+    this.barriers.push(this.borderRight);
+    this.scene.add(this.borderRight.getModel());
+
+    this.pos = { x: 0, y: 10, z: 112.5 };
+    this.size = { width: 60, height: 5, depth: 15 };
+    this.platformMy = new __WEBPACK_IMPORTED_MODULE_0__platform__["a" /* Platform */](0, this.pos, this.size);
+    this.scene.add(this.platformMy.getModel());
+
+    this.pos = { x: 0, y: 10, z: -112.5 };
+    this.size = { width: 60, height: 5, depth: 15 };
+    this.platformEnemy = new __WEBPACK_IMPORTED_MODULE_0__platform__["a" /* Platform */](1, this.pos, this.size);
+    this.scene.add(this.platformEnemy.getModel());
+
+    this.balls = [];
+    this.countBalls = 0;
+
+    this.pos = { x: 0, y: 10, z: 100 };
+    this.radius = 5;
+    this.ball = new __WEBPACK_IMPORTED_MODULE_1__ball__["a" /* Ball */](0, this.pos, this.radius);
+    this.scene.add(this.ball.getModel());
+
+    this.balls[this.countBalls] = this.ball;
+    this.countBalls += 1;
+
+    this.camera.position.x = 0;
+    this.camera.position.y = 120;
+    this.camera.position.z = 180;
+    this.camera.lookAt(this.ground.getPosition());
+
+    this.bonuses = [];
+
+    this.addEventListeners();
+  }
+
+  render() {
+    this.keyboard2.update();
+
+    this.pres = 0;
+
+    if (this.keyboard2.pressed('left')) {
+      if (this.coordsTransform === -1) {
+        this.control('left');
+      } else {
+        this.control('right');
+      }
+    }
+
+    if (this.keyboard2.pressed('right')) {
+      if (this.coordsTransform === -1) {
+        this.control('right');
+      } else {
+        this.control('left');
+      }
+    }
+
+    if (this.touchCheck === 1) {
+      const canvas = document.querySelector('canvas');
+      if (this.touch.changedTouches[0].clientX < canvas.getBoundingClientRect().left + canvas.getBoundingClientRect().width / 2) {
+        if (this.coordsTransform === -1) {
+          this.control('left');
+        } else {
+          this.control('right');
+        }
+      } else {
+        if (this.coordsTransform === -1) {
+          this.control('right');
+        } else {
+          this.control('left');
+        }
+      }
+    }
+
+    this.renderer.render(this.scene, this.camera);
+  }
+
+  addEventListeners() {
+    const canvas = document.querySelector('canvas');
+    canvas.addEventListener('touchstart', (event) => {
+      event.preventDefault();
+      this.touch = event;
+      this.touchCheck = 1;
+    });
+    canvas.addEventListener('touchend', (event) => {
+      this.touchCheck = 0;
+    });
+  }
+
+  animationScene() {
+    this.render();
+    // console.log(this.time - (new Date).getTime());
+    this.time = (new Date).getTime();
+
+    if (this.play === true) {
+      window.requestAnimationFrame(this.animationScene.bind(this));
+    }
+  }
+
+  control(button) {
+    if (this.pres === 0) {
+      this.pres = 1;
+      this.del = 20;
+    } else {
+      this.time = (new Date).getTime();
+      this.del = this.time - this.timeLast;
+    }
+    this.timeLast = (new Date).getTime();
+    if (this.del > 100) {
+      this.del = 20;
+    }
+    if (button === 'left') {
+      this.gm.sendButton('left', this.del);
+    } else if (button === 'right') {
+      this.gm.sendButton('right', this.del);
+    }
+  }
+
+  setStateGame(state, time) {
+    //console.log(state);
+    // if (state.balls.length > 1) {
+    //   console.log(state.balls);
+    // }
+    this.state = state;
+    if (this.time_st === 0) {
+      this.timen = time;
+      this.time_st = 1;
+    } else {
+      this.timepr = this.timen;
+      this.timen = time;
+    }
+    //console.log(this.timen - this.timepr);
+
+    if (us.getData().id === this.state.players[0].userId) {
+      // this.dist = this.platformMy.getPosition().x - this.state.players[0].platform.x * this.coordsTransform;
+      this.pos = {
+        x: this.state.players[0].coords.x * this.coordsTransform,
+        y: this.platformMy.getPosition().y,
+        z: this.platformMy.getPosition().z
+      };
+      this.platformMy.setPosition(this.pos);
+      this.pos = {
+        x: this.state.players[1].coords.x * this.coordsTransform,
+        y: this.platformEnemy.getPosition().y,
+        z: this.platformEnemy.getPosition().z
+      };
+      this.platformEnemy.setPosition(this.pos);
+    } else {
+      this.pos = {
+        x: this.state.players[1].coords.x * this.coordsTransform,
+        y: this.platformMy.getPosition().y,
+        z: this.platformMy.getPosition().z
+      };
+      this.platformMy.setPosition(this.pos);
+      this.pos = {
+        x: this.state.players[0].coords.x * this.coordsTransform,
+        y: this.platformEnemy.getPosition().y,
+        z: this.platformEnemy.getPosition().z
+      };
+      this.platformEnemy.setPosition(this.pos);
+    }
+    for (let i = 0; i < this.countBalls; i += 1) {
+      this.pos = {
+        x: this.state.balls[i].x * this.coordsTransform,
+        y: this.balls[0].getPosition().y,
+        z: this.state.balls[i].y * this.coordsTransform,
+      };
+      this.balls[i].setPosition(this.pos);
+    }
+    //console.log(this.state.balls[0].x * this.coordsTransform);
+    //console.log(this.balls[0].getPosition().x);
+
+    //console.log(this.balls);
+  }
+
+  setChangeGame(state) {
+    //console.log(state.balls.length);
+    // if (state.balls.length > 1) {
+    //   console.log(state.balls);
+    // }
+    this.state = state;
+    if (us.getData().id === this.state.players[0].userId) {
+      this.player1.setScore(this.state.players[0].score);
+      this.player2.setScore(this.state.players[1].score);
+      if (this.state.players[0].width !== this.platformMy.getSize().width) {
+        this.scene.remove(this.platformMy.getModel());
+        this.size = { width: this.state.players[0].width, height: this.platformMy.getSize().height };
+        this.platformMy.setSize(this.size);
+        this.scene.add(this.platformMy.getModel());
+      }
+      if (this.state.players[1].width !== this.platformEnemy.getSize().width) {
+        this.scene.remove(this.platformEnemy.getModel());
+        this.size = { width: this.state.players[1].width, height: this.platformEnemy.getSize().height };
+        this.platformEnemy.setSize(this.size);
+        this.scene.add(this.platformEnemy.getModel());
+      }
+    } else {
+      this.player1.setScore(this.state.players[1].score);
+      this.player2.setScore(this.state.players[0].score);
+      if (this.state.players[1].width !== this.platformMy.getSize().width) {
+        this.scene.remove(this.platformMy.getModel());
+        this.size = { width: this.state.players[1].width, height: this.platformMy.getSize().height };
+        this.platformMy.setSize(this.size);
+        this.scene.add(this.platformMy.getModel());
+      }
+      if (this.state.players[0].width !== this.platformEnemy.getSize().width) {
+        this.scene.remove(this.platformEnemy.getModel());
+        this.size = { width: this.state.players[0].width, height: this.platformEnemy.getSize().height };
+        this.platformEnemy.setSize(this.size);
+        this.scene.add(this.platformEnemy.getModel());
+      }
+    }
+
+    for (let i = this.state.balls.length; i < this.countBalls; i += 1) {
+      this.scene.remove(this.balls[i].getModel());
+      this.countBalls -= 1;
+    }
+
+    for (let i = 0; i < this.state.balls.length; i += 1) {
+      if (this.countBalls === i) {
+        this.pos = {
+          x: this.state.balls[i].x * this.coordsTransform,
+          y: this.balls[0].getPosition().y,
+          z: this.state.balls[i].y * this.coordsTransform,
+        };
+        this.radius = this.state.balls[i].radius;
+        this.ball = new __WEBPACK_IMPORTED_MODULE_1__ball__["a" /* Ball */](0, this.pos, this.radius);
+        this.scene.add(this.ball.getModel());
+        this.balls[this.countBalls] = this.ball;
+        this.balls[i].setPosition(this.pos);
+        this.countBalls += 1;
+      }
+    }
+
+    for (let i = 0; i < this.countBalls; i += 1) {
+      this.pos = {
+        x: this.state.balls[i].x * this.coordsTransform,
+        y: this.balls[i].getPosition().y,
+        z: this.state.balls[i].y * this.coordsTransform,
+      };
+      this.balls[i].setPosition(this.pos);
+      if (this.state.balls[i].radius !== this.balls[i].getSize()) {
+        this.scene.remove(this.balls[i].getModel());
+        this.balls[i].setSize(this.state.balls[i].radius);
+        this.scene.add(this.balls[i].getModel());
+      }
+    }
+
+    for (let i = 0; i < this.bonuses.length; i += 1) {
+      this.scene.remove(this.bonuses[i].getModel());
+    }
+    this.bonuses = [];
+
+    for (let i = 0; i < this.state.bonuses.length; i += 1) {
+      this.pos = {
+        x: this.state.bonuses[i].coords.x * this.coordsTransform,
+        y: 15,
+        z: this.state.bonuses[i].coords.y * this.coordsTransform };
+      this.radius = 10;
+      this.bonus = new __WEBPACK_IMPORTED_MODULE_4__bonus__["a" /* Bonus */](this.state.bonuses[i].type, this.pos, this.radius);
+      this.scene.add(this.bonus.getModel());
+      this.bonuses[i] = this.bonus;
+    }
+
+    this.score1 = document.querySelector('.player1_score');
+    this.score1.innerHTML = this.player1.getScore();
+    this.score2 = document.querySelector('.player2_score');
+    this.score2.innerHTML = this.player2.getScore();
+  }
+
+  setOpponent(state) {
+    console.log(state);
+    this.state = state;
+    this.coordsTransform = this.state.coordsTransform;
+    this.player2 = new __WEBPACK_IMPORTED_MODULE_8__player__["a" /* default */](this.state.opponentLogin, 0, this.state.opponentRating);
+    this.nick2 = document.querySelector('.player2 .player_nickname');
+    this.nick2.innerHTML = this.player2.getNickname();
+    this.rat2 = document.querySelector('.player2 .player_rating_score');
+    this.rat2.innerHTML = this.player2.getRating();
+    this.score2 = document.querySelector('.player2_score');
+    this.score2.innerHTML = this.player2.getScore();
+  }
+
+  stop() {
+    this.play = false;
+    this.keyboard2.destroy();
+  }
+
+  resume() {
+    this.play = true;
+    this.keyboard2 = new KeyboardState();
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = MultiStrategy;
+
+
 
 /***/ }),
 /* 58 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-eval("// style-loader: Adds some css to the DOM by adding a <style> tag\n\n// load the styles\nvar content = __webpack_require__(43);\nif(typeof content === 'string') content = [[module.i, content, '']];\n// add the styles to the DOM\nvar update = __webpack_require__(6)(content, {});\nif(content.locals) module.exports = content.locals;\n// Hot Module Replacement\nif(false) {\n\t// When the styles change, update the <style> tags\n\tif(!content.locals) {\n\t\tmodule.hot.accept(\"!!../../node_modules/css-loader/index.js!./victory.css\", function() {\n\t\t\tvar newContent = require(\"!!../../node_modules/css-loader/index.js!./victory.css\");\n\t\t\tif(typeof newContent === 'string') newContent = [[module.id, newContent, '']];\n\t\t\tupdate(newContent);\n\t\t});\n\t}\n\t// When the module is disposed, remove the <style> tags\n\tmodule.hot.dispose(function() { update(); });\n}\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/css/victory.css\n// module id = 58\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/css/victory.css?");
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ball__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__barrier__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ground__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__bot__ = __webpack_require__(56);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__player__ = __webpack_require__(16);
+/**
+ * Created by sergey on 15.04.17.
+ */
+
+
+
+
+
+
+
+
+class SingleStrategy {
+
+  constructor() {
+    this.play = true;
+
+    this.player1 = new __WEBPACK_IMPORTED_MODULE_5__player__["a" /* default */]('Player1', 0, 42);
+    this.player2 = new __WEBPACK_IMPORTED_MODULE_5__player__["a" /* default */]('Player2', 0, 36);
+
+    this.nick1 = document.querySelector('.player1 .player_nickname');
+    this.nick1.innerHTML = this.player1.getNickname();
+    this.nick2 = document.querySelector('.player2 .player_nickname');
+    this.nick2.innerHTML = this.player2.getNickname();
+    this.rat1 = document.querySelector('.player1 .player_rating_score');
+    this.rat1.innerHTML = this.player1.getRating();
+    this.rat2 = document.querySelector('.player2 .player_rating_score');
+    this.rat2.innerHTML = this.player2.getRating();
+    this.score1 = document.querySelector('.player1_score');
+    this.score1.innerHTML = this.player1.getScore();
+    this.score2 = document.querySelector('.player2_score');
+    this.score2.innerHTML = this.player2.getScore();
+
+    this.scene = new THREE.Scene();
+    this.clock = new THREE.Clock();
+    this.keyboard2 = new KeyboardState();
+    this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    this.spotLight = new THREE.SpotLight(0xffffff);
+    this.spotLight.position.set(0, 40, 40);
+    this.scene.add(this.spotLight);
+
+    this.x = window.innerWidth * 0.8;
+    this.y = this.x * 0.56;
+
+    this.renderer = new THREE.WebGLRenderer();
+    this.renderer.setSize(this.x, this.y);
+    document.body.appendChild(this.renderer.domElement);
+
+    this.pos = { x: 0, y: 0, z: 8 };
+    this.size = { width: 16, height: 1, depth: 16 };
+    this.ground = new __WEBPACK_IMPORTED_MODULE_3__ground__["a" /* Ground */](this.pos, this.size);
+    this.scene.add(this.ground.getModel());
+
+    this.barriers = [];
+
+    this.pos = { x: -7.5, y: 1, z: 8 };
+    this.size = { width: 1, height: 1, depth: 16 };
+    this.angle = Math.PI / 2;
+    this.borderLeft = new __WEBPACK_IMPORTED_MODULE_2__barrier__["a" /* Barrier */](this.pos, this.size, this.angle);
+    this.barriers.push(this.borderLeft);
+    this.scene.add(this.borderLeft.getModel());
+
+    this.pos = { x: 7.5, y: 1, z: 8 };
+    this.size = { width: 1, height: 1, depth: 16 };
+    this.angle = Math.PI / 2;
+    this.borderRight = new __WEBPACK_IMPORTED_MODULE_2__barrier__["a" /* Barrier */](this.pos, this.size, this.angle);
+    this.barriers.push(this.borderRight);
+    this.scene.add(this.borderRight.getModel());
+
+    this.pos = { x: 0, y: 1, z: 15 };
+    this.size = { width: 5, height: 1, depth: 1 };
+    this.platformMy = new __WEBPACK_IMPORTED_MODULE_0__platform__["a" /* Platform */](0, this.pos, this.size);
+    this.scene.add(this.platformMy.getModel());
+
+    this.pos = { x: 0, y: 1, z: 1 };
+    this.size = { width: 5, height: 1, depth: 1 };
+    this.platformEnemy = new __WEBPACK_IMPORTED_MODULE_0__platform__["a" /* Platform */](1, this.pos, this.size);
+    this.scene.add(this.platformEnemy.getModel());
+
+    this.pos = { x: 0, y: 1, z: 14 };
+    this.radius = 0.5;
+    this.ball = new __WEBPACK_IMPORTED_MODULE_1__ball__["a" /* Ball */](0, this.pos, this.radius);
+    this.scene.add(this.ball.getModel());
+
+    this.pos.x = this.platformEnemy.getPosition().x;
+    this.pos.y = this.platformEnemy.getPosition().y;
+    this.pos.z = this.platformEnemy.getPosition().z;
+    this.bot = new __WEBPACK_IMPORTED_MODULE_4__bot__["a" /* Bot */](this.pos);
+
+
+    this.pointViewG = new THREE.SphereGeometry(0, 0, 0);
+    this.pointViewM = new THREE.MeshNormalMaterial({ color: 0xffff00 });
+    this.pointView = new THREE.Mesh(this.pointViewG, this.pointViewM);
+    this.pointView.position.set(0, -4, 2);
+    this.scene.add(this.pointView);
+
+    this.camera.position.x = 0;
+    this.camera.position.y = 8;
+    this.camera.position.z = 20;
+    this.look = this.ground.getPosition();
+    this.look.y -= 3;
+    this.camera.lookAt(this.look);
+
+    this.addEventListeners();
+  }
+
+  render() {
+
+    this.keyboard2.update();
+
+    if (this.keyboard2.pressed('left')) {
+      this.control('left');
+    }
+
+    if (this.keyboard2.pressed('right')) {
+      this.control('right');
+    }
+
+    if (this.keyboard2.down('B')) {
+      this.control('B');
+    }
+
+    if (this.keyboard2.down('space')) {
+      this.control('space');
+    }
+
+    // window.addEventListener('touchstart', function(event) {
+    //   this.control('left');
+    // }, false);
+
+    this.checkMove();
+
+    this.renderer.render(this.scene, this.camera);
+  }
+
+  addEventListeners() {
+    const canvas = document.querySelector('canvas');
+    canvas.addEventListener('touchend', (event) => {
+      if(event.changedTouches[0].clientX < canvas.getBoundingClientRect().left + canvas.getBoundingClientRect().width / 2) {
+        this.control('left');
+      } else {
+        this.control('right');
+      }
+      // this.control('left');
+    });
+  }
+
+  animationScene() {
+    this.render();
+
+    if(this.play === true) {
+      window.requestAnimationFrame(this.animationScene.bind(this));
+    }
+  }
+
+  control(button) {
+    if (button === 'left') {
+      if (this.platformMy.getPosition().x - this.platformMy.getSize().width / 2 >
+                this.borderLeft.getPosition().x + this.borderLeft.getSize().width / 2) {
+        this.pos = {
+          x: this.platformMy.getPosition().x - 0.2,
+          y: this.platformMy.getPosition().y,
+          z: this.platformMy.getPosition().z,
+        };
+        this.platformMy.setPosition(this.pos);
+        if (this.ball.getMove() === false && this.ball.getSide() === 0) {
+          if (this.ball.getPosition().x > this.platformMy.getPosition().x + this.platformMy.getSize().width / 2) {
+            this.pos = {
+              x: this.platformMy.getPosition().x + this.platformMy.getSize().width / 2,
+              y: this.ball.getPosition().y,
+              z: this.ball.getPosition().z,
+            };
+            this.ball.setPosition(this.pos);
+          }
+        }
+      }
+    } else if (button === 'right') {
+      if (this.platformMy.getPosition().x + this.platformMy.getSize().width / 2 <
+                this.borderRight.getPosition().x - this.borderRight.getSize().width / 2) {
+        this.pos = {
+          x: this.platformMy.getPosition().x + 0.2,
+          y: this.platformMy.getPosition().y,
+          z: this.platformMy.getPosition().z,
+        };
+        this.platformMy.setPosition(this.pos);
+        if (this.ball.getMove() === false && this.ball.getSide() === 0) {
+          if (this.ball.getPosition().x < this.platformMy.getPosition().x - this.platformMy.getSize().width / 2) {
+            this.pos = {
+              x: this.platformMy.getPosition().x - this.platformMy.getSize().width / 2,
+              y: this.ball.getPosition().y,
+              z: this.ball.getPosition().z,
+            };
+            this.ball.setPosition(this.pos);
+          }
+        }
+      }
+    } else if (button === 'B') {
+      this.bot.setState(true);
+    } else if (button === 'space') {
+      if (this.ball.getMove() === false) {
+        this.ball.setMove(true);
+        this.vector = { x: 0, y: 0, z: 0 };
+        if (this.ball.getSide() === 0) {
+          this.vector.x = (this.ball.getPosition().x - this.platformMy.getPosition().x) / 13;
+          this.vector.y = 0;
+          this.vector.z = -(this.platformMy.getPosition().z + 2 - this.ball.getPosition().z) / 13;
+        } else {
+          this.vector.x = (this.ball.getPosition().x - this.platformEnemy.getPosition().x) / 13;
+          this.vector.y = 0;
+          this.vector.z = -(this.platformEnemy.getPosition().z - 2 - this.ball.getPosition().z) / 13;
+        }
+        this.ball.setVectorMove(this.vector);
+      }
+    }
+  }
+
+  checkMove() {
+    if (this.ball.getMove() === true) {
+      if (this.ball.getPosition().x - this.ball.getSize() < this.borderLeft.getPosition().x + this.borderLeft.getSize().width / 2 ||
+                this.ball.getPosition().x + this.ball.getSize() > this.borderRight.getPosition().x - this.borderRight.getSize().width / 2) {
+        this.vector.x = -this.ball.getVectorMove().x;
+        this.vector.y = this.ball.getVectorMove().y;
+        this.vector.z = this.ball.getVectorMove().z;
+        this.ball.setVectorMove(this.vector);
+      } else if (this.ball.getPosition().x >= this.platformMy.getPosition().x - this.platformMy.getSize().width / 2 &&
+                this.ball.getPosition().x <= this.platformMy.getPosition().x + this.platformMy.getSize().width / 2 &&
+                this.ball.getPosition().z + this.ball.getSize() >= this.platformMy.getPosition().z - this.platformMy.getSize().height / 2) {
+        this.vector.x = (this.ball.getPosition().x - this.platformMy.getPosition().x) / 13;
+        this.vector.y = 0;
+        this.vector.z = -(this.platformMy.getPosition().z + 2 - this.ball.getPosition().z) / 13;
+        this.ball.setVectorMove(this.vector);
+      } else if (this.ball.getPosition().x >= this.platformEnemy.getPosition().x - this.platformEnemy.getSize().width / 2 &&
+                this.ball.getPosition().x <= this.platformEnemy.getPosition().x + this.platformEnemy.getSize().width / 2 &&
+                this.ball.getPosition().z - this.ball.getSize() <= this.platformEnemy.getPosition().z + this.platformEnemy.getSize().height / 2) {
+        this.vector.x = (this.ball.getPosition().x - this.platformEnemy.getPosition().x) / 13;
+        this.vector.y = 0;
+        this.vector.z = -(this.platformEnemy.getPosition().z - 2 - this.ball.getPosition().z) / 13;
+        this.ball.setVectorMove(this.vector);
+      }
+      if (this.ball.getPosition().z > this.ground.getGoalMy()) {
+        this.ball.setSide(0);
+        this.ball.setMove(false);
+        this.pos = {
+          x: this.ground.getPosition().x,
+          y: this.platformMy.getPosition().y,
+          z: this.platformMy.getPosition().z,
+        };
+        this.platformMy.setPosition(this.pos);
+        this.pos = {
+          x: this.platformMy.getPosition().x,
+          y: this.ball.getPosition().y,
+          z: this.platformMy.getPosition().z - this.platformMy.getSize().height / 2 - this.ball.getSize(),
+        };
+        this.vector.x = 0;
+        this.vector.y = 0;
+        this.vector.z = 0;
+        this.ball.setVectorMove(this.vector);
+        this.ball.setPosition(this.pos);
+        this.player2.setScore(this.player2.getScore() + 1);
+        this.score2.innerHTML = this.player2.getScore();
+      } else if (this.ball.getPosition().z < this.ground.getGoalEnemy()) {
+        this.ball.setSide(1);
+        this.ball.setMove(false);
+        this.pos = {
+          x: this.ground.getPosition().x,
+          y: this.platformEnemy.getPosition().y,
+          z: this.platformEnemy.getPosition().z,
+        };
+        this.platformEnemy.setPosition(this.pos);
+        this.pos = {
+          x: this.platformEnemy.getPosition().x,
+          y: this.ball.getPosition().y,
+          z: this.platformEnemy.getPosition().z + this.platformEnemy.getSize().height / 2 + this.ball.getSize(),
+        };
+        this.vector.x = 0;
+        this.vector.y = 0;
+        this.vector.z = 0;
+        this.ball.setVectorMove(this.vector);
+        this.ball.setPosition(this.pos);
+        this.player1.setScore(this.player1.getScore() + 1);
+        this.score1.innerHTML = this.player1.getScore();
+      }
+      this.pos = {
+        x: this.ball.getPosition().x + this.ball.getVectorMove().x,
+        y: this.ball.getPosition().y + this.ball.getVectorMove().y,
+        z: this.ball.getPosition().z + this.ball.getVectorMove().z,
+      };
+      this.ball.setPosition(this.pos);
+      if (this.bot.getState() === true) {
+        this.enemyMove = this.bot.getBehavior(this.ball.getPosition());
+        this.pos = {
+          x: this.platformEnemy.getPosition().x + this.enemyMove.xd,
+          y: this.platformEnemy.getPosition().y + this.enemyMove.yd,
+          z: this.platformEnemy.getPosition().z + this.enemyMove.zd,
+        };
+        if (this.enemyMove.xd > 0 && this.pos.x + this.platformEnemy.getSize().width / 2 < this.borderRight.getPosition().x -
+                    this.borderRight.getSize().width / 2) {
+          this.platformEnemy.setPosition(this.pos);
+          this.bot.setPosition(this.platformEnemy.getPosition());
+        } else if (this.enemyMove.xd < 0 && this.pos.x - this.platformEnemy.getSize().width / 2 > this.borderLeft.getPosition().x +
+                    this.borderLeft.getSize().width / 2) {
+          this.platformEnemy.setPosition(this.pos);
+          this.bot.setPosition(this.platformEnemy.getPosition());
+        }
+      }
+    }
+  }
+
+  stop() {
+    this.play = false;
+    this.keyboard2.destroy();
+  }
+
+  resume() {
+    this.play = true;
+    this.keyboard2 = new KeyboardState();
+  }
+
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = SingleStrategy;
+
+
+
 
 /***/ }),
 /* 59 */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-eval("module.exports = \"data:image/png;base64,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\"\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/images/leaderboard.png\n// module id = 59\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/images/leaderboard.png?");
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__eventEmitter_eventEmitter__ = __webpack_require__(1);
+/**
+ * Created by sergey on 21.04.17.
+ */
+
+
+
+const ee = new __WEBPACK_IMPORTED_MODULE_0__eventEmitter_eventEmitter__["a" /* default */]();
+
+class Transport {
+  constructor() {
+    const address = 'ws://62.109.3.208:8082/game';
+
+    this.ws = new WebSocket(address);
+    this.ws.onopen = () => {
+      console.log(`Success connect to socket ${address}`);
+    };
+    this.ws.onclose = (event) => {
+      console.log(`Socket closed with code ${event.code}`);
+    };
+    this.ws.onmessage = (event) => { this.handleMessage(event); };
+
+  }
+
+  handleMessage(event) {
+    const messageText = event.data;
+    const message = JSON.parse(messageText);
+    // if (message.type === 'com.aerohockey.mechanics.base.ServerSnap') {
+
+    ee.emit(message.type, message);
+
+  }
+
+  send(type, content) {
+    if (this.ws.readyState === this.ws.CONNECTING) {
+      setTimeout(() => {
+        this.ws.send(JSON.stringify({ type, content }));
+      }, 1000);
+      return;
+    };
+    this.ws.send(JSON.stringify({type, content}));
+  }
+  closeSocket() {
+    this.ws.close();
+  }
+
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Transport;
+
+
 
 /***/ }),
 /* 60 */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-eval("var g;\r\n\r\n// This works in non-strict mode\r\ng = (function() {\r\n\treturn this;\r\n})();\r\n\r\ntry {\r\n\t// This works if eval is allowed (see CSP)\r\n\tg = g || Function(\"return this\")() || (1,eval)(\"this\");\r\n} catch(e) {\r\n\t// This works if the window reference is available\r\n\tif(typeof window === \"object\")\r\n\t\tg = window;\r\n}\r\n\r\n// g can still be undefined, but nothing to do about it...\r\n// We return undefined, instead of nothing here, so it's\r\n// easier to handle this case. if(!global) { ...}\r\n\r\nmodule.exports = g;\r\n\n\n//////////////////\n// WEBPACK FOOTER\n// (webpack)/buildin/global.js\n// module id = 60\n// module chunks = 0\n\n//# sourceURL=webpack:///(webpack)/buildin/global.js?");
+"use strict";
+/**
+ * Created by tlakatlekutl on 05.03.17.
+ */
+
+/* global fetch*/
+
+class Net {
+
+  constructor(baseUrl = '', headers = {}) {
+    if (Net.instance) {
+      return Net.instance;
+    }
+
+    this._headers = headers;
+    this._baseUrl = baseUrl;
+
+    Net.instance = this;
+  }
+
+  _getDefaultParams() {
+    return {
+      method: '',
+      headers: this._headers,
+      mode: 'cors',
+      cache: 'default',
+      credentials: 'include',
+    };
+  }
+
+  set Headers(value) {
+    try {
+      this.checkObjectString(value);
+      this._headers = value;
+    } catch (e) {
+      console.log(e.message);
+    }
+  }
+
+  get BaseUrl() {
+    return this._baseUrl;
+  }
+
+  set BaseUrl(url) {
+    if (typeof url === 'string') {
+      this._baseUrl = url;
+    } else {
+      throw new TypeError('Url must be a string');
+    }
+  }
+
+  post(url, data) {
+    const postParams = this._getDefaultParams();
+    postParams.method = 'POST';
+
+    if (data) {
+      if (!this.checkObjectString(data)) { throw new TypeError('Error data object'); }
+      postParams.body = JSON.stringify(data);
+    } else { postParams.body = null; }
+
+    return fetch(this._baseUrl + url, postParams);
+  }
+
+  get(url, onSucces) {
+    const getParams = this._getDefaultParams();
+    getParams.method = 'GET';
+    getParams.body = null;
+
+    return fetch(this._baseUrl + url, getParams, onSucces);
+  }
+
+
+  checkObjectString(object) {
+    if (!(object && (`${object}` === '[object Object]'))) {
+      console.error('Object must be a plain object');
+      return false;
+    }
+    const valid = Object.keys(object).every(key => typeof object[key] === 'string');
+    if (!valid) {
+      console.error('Object must contain strings values');
+      return false;
+    }
+    return true;
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Net;
+
+
+
 
 /***/ }),
 /* 61 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("Object.defineProperty(__webpack_exports__, \"__esModule\", { value: true });\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_index_css__ = __webpack_require__(19);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_index_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__css_index_css__);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_userModel__ = __webpack_require__(2);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(0);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__views_preloaderView__ = __webpack_require__(30);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__views_mainWindowView__ = __webpack_require__(27);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__views_loginModalView__ = __webpack_require__(26);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__views_signupModalVew__ = __webpack_require__(32);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__views_leaderBoardModalView__ = __webpack_require__(25);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__views_profileModalView__ = __webpack_require__(31);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__views_aboutModalVIew__ = __webpack_require__(20);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__views_gameView__ = __webpack_require__(24);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__views_page404view__ = __webpack_require__(29);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__views_mpGameView__ = __webpack_require__(28);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__views_concedeModalView__ = __webpack_require__(21);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__views_concedeMpModalView__ = __webpack_require__(22);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__views_victoryModalView__ = __webpack_require__(33);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__views_defeatModalView__ = __webpack_require__(23);\n/**\n * Created by tlakatlekutl on 31.03.17.\n */\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n// views\nconst preloaderView = new __WEBPACK_IMPORTED_MODULE_3__views_preloaderView__[\"a\" /* default */]();\nconst mainView = new __WEBPACK_IMPORTED_MODULE_4__views_mainWindowView__[\"a\" /* default */]();\nconst p404 = new __WEBPACK_IMPORTED_MODULE_11__views_page404view__[\"a\" /* default */]();\nconst loginModalView = new __WEBPACK_IMPORTED_MODULE_5__views_loginModalView__[\"a\" /* default */]();\nconst signupModalView = new __WEBPACK_IMPORTED_MODULE_6__views_signupModalVew__[\"a\" /* default */]();\nconst leaderBoardModal = new __WEBPACK_IMPORTED_MODULE_7__views_leaderBoardModalView__[\"a\" /* default */]();\nconst profileModalView = new __WEBPACK_IMPORTED_MODULE_8__views_profileModalView__[\"a\" /* default */]();\nconst aboutModalView = new __WEBPACK_IMPORTED_MODULE_9__views_aboutModalVIew__[\"a\" /* default */]();\nconst mpView = new __WEBPACK_IMPORTED_MODULE_12__views_mpGameView__[\"a\" /* default */]();\nconst gameView = new __WEBPACK_IMPORTED_MODULE_10__views_gameView__[\"a\" /* default */]();\nconst concedeModalView = new __WEBPACK_IMPORTED_MODULE_13__views_concedeModalView__[\"a\" /* default */]();\nconst concedeMpModalView = new __WEBPACK_IMPORTED_MODULE_14__views_concedeMpModalView__[\"a\" /* default */]();\nconst victoryModalView = new __WEBPACK_IMPORTED_MODULE_15__views_victoryModalView__[\"a\" /* default */]();\nconst defeatModalView = new __WEBPACK_IMPORTED_MODULE_16__views_defeatModalView__[\"a\" /* default */]();\n\n// init router\nconst router = new __WEBPACK_IMPORTED_MODULE_2__modules_router_router__[\"a\" /* default */]();\nrouter.addRoute(/\\/$/, mainView)\n  .addRoute(/login$/, loginModalView)\n  .addRoute(/signup$/, signupModalView)\n  .addRoute(/leaderboard$/, leaderBoardModal)\n  .addRoute(/profile$/, profileModalView)\n  .addRoute(/about$/, aboutModalView)\n  .addRoute(/mp/, mpView)\n  .addRoute(/game$/, gameView)\n  .addRoute(/concede$/, concedeModalView)\n  .addRoute(/concedemp$/, concedeMpModalView)\n  .addRoute(/victory$/, victoryModalView)\n  .addRoute(/defeat$/, defeatModalView)\n  .set404(p404);\n\n// global user profile\nconst userModel = new __WEBPACK_IMPORTED_MODULE_1__models_userModel__[\"a\" /* default */]();\n\nleaderBoardModal.render();\naboutModalView.render();\n\nrouter.start()\n  .then(() => {\n    console.log(userModel.getData());\n    mainView.render();\n    router.go(window.location.href);\n    preloaderView.dispatchLoadCompleted();\n  });\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/main.js\n// module id = 61\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/main.js?");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_concede_css__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_concede_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__css_concede_css__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__modalView__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_concede_pug__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_concede_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__templates_concede_pug__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__modules_eventEmitter_eventEmitter__ = __webpack_require__(1);
+/**
+ * Created by sergey on 25.04.17.
+ */
+
+
+
+
+
+
+
+const ee = new __WEBPACK_IMPORTED_MODULE_3__modules_eventEmitter_eventEmitter__["a" /* default */]();
+
+class ConcedeModal extends __WEBPACK_IMPORTED_MODULE_1__modalView__["a" /* default */] {
+  constructor(game) {
+    super('Выход', __WEBPACK_IMPORTED_MODULE_2__templates_concede_pug___default.a);
+    this.game = game;
+  }
+  render() {
+    this.alreadyInDOM = true;
+    this.generateBase();
+    this.bodyModal.innerHTML = this.drawFunc();
+    this.parent.appendChild(this.modal);
+    document.querySelector('.choose__yes').addEventListener('click', () => {
+      this.destruct();
+      ee.emit(__WEBPACK_IMPORTED_MODULE_3__modules_eventEmitter_eventEmitter__["k" /* DESTROY_GAME */]);
+    });
+    document.querySelector('.choose__no').addEventListener('click', () => {
+      this.game.resume();
+      this.destruct();
+    });
+    this.close.addEventListener('click', () => { this.game.resume(); this.destruct(); });
+    this.show();
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = ConcedeModal;
+
 
 /***/ }),
 /* 62 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("/**\n * Created by sergey on 20.04.17.\n */\n\nclass Bot {\n    constructor(pos) {\n        this.active = false;\n\n        this.x = pos.x;\n        this.y = pos.y;\n        this.z = pos.z;\n        this.del = 0.2;\n        this.move = { xd: 0, yd: 0, zd: 0};\n    }\n\n    getState() {\n        return this.active;\n    }\n\n    setState(state) {\n        this.active = state;\n    }\n\n    setPosition(pos) {\n        this.x = pos.x;\n        this.y = pos.y;\n        this.z = pos.z;\n    }\n\n    getBehavior(posBall) {\n        this.move = { xd: 0, yd: 0, zd: 0};\n        if(posBall.x - this.x >= this.del) {\n            this.move.xd = this.del;\n        } else if (this.x - posBall.x  >= this.del) {\n            this.move.xd = -this.del;\n        }\n        return this.move;\n    }\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = Bot;\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/modules/game/bot.js\n// module id = 62\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/modules/game/bot.js?");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_defeat_css__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_defeat_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__css_defeat_css__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__modalView__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_defeat_pug__ = __webpack_require__(39);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_defeat_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__templates_defeat_pug__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__models_userModel__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__ = __webpack_require__(1);
+/**
+ * Created by sergey on 01.05.17.
+ */
+
+
+
+
+
+
+
+
+const ee = new __WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__["a" /* default */]();
+const us = new __WEBPACK_IMPORTED_MODULE_3__models_userModel__["a" /* default */]();
+
+class DefeatModal extends __WEBPACK_IMPORTED_MODULE_1__modalView__["a" /* default */] {
+  constructor() {
+    super('Завершение игры', __WEBPACK_IMPORTED_MODULE_2__templates_defeat_pug___default.a);
+  }
+  render() {
+    super.render();
+    this.changeRating = document.querySelector('.defeat-modal .change');
+    this.changeRating.innerHTML = us.getData().changeRating;
+    this.newRating = document.querySelector('.defeat-modal .rating_score');
+    this.newRating.innerHTML = us.getData().rating + us.getData().changeRating;
+    this.onClose(() => {
+      this.destruct();
+      ee.emit(__WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__["k" /* DESTROY_GAME */]);
+    });
+  }
+
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = DefeatModal;
+
 
 /***/ }),
 /* 63 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform__ = __webpack_require__(16);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ball__ = __webpack_require__(13);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__barrier__ = __webpack_require__(14);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ground__ = __webpack_require__(15);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__models_gameModel__ = __webpack_require__(11);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__eventEmitter_eventEmitter__ = __webpack_require__(5);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__models_userModel__ = __webpack_require__(2);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__player__ = __webpack_require__(18);\n/**\n * Created by sergey on 21.04.17.\n */\n\n\n\n\n\n\n\n\n\n\nconst gm = new __WEBPACK_IMPORTED_MODULE_4__models_gameModel__[\"a\" /* default */]();\nconst ee = new __WEBPACK_IMPORTED_MODULE_5__eventEmitter_eventEmitter__[\"a\" /* default */]();\nconst us = new __WEBPACK_IMPORTED_MODULE_6__models_userModel__[\"a\" /* default */]();\n\nclass MultiStrategy {\n\n  constructor() {\n\n    this.play = true;\n    this.time = (new Date).getTime();\n    this.pres = 0;\n    this.timeLast = (new Date).getTime();\n\n    this.player1 = new __WEBPACK_IMPORTED_MODULE_7__player__[\"a\" /* default */](us.getData().nickname, 0, us.getData().rating);\n\n    this.nick1 = document.querySelector('.player1 .player_nickname');\n    this.nick1.innerHTML = this.player1.getNickname();\n    this.rat1 = document.querySelector('.player1 .player_rating_score');\n    this.rat1.innerHTML = this.player1.getRating();\n\n    this.scene = new THREE.Scene();\n    this.clock = new THREE.Clock();\n    this.keyboard2 = new KeyboardState();\n    this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);\n    this.spotLight = new THREE.SpotLight(0xffffff);\n    this.spotLight.position.set(0, 340, 340);\n    this.scene.add(this.spotLight);\n\n    this.x = window.innerWidth * 0.8;\n    this.y = this.x * 0.56;\n\n    this.renderer = new THREE.WebGLRenderer();\n    this.renderer.setSize(this.x, this.y);\n    document.body.appendChild(this.renderer.domElement);\n\n    this.pos = { x: 0, y: 0, z: 120 };\n    this.size = { width: 180, height: 10, depth: 240 };\n    this.ground = new __WEBPACK_IMPORTED_MODULE_3__ground__[\"a\" /* Ground */](this.pos, this.size);\n    this.scene.add(this.ground.getModel());\n\n    this.barriers = [];\n\n    this.pos = { x: -85, y: 10, z: 120 };\n    this.size = { width: 10, height: 10, depth: 240 };\n    this.angle = Math.PI / 2;\n    this.borderLeft = new __WEBPACK_IMPORTED_MODULE_2__barrier__[\"a\" /* Barrier */](this.pos, this.size, this.angle);\n    this.barriers.push(this.borderLeft);\n    this.scene.add(this.borderLeft.getModel());\n\n    this.pos = { x: 85, y: 10, z: 120 };\n    this.size = { width: 10, height: 10, depth: 240 };\n    this.angle = Math.PI / 2;\n    this.borderRight = new __WEBPACK_IMPORTED_MODULE_2__barrier__[\"a\" /* Barrier */](this.pos, this.size, this.angle);\n    this.barriers.push(this.borderRight);\n    this.scene.add(this.borderRight.getModel());\n\n    this.pos = { x: 0, y: 10, z: 232.5 };\n    this.size = { width: 60, height: 5, depth: 15 };\n    this.platformMy = new __WEBPACK_IMPORTED_MODULE_0__platform__[\"a\" /* Platform */](0, this.pos, this.size);\n    this.scene.add(this.platformMy.getModel());\n\n    this.pos = { x: 0, y: 10, z: 7.5 };\n    this.size = { width: 60, height: 5, depth: 15 };\n    this.platformEnemy = new __WEBPACK_IMPORTED_MODULE_0__platform__[\"a\" /* Platform */](1, this.pos, this.size);\n    this.scene.add(this.platformEnemy.getModel());\n\n    this.pos = { x: 0, y: 10, z: 220 };\n    this.radius = 5;\n    this.ball = new __WEBPACK_IMPORTED_MODULE_1__ball__[\"a\" /* Ball */](0, this.pos, this.radius);\n    this.scene.add(this.ball.getModel());\n\n    this.camera.position.x = 0;\n    this.camera.position.y = 120;\n    this.camera.position.z = 300;\n    this.camera.lookAt(this.ground.getPosition());\n\n    this.addEventListeners();\n  }\n\n  render() {\n    this.keyboard2.update();\n\n    this.pres = 0;\n\n    if (this.keyboard2.pressed('left')) {\n      this.control('left');\n    }\n\n    if (this.keyboard2.pressed('right')) {\n      this.control('right');\n    }\n\n    if (this.keyboard2.down('space')) {\n      this.control('space');\n    }\n\n    this.renderer.render(this.scene, this.camera);\n  }\n\n  addEventListeners() {\n    const canvas = document.querySelector('canvas');\n    canvas.addEventListener('touchend', (event) => {\n      if(event.changedTouches[0].clientX < canvas.getBoundingClientRect().left + canvas.getBoundingClientRect().width / 2) {\n        this.control('left');\n      } else {\n        this.control('right');\n      }\n      // this.control('left');\n    });\n  }\n\n  animationScene() {\n    this.render();\n    this.time = (new Date).getTime();\n\n    if(this.play === true) {\n      window.requestAnimationFrame(this.animationScene.bind(this));\n    }\n  }\n\n  control(button) {\n    this.controller = 1;\n    if(this.pres === 0) {\n      this.pres = 1;\n      this.del = 20;\n    } else {\n      this.time = (new Date).getTime();\n      this.del = this.time - this.timeLast;\n    }\n    this.timeLast = (new Date).getTime();\n    if(this.del > 100) {\n      this.del = 20;\n    }\n    if (button === 'left') {\n      gm.sendButton('left', this.del);\n    } else if (button === 'right') {\n      gm.sendButton('right', this.del);\n    } else if (button === 'space') {\n      gm.sendButton('space', this.del);\n    }\n  }\n\n  setStateGame(state) {\n    // console.log(us);\n    this.state = state;\n\n    if(us.getData().id === this.state.players[0].userId) {\n      this.player1.setScore(this.state.players[0].score);\n      this.player2.setScore(this.state.players[1].score);\n    } else {\n      this.player1.setScore(this.state.players[1].score);\n      this.player2.setScore(this.state.players[0].score);\n    }\n\n    this.score1 = document.querySelector('.player1_score');\n    this.score1.innerHTML = this.player1.getScore();\n    this.score2 = document.querySelector('.player2_score');\n    this.score2.innerHTML = this.player2.getScore();\n\n    if(us.getData().id === this.state.players[0].userId) {\n      this.pos = {\n        x: this.state.players[0].platform.x,\n        y: this.platformMy.getPosition().y,\n        z: this.platformMy.getPosition().z\n      };\n      this.platformMy.setPosition(this.pos);\n      this.pos = {\n        x: this.state.players[1].platform.x,\n        y: this.platformEnemy.getPosition().y,\n        z: this.platformEnemy.getPosition().z\n      };\n      this.platformEnemy.setPosition(this.pos);\n      this.pos = {\n        x: this.state.ballCoords.x,\n        y: this.ball.getPosition().y,\n        z: this.state.ballCoords.y\n      };\n      this.ball.setPosition(this.pos);\n    } else {\n      this.pos = {\n        x: this.state.players[1].platform.x,\n        y: this.platformMy.getPosition().y,\n        z: this.platformMy.getPosition().z\n      };\n      this.platformMy.setPosition(this.pos);\n      this.pos = {\n        x: this.state.players[0].platform.x,\n        y: this.platformEnemy.getPosition().y,\n        z: this.platformEnemy.getPosition().z\n      };\n      this.platformEnemy.setPosition(this.pos);\n      this.pos = {\n        x: this.state.ballCoords.x,\n        y: this.ball.getPosition().y,\n        z: this.state.ballCoords.y\n      };\n      this.ball.setPosition(this.pos);\n    }\n  }\n\n  setOpponent(state) {\n    console.log(state);\n    this.state = state;\n    this.player2 = new __WEBPACK_IMPORTED_MODULE_7__player__[\"a\" /* default */](this.state.opponentLogin, 0, this.state.opponentRating);\n    this.nick2 = document.querySelector('.player2 .player_nickname');\n    this.nick2.innerHTML = this.player2.getNickname();\n    this.rat2 = document.querySelector('.player2 .player_rating_score');\n    this.rat2.innerHTML = this.player2.getRating();\n  }\n\n  stop() {\n    this.play = false;\n    this.keyboard2.destroy();\n  }\n\n  resume() {\n    this.play = true;\n    this.keyboard2 = new KeyboardState();\n  }\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = MultiStrategy;\n\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/modules/game/multi.js\n// module id = 63\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/modules/game/multi.js?");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modalView__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_userModel__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_login_pug__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_login_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__templates_login_pug__);
+/**
+* Created by tlakatlekutl on 02.04.17.
+*/
+
+
+
+
+
+
+const userModel = new __WEBPACK_IMPORTED_MODULE_1__models_userModel__["a" /* default */]();
+const router = new __WEBPACK_IMPORTED_MODULE_2__modules_router_router__["a" /* default */]();
+
+class LoginModal extends __WEBPACK_IMPORTED_MODULE_0__modalView__["a" /* default */] {
+  constructor() {
+    super('Login', __WEBPACK_IMPORTED_MODULE_3__templates_login_pug___default.a);
+  }
+  render() {
+    super.render();
+    this.errorField = document.querySelector('.danger');
+    document.querySelector('.login-submit-button').addEventListener('click', (event) => {
+      if (this.isValid()) {
+        event.preventDefault();
+        userModel.login(this.getFormData())
+          .then(() => {
+            router.go('/');
+            this.destruct();
+          })
+          .catch(() => { this.showError(); });
+      }
+    });
+    this.onClose(() => router.go('/'));
+  }
+
+  show() {
+    if (!userModel.isAuthorised()) {
+      super.show();
+      this.hideError();
+    } else {
+      router.go('/');
+    }
+  }
+  showError() {
+    this.errorField.style.display = 'block';
+  }
+  hideError() {
+    this.errorField.style.display = 'none';
+  }
+  isValid() {
+    this.nickname = document.querySelector('.login-nickname-input').value;
+    this.password = document.querySelector('.login-password-input').value;
+    if (this.nickname === '') {
+      return false;
+    }
+    if (this.password === '') {
+      return false;
+    }
+    return true;
+  }
+  getFormData() {
+    return {
+      login: this.nickname,
+      password: this.password,
+    };
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = LoginModal;
+
+
+
 
 /***/ }),
 /* 64 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__platform__ = __webpack_require__(16);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ball__ = __webpack_require__(13);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__barrier__ = __webpack_require__(14);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ground__ = __webpack_require__(15);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__bot__ = __webpack_require__(62);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__player__ = __webpack_require__(18);\n/**\n * Created by sergey on 15.04.17.\n */\n\n\n\n\n\n\n\n\nclass SingleStrategy {\n\n  constructor() {\n    this.play = true;\n\n    this.player1 = new __WEBPACK_IMPORTED_MODULE_5__player__[\"a\" /* default */]('Player1', 0, 42);\n    this.player2 = new __WEBPACK_IMPORTED_MODULE_5__player__[\"a\" /* default */]('Player2', 0, 36);\n\n    this.nick1 = document.querySelector('.player1 .player_nickname');\n    this.nick1.innerHTML = this.player1.getNickname();\n    this.nick2 = document.querySelector('.player2 .player_nickname');\n    this.nick2.innerHTML = this.player2.getNickname();\n    this.rat1 = document.querySelector('.player1 .player_rating_score');\n    this.rat1.innerHTML = this.player1.getRating();\n    this.rat2 = document.querySelector('.player2 .player_rating_score');\n    this.rat2.innerHTML = this.player2.getRating();\n    this.score1 = document.querySelector('.player1_score');\n    this.score1.innerHTML = this.player1.getScore();\n    this.score2 = document.querySelector('.player2_score');\n    this.score2.innerHTML = this.player2.getScore();\n\n    this.scene = new THREE.Scene();\n    this.clock = new THREE.Clock();\n    this.keyboard2 = new KeyboardState();\n    this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);\n    this.spotLight = new THREE.SpotLight(0xffffff);\n    this.spotLight.position.set(0, 40, 40);\n    this.scene.add(this.spotLight);\n\n    this.x = window.innerWidth * 0.8;\n    this.y = this.x * 0.56;\n\n    this.renderer = new THREE.WebGLRenderer();\n    this.renderer.setSize(this.x, this.y);\n    document.body.appendChild(this.renderer.domElement);\n\n    this.pos = { x: 0, y: 0, z: 8 };\n    this.size = { width: 16, height: 1, depth: 16 };\n    this.ground = new __WEBPACK_IMPORTED_MODULE_3__ground__[\"a\" /* Ground */](this.pos, this.size);\n    this.scene.add(this.ground.getModel());\n\n    this.barriers = [];\n\n    this.pos = { x: -7.5, y: 1, z: 8 };\n    this.size = { width: 1, height: 1, depth: 16 };\n    this.angle = Math.PI / 2;\n    this.borderLeft = new __WEBPACK_IMPORTED_MODULE_2__barrier__[\"a\" /* Barrier */](this.pos, this.size, this.angle);\n    this.barriers.push(this.borderLeft);\n    this.scene.add(this.borderLeft.getModel());\n\n    this.pos = { x: 7.5, y: 1, z: 8 };\n    this.size = { width: 1, height: 1, depth: 16 };\n    this.angle = Math.PI / 2;\n    this.borderRight = new __WEBPACK_IMPORTED_MODULE_2__barrier__[\"a\" /* Barrier */](this.pos, this.size, this.angle);\n    this.barriers.push(this.borderRight);\n    this.scene.add(this.borderRight.getModel());\n\n    this.pos = { x: 0, y: 1, z: 15 };\n    this.size = { width: 5, height: 1, depth: 1 };\n    this.platformMy = new __WEBPACK_IMPORTED_MODULE_0__platform__[\"a\" /* Platform */](0, this.pos, this.size);\n    this.scene.add(this.platformMy.getModel());\n\n    this.pos = { x: 0, y: 1, z: 1 };\n    this.size = { width: 5, height: 1, depth: 1 };\n    this.platformEnemy = new __WEBPACK_IMPORTED_MODULE_0__platform__[\"a\" /* Platform */](1, this.pos, this.size);\n    this.scene.add(this.platformEnemy.getModel());\n\n    this.pos = { x: 0, y: 1, z: 14 };\n    this.radius = 0.5;\n    this.ball = new __WEBPACK_IMPORTED_MODULE_1__ball__[\"a\" /* Ball */](0, this.pos, this.radius);\n    this.scene.add(this.ball.getModel());\n\n    this.pos.x = this.platformEnemy.getPosition().x;\n    this.pos.y = this.platformEnemy.getPosition().y;\n    this.pos.z = this.platformEnemy.getPosition().z;\n    this.bot = new __WEBPACK_IMPORTED_MODULE_4__bot__[\"a\" /* Bot */](this.pos);\n\n\n    this.pointViewG = new THREE.SphereGeometry(0, 0, 0);\n    this.pointViewM = new THREE.MeshNormalMaterial({ color: 0xffff00 });\n    this.pointView = new THREE.Mesh(this.pointViewG, this.pointViewM);\n    this.pointView.position.set(0, -4, 2);\n    this.scene.add(this.pointView);\n\n    this.camera.position.x = 0;\n    this.camera.position.y = 8;\n    this.camera.position.z = 20;\n    this.look = this.ground.getPosition();\n    this.look.y -= 3;\n    this.camera.lookAt(this.look);\n\n    this.addEventListeners();\n  }\n\n  render() {\n\n    this.keyboard2.update();\n\n    if (this.keyboard2.pressed('left')) {\n      this.control('left');\n    }\n\n    if (this.keyboard2.pressed('right')) {\n      this.control('right');\n    }\n\n    if (this.keyboard2.down('B')) {\n      this.control('B');\n    }\n\n    if (this.keyboard2.down('space')) {\n      this.control('space');\n    }\n\n    // window.addEventListener('touchstart', function(event) {\n    //   this.control('left');\n    // }, false);\n\n    this.checkMove();\n\n    this.renderer.render(this.scene, this.camera);\n  }\n\n  addEventListeners() {\n    const canvas = document.querySelector('canvas');\n    canvas.addEventListener('touchend', (event) => {\n      if(event.changedTouches[0].clientX < canvas.getBoundingClientRect().left + canvas.getBoundingClientRect().width / 2) {\n        this.control('left');\n      } else {\n        this.control('right');\n      }\n      // this.control('left');\n    });\n  }\n\n  animationScene() {\n    this.render();\n\n    if(this.play === true) {\n      window.requestAnimationFrame(this.animationScene.bind(this));\n    }\n  }\n\n  control(button) {\n    if (button === 'left') {\n      if (this.platformMy.getPosition().x - this.platformMy.getSize().width / 2 >\n                this.borderLeft.getPosition().x + this.borderLeft.getSize().width / 2) {\n        this.pos = {\n          x: this.platformMy.getPosition().x - 0.2,\n          y: this.platformMy.getPosition().y,\n          z: this.platformMy.getPosition().z,\n        };\n        this.platformMy.setPosition(this.pos);\n        if (this.ball.getMove() === false && this.ball.getSide() === 0) {\n          if (this.ball.getPosition().x > this.platformMy.getPosition().x + this.platformMy.getSize().width / 2) {\n            this.pos = {\n              x: this.platformMy.getPosition().x + this.platformMy.getSize().width / 2,\n              y: this.ball.getPosition().y,\n              z: this.ball.getPosition().z,\n            };\n            this.ball.setPosition(this.pos);\n          }\n        }\n      }\n    } else if (button === 'right') {\n      if (this.platformMy.getPosition().x + this.platformMy.getSize().width / 2 <\n                this.borderRight.getPosition().x - this.borderRight.getSize().width / 2) {\n        this.pos = {\n          x: this.platformMy.getPosition().x + 0.2,\n          y: this.platformMy.getPosition().y,\n          z: this.platformMy.getPosition().z,\n        };\n        this.platformMy.setPosition(this.pos);\n        if (this.ball.getMove() === false && this.ball.getSide() === 0) {\n          if (this.ball.getPosition().x < this.platformMy.getPosition().x - this.platformMy.getSize().width / 2) {\n            this.pos = {\n              x: this.platformMy.getPosition().x - this.platformMy.getSize().width / 2,\n              y: this.ball.getPosition().y,\n              z: this.ball.getPosition().z,\n            };\n            this.ball.setPosition(this.pos);\n          }\n        }\n      }\n    } else if (button === 'B') {\n      this.bot.setState(true);\n    } else if (button === 'space') {\n      if (this.ball.getMove() === false) {\n        this.ball.setMove(true);\n        this.vector = { x: 0, y: 0, z: 0 };\n        if (this.ball.getSide() === 0) {\n          this.vector.x = (this.ball.getPosition().x - this.platformMy.getPosition().x) / 13;\n          this.vector.y = 0;\n          this.vector.z = -(this.platformMy.getPosition().z + 2 - this.ball.getPosition().z) / 13;\n        } else {\n          this.vector.x = (this.ball.getPosition().x - this.platformEnemy.getPosition().x) / 13;\n          this.vector.y = 0;\n          this.vector.z = -(this.platformEnemy.getPosition().z - 2 - this.ball.getPosition().z) / 13;\n        }\n        this.ball.setVectorMove(this.vector);\n      }\n    }\n  }\n\n  checkMove() {\n    if (this.ball.getMove() === true) {\n      if (this.ball.getPosition().x - this.ball.getSize() < this.borderLeft.getPosition().x + this.borderLeft.getSize().width / 2 ||\n                this.ball.getPosition().x + this.ball.getSize() > this.borderRight.getPosition().x - this.borderRight.getSize().width / 2) {\n        this.vector.x = -this.ball.getVectorMove().x;\n        this.vector.y = this.ball.getVectorMove().y;\n        this.vector.z = this.ball.getVectorMove().z;\n        this.ball.setVectorMove(this.vector);\n      } else if (this.ball.getPosition().x >= this.platformMy.getPosition().x - this.platformMy.getSize().width / 2 &&\n                this.ball.getPosition().x <= this.platformMy.getPosition().x + this.platformMy.getSize().width / 2 &&\n                this.ball.getPosition().z + this.ball.getSize() >= this.platformMy.getPosition().z - this.platformMy.getSize().height / 2) {\n        this.vector.x = (this.ball.getPosition().x - this.platformMy.getPosition().x) / 13;\n        this.vector.y = 0;\n        this.vector.z = -(this.platformMy.getPosition().z + 2 - this.ball.getPosition().z) / 13;\n        this.ball.setVectorMove(this.vector);\n      } else if (this.ball.getPosition().x >= this.platformEnemy.getPosition().x - this.platformEnemy.getSize().width / 2 &&\n                this.ball.getPosition().x <= this.platformEnemy.getPosition().x + this.platformEnemy.getSize().width / 2 &&\n                this.ball.getPosition().z - this.ball.getSize() <= this.platformEnemy.getPosition().z + this.platformEnemy.getSize().height / 2) {\n        this.vector.x = (this.ball.getPosition().x - this.platformEnemy.getPosition().x) / 13;\n        this.vector.y = 0;\n        this.vector.z = -(this.platformEnemy.getPosition().z - 2 - this.ball.getPosition().z) / 13;\n        this.ball.setVectorMove(this.vector);\n      }\n      if (this.ball.getPosition().z > this.ground.getGoalMy()) {\n        this.ball.setSide(0);\n        this.ball.setMove(false);\n        this.pos = {\n          x: this.ground.getPosition().x,\n          y: this.platformMy.getPosition().y,\n          z: this.platformMy.getPosition().z,\n        };\n        this.platformMy.setPosition(this.pos);\n        this.pos = {\n          x: this.platformMy.getPosition().x,\n          y: this.ball.getPosition().y,\n          z: this.platformMy.getPosition().z - this.platformMy.getSize().height / 2 - this.ball.getSize(),\n        };\n        this.vector.x = 0;\n        this.vector.y = 0;\n        this.vector.z = 0;\n        this.ball.setVectorMove(this.vector);\n        this.ball.setPosition(this.pos);\n        this.player2.setScore(this.player2.getScore() + 1);\n        this.score2.innerHTML = this.player2.getScore();\n      } else if (this.ball.getPosition().z < this.ground.getGoalEnemy()) {\n        this.ball.setSide(1);\n        this.ball.setMove(false);\n        this.pos = {\n          x: this.ground.getPosition().x,\n          y: this.platformEnemy.getPosition().y,\n          z: this.platformEnemy.getPosition().z,\n        };\n        this.platformEnemy.setPosition(this.pos);\n        this.pos = {\n          x: this.platformEnemy.getPosition().x,\n          y: this.ball.getPosition().y,\n          z: this.platformEnemy.getPosition().z + this.platformEnemy.getSize().height / 2 + this.ball.getSize(),\n        };\n        this.vector.x = 0;\n        this.vector.y = 0;\n        this.vector.z = 0;\n        this.ball.setVectorMove(this.vector);\n        this.ball.setPosition(this.pos);\n        this.player1.setScore(this.player1.getScore() + 1);\n        this.score1.innerHTML = this.player1.getScore();\n      }\n      this.pos = {\n        x: this.ball.getPosition().x + this.ball.getVectorMove().x,\n        y: this.ball.getPosition().y + this.ball.getVectorMove().y,\n        z: this.ball.getPosition().z + this.ball.getVectorMove().z,\n      };\n      this.ball.setPosition(this.pos);\n      if (this.bot.getState() === true) {\n        this.enemyMove = this.bot.getBehavior(this.ball.getPosition());\n        this.pos = {\n          x: this.platformEnemy.getPosition().x + this.enemyMove.xd,\n          y: this.platformEnemy.getPosition().y + this.enemyMove.yd,\n          z: this.platformEnemy.getPosition().z + this.enemyMove.zd,\n        };\n        if (this.enemyMove.xd > 0 && this.pos.x + this.platformEnemy.getSize().width / 2 < this.borderRight.getPosition().x -\n                    this.borderRight.getSize().width / 2) {\n          this.platformEnemy.setPosition(this.pos);\n          this.bot.setPosition(this.platformEnemy.getPosition());\n        } else if (this.enemyMove.xd < 0 && this.pos.x - this.platformEnemy.getSize().width / 2 > this.borderLeft.getPosition().x +\n                    this.borderLeft.getSize().width / 2) {\n          this.platformEnemy.setPosition(this.pos);\n          this.bot.setPosition(this.platformEnemy.getPosition());\n        }\n      }\n    }\n  }\n\n  stop() {\n    this.play = false;\n    this.keyboard2.destroy();\n  }\n\n  resume() {\n    this.play = true;\n    this.keyboard2 = new KeyboardState();\n  }\n\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = SingleStrategy;\n\n\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/modules/game/strategy.js\n// module id = 64\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/modules/game/strategy.js?");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__baseView__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__templates_mp_pug__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__templates_mp_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__templates_mp_pug__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__models_gameModel__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__modules_game_play__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__models_userModel__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__modules_eventEmitter_eventEmitter__ = __webpack_require__(1);
+/**
+ * Created by tlakatlekutl on 27.03.17.
+ */
+
+// import Router from '../modules/router/router';
+
+
+
+
+
+
+
+const ee = new __WEBPACK_IMPORTED_MODULE_5__modules_eventEmitter_eventEmitter__["a" /* default */]();
+const us = new __WEBPACK_IMPORTED_MODULE_4__models_userModel__["a" /* default */]();
+
+class MpGameView extends __WEBPACK_IMPORTED_MODULE_0__baseView__["a" /* default */] {
+  constructor() {
+    super(['multiplayer-game-view'], __WEBPACK_IMPORTED_MODULE_1__templates_mp_pug___default.a);
+    this.gm = new __WEBPACK_IMPORTED_MODULE_2__models_gameModel__["a" /* default */]();
+
+    ee.on('com.aerohockey.mechanics.base.ServerSnap', (message) => {
+      this.time = (new Date()).getTime();
+      this.game.setStateGame(message.content, this.time);
+    });
+    ee.on('com.aerohockey.mechanics.requests.StartGame$Request', (message) => {
+      this.game.setOpponent(message.content);
+    });
+    ee.on('com.aerohockey.mechanics.base.ServerDetailSnap', (message) => {
+      this.game.setChangeGame(message.content);
+    });
+    ee.on('com.aerohockey.mechanics.base.GameOverSnap', (message) => {
+      this.state = JSON.parse(message.content);
+      console.log(this.state);
+      this.game.stop();
+      if (this.state.changeRating > 0) {
+        us.getData().changeRating = this.state.changeRating;
+        ee.emit(__WEBPACK_IMPORTED_MODULE_5__modules_eventEmitter_eventEmitter__["i" /* VICTORY */]);
+      } else {
+        us.getData().changeRating = this.state.changeRating;
+        ee.emit(__WEBPACK_IMPORTED_MODULE_5__modules_eventEmitter_eventEmitter__["j" /* DEFEAT */]);
+      }
+    });
+  }
+
+  render() {
+    super.render();
+    this.node.innerHTML = this.drawFunc();
+    this.parent.appendChild(this.node);
+    document.querySelector('.game-back-link').addEventListener('click', () => {
+      this.game.stop();
+      ee.emit(__WEBPACK_IMPORTED_MODULE_5__modules_eventEmitter_eventEmitter__["f" /* GAME_PAUSE */], this.game);
+    });
+    this.gm.findOpponent();
+  }
+  show() {
+    if (!this.alreadyInDOM) {
+      this.render();
+      this.alreadyInDOM = true;
+    }
+    if (this.game) {
+      this.game.resume();
+    } else {
+      this.game = new __WEBPACK_IMPORTED_MODULE_3__modules_game_play__["a" /* default */]('multi');
+      this.game.gameProcess();
+    }
+    this.node.hidden = false;
+  }
+  hide() {
+    console.log('multi game hide');
+    this.destruct();
+  }
+  destruct() {
+    const root = document.querySelector('main');
+    const gamePage = document.querySelector('.multiplayer-game-view');
+    root.removeChild(gamePage);
+    const game = document.querySelector('canvas');
+    const body = document.querySelector('body');
+    body.removeChild(game);
+    this.alreadyInDOM = false;
+    this.gm.exit();
+    delete this.game;
+  }
+
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = MpGameView;
+
+
+
 
 /***/ }),
 /* 65 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__eventEmitter_eventEmitter__ = __webpack_require__(5);\n/**\n * Created by sergey on 21.04.17.\n */\n\n\n\nconst ee = new __WEBPACK_IMPORTED_MODULE_0__eventEmitter_eventEmitter__[\"a\" /* default */]();\n\nclass Transport {\n  constructor() {\n    if (Transport.instance) {\n      return Transport.instance;\n    }\n    const address = 'ws://62.109.3.208:8082/game';\n\n    this.ws = new WebSocket(address);\n    this.ws.onopen = () => {\n      console.log(`Success connect to socket ${address}`);\n    };\n    this.ws.onclose = (event) => {\n      console.log(`Socket closed with code ${event.code}`);\n    };\n    this.ws.onmessage = (event) => { this.handleMessage(event); };\n\n    Transport.instance = this;\n  }\n\n  handleMessage(event) {\n    const messageText = event.data;\n    const message = JSON.parse(messageText);\n    // if (message.type === 'com.aerohockey.mechanics.base.ServerSnap') {\n    ee.emit(message.type, message);\n    // }\n    // else {\n    //   //console.log(message);\n    //   ee.emit('print', messageText);\n    // }\n  }\n\n  send(type, content) {\n\t\t//console.log(JSON.stringify({ type, content }));\n    this.ws.send(JSON.stringify({ type, content }));\n\t\t// this.ws.send(JSON.stringify({\n\t\t\t// type: 'com.aerohockey.mechanics.requests.JoinGame$Request',\n\t\t\t// content: '{}',\n\t\t// }));\n  }\n\n\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = Transport;\n\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/modules/gameTransport/transport.js\n// module id = 65\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/modules/gameTransport/transport.js?");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modalView__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_userModel__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_profile_pug__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_profile_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__templates_profile_pug__);
+/**
+ * Created by tlakatlekutl on 04.04.17.
+ */
+
+
+
+
+
+
+
+const userModel = new __WEBPACK_IMPORTED_MODULE_1__models_userModel__["a" /* default */]();
+const router = new __WEBPACK_IMPORTED_MODULE_2__modules_router_router__["a" /* default */]();
+
+class ProfileModalView extends __WEBPACK_IMPORTED_MODULE_0__modalView__["a" /* default */] {
+  constructor() {
+    super('Profile', __WEBPACK_IMPORTED_MODULE_3__templates_profile_pug___default.a);
+  }
+  show() {
+    if (userModel.isAuthorised()) {
+      if (!this.alreadyInDOM) {
+        this.alreadyInDOM = true;
+        this.render({ user: userModel.getData() });
+      }
+      this.bodyModal.innerHTML = this.drawFunc({ user: userModel.getData() });
+      this.modal.style.display = 'block';
+    } else {
+      router.go('/');
+    }
+  }
+
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = ProfileModalView;
+
+
+
 
 /***/ }),
 /* 66 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("/**\n * Created by tlakatlekutl on 05.03.17.\n */\n\n/* global fetch*/\n\nclass Net {\n\n  constructor(baseUrl = '', headers = {}) {\n    if (Net.instance) {\n      return Net.instance;\n    }\n\n    this._headers = headers;\n    this._baseUrl = baseUrl;\n\n    Net.instance = this;\n  }\n\n  _getDefaultParams() {\n    return {\n      method: '',\n      headers: this._headers,\n      mode: 'cors',\n      cache: 'default',\n      credentials: 'include',\n    };\n  }\n\n  set Headers(value) {\n    try {\n      this.checkObjectString(value);\n      this._headers = value;\n    } catch (e) {\n      console.log(e.message);\n    }\n  }\n\n  get BaseUrl() {\n    return this._baseUrl;\n  }\n\n  set BaseUrl(url) {\n    if (typeof url === 'string') {\n      this._baseUrl = url;\n    } else {\n      throw new TypeError('Url must be a string');\n    }\n  }\n\n  post(url, data) {\n    const postParams = this._getDefaultParams();\n    postParams.method = 'POST';\n\n    if (data) {\n      if (!this.checkObjectString(data)) { throw new TypeError('Error data object'); }\n      postParams.body = JSON.stringify(data);\n    } else { postParams.body = null; }\n\n    return fetch(this._baseUrl + url, postParams);\n  }\n\n  get(url, onSucces) {\n    const getParams = this._getDefaultParams();\n    getParams.method = 'GET';\n    getParams.body = null;\n\n    return fetch(this._baseUrl + url, getParams, onSucces);\n  }\n\n\n  checkObjectString(object) {\n    if (!(object && (`${object}` === '[object Object]'))) {\n      console.error('Object must be a plain object');\n      return false;\n    }\n    const valid = Object.keys(object).every(key => typeof object[key] === 'string');\n    if (!valid) {\n      console.error('Object must contain strings values');\n      return false;\n    }\n    return true;\n  }\n}\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = Net;\n\n\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./static/js/modules/network/net.js\n// module id = 66\n// module chunks = 0\n\n//# sourceURL=webpack:///./static/js/modules/network/net.js?");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modalView__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_userModel__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_router_router__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_sign_up_pug__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_sign_up_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__templates_sign_up_pug__);
+/**
+* Created by tlakatlekutl on 03.04.17.
+*/
+
+
+
+
+
+
+
+const userModel = new __WEBPACK_IMPORTED_MODULE_1__models_userModel__["a" /* default */]();
+const router = new __WEBPACK_IMPORTED_MODULE_2__modules_router_router__["a" /* default */]();
+
+class SignupModal extends __WEBPACK_IMPORTED_MODULE_0__modalView__["a" /* default */] {
+  constructor() {
+    super('Signup', __WEBPACK_IMPORTED_MODULE_3__templates_sign_up_pug___default.a);
+  }
+  render() {
+    super.render();
+    this.errorField = document.querySelector('.danger-signup');
+    document.querySelector('.signup-submit-button').addEventListener('click', (event) => {
+      event.preventDefault();
+      if (this.isValid()) {
+        this.errorField.style.display = 'none';
+        userModel.signup(this.getFormData())
+          .then(() => {
+            router.go('/');
+            this.destruct();
+          })
+          .catch((error) => { console.log(error); this.showError(error.error); });
+      }
+    });
+    this.onClose(() => router.go('/'));
+  }
+  show() {
+    if (!userModel.isAuthorised()) {
+      super.show();
+      this.hideError();
+    } else {
+      router.go('/');
+    }
+  }
+  showError(errorText) {
+    this.errorField.innerHTML = errorText;
+    this.errorField.style.display = 'block';
+  }
+  hideError() {
+    this.errorField.style.display = 'none';
+  }
+  isValid() {
+    this.nickname = document.querySelector('.signup-nickname-input').value;
+    this.password = document.querySelector('.signup-password-input').value;
+    this.repeatPassword = document.querySelector('.signup-password-repeat').value;
+    this.email = document.querySelector('.signup-email-input').value;
+
+    if (this.nickname === '') {
+      this.showError('Имя не может быть пустым');
+      return false;
+    }
+    if (this.password === '') {
+      this.showError('Пароль не может быть пустым');
+      return false;
+    }
+    if (this.repeatPassword === '') {
+      this.showError('Повторите пароль');
+      return false;
+    }
+    if (this.password !== this.repeatPassword) {
+      this.showError('Пароли не совпадают');
+      return false;
+    }
+    if (this.email === '') {
+      this.showError('Email не может быть пустым');
+      return false;
+    }
+    return true;
+  }
+  getFormData() {
+    return {
+      login: this.nickname,
+      password: this.password,
+      email: this.email,
+    };
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = SignupModal;
+
+
 
 /***/ }),
 /* 67 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_victory_css__ = __webpack_require__(51);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_victory_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__css_victory_css__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__modalView__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_victory_pug__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_victory_pug___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__templates_victory_pug__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__models_userModel__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__ = __webpack_require__(1);
+/**
+ * Created by sergey on 01.05.17.
+ */
+
+
+
+
+
+
+
+
+const us = new __WEBPACK_IMPORTED_MODULE_3__models_userModel__["a" /* default */]();
+const ee = new __WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__["a" /* default */]();
+
+class VictoryModal extends __WEBPACK_IMPORTED_MODULE_1__modalView__["a" /* default */] {
+  constructor() {
+    super('Завершение игры', __WEBPACK_IMPORTED_MODULE_2__templates_victory_pug___default.a);
+  }
+  render() {
+    super.render();
+    this.changeRating = document.querySelector('.victory-modal .change');
+    this.changeRating.innerHTML = us.getData().changeRating;
+    this.newRating = document.querySelector('.victory-modal .rating_score');
+    this.newRating.innerHTML = us.getData().rating + us.getData().changeRating;
+    this.onClose(() => {
+      this.destruct();
+      ee.emit(__WEBPACK_IMPORTED_MODULE_4__modules_eventEmitter_eventEmitter__["k" /* DESTROY_GAME */]);
+    });
+  }
+  // onClose(func) {
+  //   this.close.addEventListener('click', func);
+  //   this.close.addEventListener('click', () => {
+  //     this.modal.style.display = 'none';
+  //   });
+  //   return this;
+  // }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = VictoryModal;
+
+
+/***/ }),
+/* 68 */
 /***/ (function(module, exports) {
 
-eval("/* (ignored) */\n\n//////////////////\n// WEBPACK FOOTER\n// fs (ignored)\n// module id = 67\n// module chunks = 0\n\n//# sourceURL=webpack:///fs_(ignored)?");
+/* (ignored) */
 
 /***/ })
 /******/ ]);
