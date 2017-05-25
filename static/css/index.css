@@ -49,22 +49,6 @@
         cursor: pointer;
     }
 
-    /*.btn-left:hover {*/
-    /*transition: 3s;*/
-    /*flex-grow: 2;*/
-    /*}*/
-    /*.btn-left:hover ~ .btn-right{*/
-    /*!*transition: 3s;*!*/
-    /*!*width: 25px;*!*/
-    /*}*/
-    /*.btn-right:hover {*/
-    /*transition: 3s;*/
-    /*flex-grow: 2;*/
-    /*}*/
-    /*.btn-right:hover ~ .btn-left{*/
-    /*transition: 3s;*/
-    /*width: 25px;*/
-    /*}*/
     .leaderboard-button {
         background-image: url("../images/leaderboard.png");
         width: 100px;

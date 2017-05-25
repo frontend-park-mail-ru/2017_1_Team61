@@ -8,9 +8,9 @@ const ee = new EventEmitter();
 
 export default class Transport {
   constructor() {
-    if (Transport.instance) {
-      return Transport.instance;
-    }
+    // if (Transport.instance) {
+    //   return Transport.instance;
+    // }
     const address = 'ws://62.109.3.208:8082/game';
 
     this.ws = new WebSocket(address);
@@ -22,13 +22,14 @@ export default class Transport {
     };
     this.ws.onmessage = (event) => { this.handleMessage(event); };
 
-    Transport.instance = this;
+    // Transport.instance = this;
   }
 
   handleMessage(event) {
     const messageText = event.data;
     const message = JSON.parse(messageText);
     // if (message.type === 'com.aerohockey.mechanics.base.ServerSnap') {
+
     ee.emit(message.type, message);
     // }
     // else {
@@ -38,13 +39,16 @@ export default class Transport {
   }
 
   send(type, content) {
-		//console.log(JSON.stringify({ type, content }));
-    this.ws.send(JSON.stringify({ type, content }));
-		// this.ws.send(JSON.stringify({
-			// type: 'com.aerohockey.mechanics.requests.JoinGame$Request',
-			// content: '{}',
-		// }));
+    if (this.ws.readyState === this.ws.CONNECTING) {
+      setTimeout(() => {
+        this.ws.send(JSON.stringify({ type, content }));
+      }, 1000);
+      return;
+    };
+    this.ws.send(JSON.stringify({type, content}));
   }
-
+  closeSocket() {
+    this.ws.close();
+  }
 
 }

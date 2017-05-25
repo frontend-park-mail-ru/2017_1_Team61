@@ -30,6 +30,16 @@ export default class Router {
   checkPathExists(url) {
     return this.routes.findIndex(route => route.re.test(url));
   }
+  updateRoute(url, view) {
+    const i = this.routes.findIndex(route => route.re.test(url))
+    console.log(i);
+    // debugger;
+    if (i !== -1) {
+      this.routes[i].view = view;
+    } else {
+      throw new Error(`Cant delete route ${name}`);
+    }
+  }
 
   navigate(url) {
     const i = this.checkPathExists(url);
@@ -47,6 +57,11 @@ export default class Router {
         this.currentView = this.routes[i].view;
       }
     } else {
+      // alert(url);
+      if (/mp$/.test(url)) {
+        this.go('/');
+        return;
+      }
       if (this.currentView) {
         this.currentView.hide();
       }
@@ -67,11 +82,24 @@ export default class Router {
     return this;
   }
 
+  deleteRoute(url) {
+    const i = this.routes.findIndex(route => route.re.test(url));
+    if (i !== -1) {
+      if (i !== -1) {
+        this.routes.splice(i, 1);
+      } else {
+        throw new Error(`Cant delete no route ${url}`);
+      }
+    }
+    return this;
+  }
+
+
   start() {
     return new Promise((resolve) => {
       userModel.getUserStatus()
         .then(() => {
-          setInterval(() => { this.checkUrlChanging(); }, 50);
+          // setInterval(() => { this.checkUrlChanging(); }, 50);
           resolve();
         });
     })
@@ -80,6 +108,7 @@ export default class Router {
   checkUrlChanging() {
     const url = window.location.href;
     if (url !== this.currentUrl) {
+      console.log('url changed!');
       this.navigate(url);
       this.currentUrl = url;
     }
