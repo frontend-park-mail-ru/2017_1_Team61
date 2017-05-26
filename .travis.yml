@@ -22,4 +22,6 @@ script:
     - docker push registry.heroku.com/fastball-dev/web
 
 deploy:
+  provider: heroku
+  app: fastball-dev
   skip_cleanup: true
