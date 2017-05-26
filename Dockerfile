@@ -12,6 +12,7 @@ COPY ./dist/bundle.js /dist/bundle.js
 
 COPY ./static/sw.js /dist/service_worker.js
 COPY ./static/fonts /dist/fonts
-COPY ./static/imgs /dist/imgs
+COPY ./static/images /dist/images
+COPY ./static/sounds /dist/sounds
 
 CMD /bin/bash -c "echo \"listen $PORT;\" > /etc/nginx/listen.conf && nginx -g 'daemon off;'"
