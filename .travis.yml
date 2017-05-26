@@ -1,6 +1,7 @@
 dist: trusty
 sudo: required
 language: node_js
+skip_cleanup: true
 node_js:
 - '7'
 
