@@ -24,4 +24,5 @@ script:
 deploy:
   provider: heroku
   app: fastball-dev
+  api_key: 8fba0d7a-56bd-4dc5-bd69-6c99293c8951
   skip_cleanup: true
