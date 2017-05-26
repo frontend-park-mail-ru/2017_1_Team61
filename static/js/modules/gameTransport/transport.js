@@ -3,12 +3,14 @@
  */
 
 import EventEmitter from '../eventEmitter/eventEmitter';
+import {WS_URL} from '../../config';
+
 
 const ee = new EventEmitter();
 
 export default class Transport {
   constructor() {
-    const address = 'ws://62.109.3.208:8082/game';
+    const address = WS_URL;
 
     this.ws = new WebSocket(address);
     this.ws.onopen = () => {

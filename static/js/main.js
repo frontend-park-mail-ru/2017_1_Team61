@@ -5,8 +5,6 @@
 import '../css/index.css';
 
 import './eventsHandlers';
-
-
 import UserModel from './models/userModel';
 import Router from './modules/router/router';
 

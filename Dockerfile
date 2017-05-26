@@ -7,7 +7,7 @@ COPY ./nginx.conf /etc/nginx/conf.d/
 COPY ./listen.conf /etc/nginx/
 
 RUN mkdir /dist
-COPY ./static/index.html /dist/index.html
+COPY ./public/index.html /dist/index.html
 COPY ./dist/bundle.js /dist/bundle.js
 
 COPY ./static/sw.js /dist/sw.js

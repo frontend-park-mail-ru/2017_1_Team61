@@ -15,7 +15,6 @@ const cacheUrls = [
   'static/js/modules/threeJS/KeyboardState.js',
   'static/js/modules/threeJS/OrbitControls.js',
   'dist/bundle.js'
-
 ];
 
 this.addEventListener('install', (event) => {
