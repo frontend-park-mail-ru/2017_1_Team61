@@ -2,6 +2,7 @@
  * Created by sergey on 21.04.17.
  */
 
+import './KeyboardState';
 import SingleStrategy from './strategy';
 import MultiStrategy from './multi';
 

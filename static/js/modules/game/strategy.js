@@ -8,6 +8,7 @@ import { Barrier } from './barrier';
 import { Ground } from './ground';
 import { Bot } from './bot';
 import Player from './player';
+import * as THREE from 'three';
 
 export default class SingleStrategy {
 

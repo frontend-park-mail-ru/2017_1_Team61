@@ -1,7 +1,7 @@
 /**
  * Created by sergey on 20.04.17.
  */
-
+import * as THREE from 'three';
 export class Bot {
     constructor(pos) {
         this.active = false;

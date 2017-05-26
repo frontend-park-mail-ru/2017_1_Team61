@@ -1,7 +1,7 @@
 /**
  * Created by sergey on 15.04.17.
  */
-
+import * as THREE from 'three';
 import {GameObject} from './object';
 
 export class Barrier extends GameObject {

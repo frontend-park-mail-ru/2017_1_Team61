@@ -1,6 +1,8 @@
 /**
  * Created by sergey on 16.05.17.
  */
+
+import * as THREE from 'three';
 import {GameObject} from './object';
 
 export class Bonus extends GameObject {

@@ -1,7 +1,7 @@
 /**
  * Created by sergey on 21.04.17.
  */
-
+import * as THREE from 'three';
 import { Platform } from './platform';
 import { Ball } from './ball';
 import { Barrier } from './barrier';
