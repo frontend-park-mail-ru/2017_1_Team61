@@ -7,7 +7,7 @@ import Net from '../network/net';
 export default class API {
 
   constructor(
-    baseUrl = 'http://62.109.3.208:8082/api',
+    baseUrl = 'https://fastball-backend.herokuapp.com:8082/api', /// 'http://62.109.3.208:8082/api'
     headers = { 'content-type': 'application/json; charset=utf-8' }) {
     if (API.instance) {
       return API.instance;
