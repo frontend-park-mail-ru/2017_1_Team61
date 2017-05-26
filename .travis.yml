@@ -15,8 +15,6 @@ branches:
   - master
   - ekult
 
-install: true
-
 script:
     - docker login --username=_ --password=$(echo $API_KEY) registry.heroku.com
     - docker build -t registry.heroku.com/fastball-dev/web .
