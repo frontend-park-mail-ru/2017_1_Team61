@@ -8,7 +8,7 @@ COPY ./listen.conf /etc/nginx/
 
 RUN mkdir /dist
 COPY ./static/index.html /dist/index.html
-COPY ./dist/buildle.js /dist/buildle.js
+COPY ./dist/bundle.js /dist/bundle.js
 
 COPY ./static/sw.js /dist/service_worker.js
 COPY ./static/fonts /dist/fonts
