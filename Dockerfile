@@ -10,7 +10,7 @@ RUN mkdir /dist
 COPY ./static/index.html /dist/index.html
 COPY ./dist/bundle.js /dist/bundle.js
 
-COPY ./static/sw.js /dist/service_worker.js
+COPY ./static/sw.js /dist/sw.js
 COPY ./static/fonts /dist/fonts
 COPY ./static/images /dist/images
 COPY ./static/sounds /dist/sounds
