@@ -8,7 +8,7 @@ const ee = new EventEmitter();
 
 export default class Transport {
   constructor() {
-    const address = 'wss://fastball-backend.herokuapp.com:8082/game';
+    const address = 'wss://fastball-backend.herokuapp.com/game';
 
     this.ws = new WebSocket(address);
     this.ws.onopen = () => {
