@@ -43,15 +43,15 @@ router.addRoute(/\/$/, mainView)
 // global user profile
 const userModel = new UserModel();
 
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js')
-    .then( (registration) => {
-      console.log('ServiceWorker registration', registration);
-    })
-    .catch((err) => {
-      console.log('Registration failed with ', err);
-    });
-}
+// if ('serviceWorker' in navigator) {
+//   navigator.serviceWorker.register('sw.js')
+//     .then( (registration) => {
+//       console.log('ServiceWorker registration', registration);
+//     })
+//     .catch((err) => {
+//       console.log('Registration failed with ', err);
+//     });
+// }
 
 
 leaderBoardModal.render();
