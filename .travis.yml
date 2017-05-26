@@ -1,7 +1,6 @@
 dist: trusty
 sudo: required
 language: node_js
-skip_cleanup: true
 node_js:
 - '7'
 
@@ -22,3 +21,5 @@ script:
     - docker tag fastball-dev registry.heroku.com/fastball-dev/web
     - docker push registry.heroku.com/fastball-dev/web
 
+deploy:
+  skip_cleanup: true
