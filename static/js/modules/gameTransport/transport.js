@@ -10,6 +10,10 @@ const ee = new EventEmitter();
 
 export default class Transport {
   constructor() {
+
+    // if (Transport.instance) {
+    //   return this;
+    // }
     const address = WS_URL;
 
     this.ws = new WebSocket(address);
@@ -21,6 +25,7 @@ export default class Transport {
     };
     this.ws.onmessage = (event) => { this.handleMessage(event); };
 
+    // Transport.instance = this;
   }
 
   handleMessage(event) {

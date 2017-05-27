@@ -8,11 +8,11 @@ import Transport from '../modules/gameTransport/transport';
 
 export default class GameModel {
   constructor() {
-    // if (GameModel.instance) {
-    //   return GameModel.instance;
-    // }
+    if (GameModel.instance) {
+      return GameModel.instance;
+    }
     this.transport = new Transport();
-    // GameModel.instance = this;
+    GameModel.instance = this;
   }
   findOpponent() {
     if (!this.transport) {
@@ -27,5 +27,6 @@ export default class GameModel {
   exit(){
     this.transport.closeSocket();
     delete this.transport;
+
   }
 }

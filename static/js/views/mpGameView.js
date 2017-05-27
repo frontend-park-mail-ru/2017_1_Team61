@@ -9,6 +9,7 @@ import GameModel from '../models/gameModel';
 import Game from '../modules/game/play';
 import UserModel from '../models/userModel';
 import EvenEmitter, { GAME_PAUSE, VICTORY, DEFEAT } from '../modules/eventEmitter/eventEmitter';
+import Transport from '../modules/gameTransport/transport';
 
 const ee = new EvenEmitter();
 const us = new UserModel();
