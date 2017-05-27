@@ -51,10 +51,11 @@ export default class MultiStrategy {
     this.spotLight.position.set(0, 340, 340);
     this.scene.add(this.spotLight);
 
-    this.x = window.innerWidth * 0.8;
-    this.y = this.x * 0.56;
+    this.x = window.innerWidth * 0.95;
+    this.y = window.innerHeight * 0.8;
 
-    this.renderer = new THREE.WebGLRenderer();
+    this.renderer = new THREE.WebGLRenderer( { alpha: true } );
+    this.renderer.setClearColor( 0x000000, 0 ); // the default
     this.renderer.setSize(this.x, this.y);
     document.body.appendChild(this.renderer.domElement);
 
@@ -111,6 +112,12 @@ export default class MultiStrategy {
   }
 
   render() {
+
+    this.x = window.innerWidth * 0.95;
+    this.y = window.innerHeight * 0.8;
+
+    this.renderer.setSize(this.x, this.y);
+
     this.keyboard2.update();
 
     this.pres = 0;

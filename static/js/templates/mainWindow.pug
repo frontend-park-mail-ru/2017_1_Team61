@@ -4,10 +4,12 @@
 .main-page
     .user-state
         if user.authorised
-            a.dropdown-link #{user.nickname} \/
             .dropdown-content
                 a.profile-link Profile
                 a.logout-link Logout
+            a.dropdown-link
+                .username #{user.nickname}
+                button.dropdown-list
         else
             a.login-link Login
             a.signup-link Sign up
@@ -19,4 +21,5 @@
         .main-page-leaderboard
             button.leaderboard-button Leaderboard
 footer.main-page-footer
-    a.footer-help-link help
+    a.footer-help-link
+        button.footer-button
