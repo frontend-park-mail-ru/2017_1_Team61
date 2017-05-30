@@ -193,17 +193,17 @@ export default class MultiStrategy {
       this.del = 20;
     }
     if (button === 'left') {
+      let platformSpeed = 0.025 * this.coordsTransform;
+      this.platformMy.move(platformSpeed, this.del);
       this.gm.sendButton('left', this.del);
     } else if (button === 'right') {
+      let platformSpeed = -0.025 * this.coordsTransform;
+      this.platformMy.move(platformSpeed, this.del);
       this.gm.sendButton('right', this.del);
     }
   }
 
   setStateGame(state, time) {
-    //console.log(state);
-    // if (state.balls.length > 1) {
-    //   console.log(state.balls);
-    // }
     this.state = state;
     if (this.time_st === 0) {
       this.timen = time;
@@ -212,10 +212,10 @@ export default class MultiStrategy {
       this.timepr = this.timen;
       this.timen = time;
     }
+
     //console.log(this.timen - this.timepr);
 
     if (us.getData().id === this.state.players[0].userId) {
-      // this.dist = this.platformMy.getPosition().x - this.state.players[0].platform.x * this.coordsTransform;
       this.pos = {
         x: this.state.players[0].coords.x * this.coordsTransform,
         y: this.platformMy.getPosition().y,
