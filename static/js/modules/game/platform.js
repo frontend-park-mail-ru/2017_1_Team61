@@ -12,6 +12,7 @@ export class Platform extends GameObject {
     this.depth = size.depth;
 
     this.side = side;
+    this.modelPos = pos;
 
     this.Geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
     if (this.side === 0) {
@@ -20,12 +21,16 @@ export class Platform extends GameObject {
       this.Material = new THREE.MeshLambertMaterial({ color: 0xC70A00 });
     }
     this.model = new THREE.Mesh(this.Geometry, this.Material);
-    this.model.position.set(this.X, this.Y, this.Z);
+    this.model.position.set(this.modelPos.x, this.modelPos.y, this.modelPos.z);
+  }
+
+  getModelPosition() {
+    return { x: this.modelPos.x, y: this.modelPos.y, z: this.modelPos.z };
   }
 
   setPosition(pos) {
     super.setPosition(pos);
-    this.model.position.set(this.X, this.Y, this.Z);
+    // this.model.position.set(this.X, this.Y, this.Z);
   }
 
   getSize() {
@@ -42,7 +47,7 @@ export class Platform extends GameObject {
       this.Material = new THREE.MeshLambertMaterial({ color: 0xC70A00 });
     }
     this.model = new THREE.Mesh(this.Geometry, this.Material);
-    this.model.position.set(this.X, this.Y, this.Z);
+    this.model.position.set(this.modelPos.x, this.modelPos.y, this.modelPos.z);
   }
 
   getSide() {
@@ -53,13 +58,8 @@ export class Platform extends GameObject {
     return this.model;
   }
 
-  move(speed, frameTime) {
-    this.X += speed * frameTime;
-    this.model.position.set(this.X, this.Y, this.Z);
-    // if (dir === 'left') {
-    //   this.X -= 0.05 * frameTime;
-    // } else {
-    //   this.X += 0.05 * frameTime;
-    // }
+  move(speed) {
+    this.modelPos.x += speed;
+    this.model.position.set(this.modelPos.x, this.modelPos.y, this.modelPos.z);
   }
 }

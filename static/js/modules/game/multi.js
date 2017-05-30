@@ -85,6 +85,11 @@ export default class MultiStrategy {
     this.platformMy = new Platform(0, this.pos, this.size);
     this.scene.add(this.platformMy.getModel());
 
+    // this.pos = { x: 0, y: 10, z: 112.5 };
+    // this.size = { width: 60, height: 5, depth: 15 };
+    // this.platformMyFant = new Platform(0, this.pos, this.size);
+    // this.scene.add(this.platformMyFant.getModel());
+
     this.pos = { x: 0, y: 10, z: -112.5 };
     this.size = { width: 60, height: 5, depth: 15 };
     this.platformEnemy = new Platform(1, this.pos, this.size);
@@ -155,6 +160,24 @@ export default class MultiStrategy {
       }
     }
 
+    if (this.platformMy.getPosition().x > this.platformMy.getModelPosition().x) {
+      if (this.platformMy.getPosition().x - this.platformMy.getModelPosition().x < 0.5) {
+        let platformSpeed = this.platformMy.getPosition().x - this.platformMy.getModelPosition().x;
+        this.platformMy.move(platformSpeed);
+      } else {
+        let platformSpeed = 1;
+        this.platformMy.move(platformSpeed);
+      }
+    } else if (this.platformMy.getPosition().x < this.platformMy.getModelPosition().x) {
+      if (this.platformMy.getModelPosition().x - this.platformMy.getPosition().x < 0.5) {
+        let platformSpeed = this.platformMy.getModelPosition().x - this.platformMy.getPosition().x ;
+        this.platformMy.move(platformSpeed);
+      } else {
+        let platformSpeed = -1;
+        this.platformMy.move(platformSpeed);
+      }
+    }
+
     this.renderer.render(this.scene, this.camera);
   }
 
@@ -189,16 +212,13 @@ export default class MultiStrategy {
       this.del = this.time - this.timeLast;
     }
     this.timeLast = (new Date).getTime();
-    if (this.del > 100) {
-      this.del = 20;
-    }
     if (button === 'left') {
-      let platformSpeed = 0.025 * this.coordsTransform;
-      this.platformMy.move(platformSpeed, this.del);
+      let platformSpeed = 0.05 * this.coordsTransform * this.del;
+      this.platformMy.move(platformSpeed);
       this.gm.sendButton('left', this.del);
     } else if (button === 'right') {
-      let platformSpeed = -0.025 * this.coordsTransform;
-      this.platformMy.move(platformSpeed, this.del);
+      let platformSpeed = -0.05 * this.coordsTransform * this.del;
+      this.platformMy.move(platformSpeed);
       this.gm.sendButton('right', this.del);
     }
   }
@@ -250,10 +270,6 @@ export default class MultiStrategy {
       };
       this.balls[i].setPosition(this.pos);
     }
-    //console.log(this.state.balls[0].x * this.coordsTransform);
-    //console.log(this.balls[0].getPosition().x);
-
-    //console.log(this.balls);
   }
 
   setChangeGame(state) {
