@@ -459,12 +459,12 @@ export default class MultiStrategy {
       for (let j = 0; j < this.state.bonuses.length; j += 1) {
         if (this.bonuses[i].getType() === this.state.bonuses[j].type) {
           check = 1;
+          bonusesLoc.push(this.bonuses[i]);
         }
       }
       if (check === 0) {
         this.scene.remove(this.bonuses[i].getPivot());
       }
-      bonusesLoc.push(this.bonuses[i]);
     }
 
     this.bonuses = [];
