@@ -21,7 +21,7 @@ export default class MultiStrategy {
 
     this.gm = new GameModel();
 
-    this.play = true;
+    this.play = false;
     this.time = (new Date).getTime();
 
     this.timepr = 0;
@@ -45,7 +45,6 @@ export default class MultiStrategy {
 
     this.scene = new THREE.Scene();
     this.clock = new THREE.Clock();
-    this.keyboard2 = new KeyboardState();
     this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     this.spotLight = new THREE.SpotLight(0xffffff);
     this.spotLight.position.set(0, 340, 340);
@@ -54,8 +53,8 @@ export default class MultiStrategy {
     this.x = window.innerWidth * 0.95;
     this.y = window.innerHeight * 0.8;
 
-    this.renderer = new THREE.WebGLRenderer( { alpha: true } );
-    this.renderer.setClearColor( 0x000000, 0 ); // the default
+    this.renderer = new THREE.WebGLRenderer({ alpha: true });
+    this.renderer.setClearColor(0x000000, 0);
     this.renderer.setSize(this.x, this.y);
     document.body.appendChild(this.renderer.domElement);
 
@@ -69,14 +68,14 @@ export default class MultiStrategy {
     this.pos = { x: -85, y: 10, z: 0 };
     this.size = { width: 10, height: 10, depth: 240 };
     this.angle = Math.PI / 2;
-    this.borderLeft = new Barrier(this.pos, this.size, this.angle);
+    this.borderLeft = new Barrier(this.pos, this.size, this.angle, 'BORDER');
     this.barriers.push(this.borderLeft);
     this.scene.add(this.borderLeft.getModel());
 
     this.pos = { x: 85, y: 10, z: 0 };
     this.size = { width: 10, height: 10, depth: 240 };
     this.angle = Math.PI / 2;
-    this.borderRight = new Barrier(this.pos, this.size, this.angle);
+    this.borderRight = new Barrier(this.pos, this.size, this.angle, 'BORDER');
     this.barriers.push(this.borderRight);
     this.scene.add(this.borderRight.getModel());
 
@@ -94,6 +93,122 @@ export default class MultiStrategy {
     this.size = { width: 60, height: 5, depth: 15 };
     this.platformEnemy = new Platform(1, this.pos, this.size);
     this.scene.add(this.platformEnemy.getModel());
+
+    this.pos = { x: 0, y: 10, z: 120 };
+    this.size = { width: 160, height: 10, depth: 5 };
+    this.angle = 0;
+    this.shieldMy = new Barrier(this.pos, this.size, this.angle, 'SHIELD');
+    this.scene.add(this.shieldMy.getModel());
+
+    this.pos = { x: 0, y: 10, z: -120 };
+    this.size = { width: 160, height: 10, depth: 5 };
+    this.angle = 0;
+    this.shieldEnemy = new Barrier(this.pos, this.size, this.angle, 'SHIELD');
+    this.scene.add(this.shieldEnemy.getModel());
+
+    // this.geometry = new THREE.SphereGeometry(5, 32, 32, 0, Math.PI);
+    // this.material = new THREE.MeshLambertMaterial({ color: 0x1D870D });
+    // this.sphere = new THREE.Mesh(this.geometry, this.material);
+    // this.sphere.position.set(0, 60, 112.5);
+    // this.scene.add(this.sphere);
+    // this.x = 0;
+    // this.y = 40;
+    // this.heartShape = new THREE.Shape();
+    //
+    // this.heartShape.moveTo(this.x + 5, this.y + 5);
+    // // this.heartShape.moveTo(this.x + 10, this.y + 5);
+    // // this.heartShape.moveTo(this.x + 10, this.y + 10);
+    // // this.heartShape.moveTo(this.x + 5, this.y + 10);
+    //
+    //
+    // this.heartShape.bezierCurveTo(this.x + 5, this.y + 5, this.x + 4, this.y, this.x, this.y);
+    // this.heartShape.bezierCurveTo(this.x - 6, this.y, this.x - 6, this.y + 7,this.x - 6, this.y + 7);
+    // this.heartShape.bezierCurveTo(this.x - 6, this.y + 11, this.x - 3, this.y + 15.4, this.x + 5, this.y + 19);
+    // this.heartShape.bezierCurveTo(this.x + 12, this.y + 15.4, this.x + 16, this.y + 11, this.x + 16, this.y + 7);
+    // this.heartShape.bezierCurveTo(this.x + 16, this.y + 7, this.x + 16, this.y, this.x + 10, this.y);
+    // this.heartShape.bezierCurveTo(this.x + 7, this.y, this.x + 5, this.y + 5, this.x + 5, this.y + 5);
+    //
+    // this.geometry = new THREE.ShapeGeometry(this.heartShape);
+    // this.material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    // this.mesh = new THREE.Mesh(this.geometry, this.material);
+    // this.scene.add(this.mesh);
+
+    // const rightArrow = [];
+    // rightArrow.push(new THREE.Vector2(0, 30));
+    // rightArrow.push(new THREE.Vector2(0, 35));
+    // rightArrow.push(new THREE.Vector2(7.5, 35));
+    // rightArrow.push(new THREE.Vector2(7.5, 37.5));
+    // rightArrow.push(new THREE.Vector2(10, 32.5));
+    // rightArrow.push(new THREE.Vector2(7.5, 27.5));
+    // rightArrow.push(new THREE.Vector2(7.5, 30));
+    //
+    // const rightArrowShape = new THREE.Shape(rightArrow);
+    // const extrusionSettings = {
+    //   amount: 5, curveSegments: 3,
+    //   bevelThickness: 1, bevelSize: 2, bevelEnabled: false,
+    //   material: 0, extrudeMaterial: 1
+    // };
+    //
+    // const rightArrowGeometry = new THREE.ExtrudeGeometry(rightArrowShape, extrusionSettings);
+    // const materialFrontR = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+    // const materialSideR = new THREE.MeshBasicMaterial({ color: 0xff8800 });
+    // const materialArrayR = [materialFrontR, materialSideR];
+    // const rightArrowMaterial = new THREE.MeshFaceMaterial(materialArrayR);
+    //
+    // this.rightAr = new THREE.Mesh(rightArrowGeometry, rightArrowMaterial);
+    // this.rightAr.position.set(0, 50, 0);
+    // this.scene.add(this.rightAr);
+    //
+    // const leftArrow = [];
+    // leftArrow.push(new THREE.Vector2(-2.5, 30));
+    // leftArrow.push(new THREE.Vector2(-2.5, 35));
+    // leftArrow.push(new THREE.Vector2(-10, 35));
+    // leftArrow.push(new THREE.Vector2(-10, 37.5));
+    // leftArrow.push(new THREE.Vector2(-12.5, 32.5));
+    // leftArrow.push(new THREE.Vector2(-10, 27.5));
+    // leftArrow.push(new THREE.Vector2(-10, 30));
+    //
+    // const leftArrowShape = new THREE.Shape(leftArrow);
+    //
+    // const leftArrowGeometry = new THREE.ExtrudeGeometry(leftArrowShape, extrusionSettings);
+    // const materialFrontL = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+    // const materialSideL = new THREE.MeshBasicMaterial({ color: 0xff8800 });
+    // const materialArrayL = [materialFrontL, materialSideL];
+    // const leftArrowMaterial = new THREE.MeshFaceMaterial(materialArrayL);
+    //
+    // this.leftAr = new THREE.Mesh(leftArrowGeometry, leftArrowMaterial);
+    // this.leftAr.position.set(0, 50, 0);
+    // this.leftAr.add();
+    // this.scene.add(this.leftAr);
+
+    // const x1 = 0;
+    // const y1 = 0;
+    //
+    // this.pivotPoint2 = new THREE.Object3D();
+    // this.pivotPoint2.position.set(20, 15, 20);
+    //
+    // const rightArrow = [];
+    // rightArrow.push(new THREE.Vector2(x1, y1));
+    // rightArrow.push(new THREE.Vector2(x1, y1 + 5));
+    // rightArrow.push(new THREE.Vector2(x1 + 7.5, y1 + 5));
+    // rightArrow.push(new THREE.Vector2(x1 + 7.5, y1 + 7.5));
+    // rightArrow.push(new THREE.Vector2(x1 + 10, y1 + 2.5));
+    // rightArrow.push(new THREE.Vector2(x1 + 7.5, y1 - 2.5));
+    // rightArrow.push(new THREE.Vector2(x1 + 7.5, y1));
+    //
+    // const rightArrowShape = new THREE.Shape(rightArrow);
+    // const extrusionSettings = {
+    //   amount: 5, curveSegments: 3,
+    //   bevelThickness: 1, bevelSize: 2, bevelEnabled: false,
+    //   material: 0, extrudeMaterial: 1
+    // };
+    //
+    // const rightArrowGeometry = new THREE.ExtrudeGeometry(rightArrowShape, extrusionSettings);
+    // this.Material = new THREE.MeshLambertMaterial({ color: 0x4FFF18 });
+    // this.rightAr = new THREE.Mesh(rightArrowGeometry, this.Material);
+    // this.pivotPoint2.add(this.rightAr);
+    // this.rightAr.position.set(0, 0, 0);
+    // this.scene.add(this.pivotPoint2);
 
     this.balls = [];
     this.countBalls = 0;
@@ -123,58 +238,49 @@ export default class MultiStrategy {
 
     this.renderer.setSize(this.x, this.y);
 
-    this.keyboard2.update();
+    if (this.play === true) {
+      this.keyboard2.update();
 
-    this.pres = 0;
+      this.pres = 0;
 
-    if (this.keyboard2.pressed('left')) {
-      if (this.coordsTransform === -1) {
-        this.control('left');
-      } else {
-        this.control('right');
-      }
-    }
-
-    if (this.keyboard2.pressed('right')) {
-      if (this.coordsTransform === -1) {
-        this.control('right');
-      } else {
-        this.control('left');
-      }
-    }
-
-    if (this.touchCheck === 1) {
-      const canvas = document.querySelector('canvas');
-      if (this.touch.changedTouches[0].clientX < canvas.getBoundingClientRect().left + canvas.getBoundingClientRect().width / 2) {
+      if (this.keyboard2.pressed('left')) {
         if (this.coordsTransform === -1) {
           this.control('left');
         } else {
           this.control('right');
         }
-      } else {
+      }
+
+      if (this.keyboard2.pressed('right')) {
         if (this.coordsTransform === -1) {
           this.control('right');
         } else {
           this.control('left');
         }
       }
-    }
 
-    if (this.platformMy.getPosition().x > this.platformMy.getModelPosition().x) {
-      if (this.platformMy.getPosition().x - this.platformMy.getModelPosition().x < 0.5) {
-        let platformSpeed = this.platformMy.getPosition().x - this.platformMy.getModelPosition().x;
-        this.platformMy.move(platformSpeed);
-      } else {
-        let platformSpeed = 1;
-        this.platformMy.move(platformSpeed);
+      if (this.touchCheck === 1) {
+        const canvas = document.querySelector('canvas');
+        if (this.touch.changedTouches[0].clientX < canvas.getBoundingClientRect().left + canvas.getBoundingClientRect().width / 2) {
+          if (this.coordsTransform === -1) {
+            this.control('left');
+          } else {
+            this.control('right');
+          }
+        } else {
+          if (this.coordsTransform === -1) {
+            this.control('right');
+          } else {
+            this.control('left');
+          }
+        }
       }
-    } else if (this.platformMy.getPosition().x < this.platformMy.getModelPosition().x) {
-      if (this.platformMy.getModelPosition().x - this.platformMy.getPosition().x < 0.5) {
-        let platformSpeed = this.platformMy.getModelPosition().x - this.platformMy.getPosition().x ;
-        this.platformMy.move(platformSpeed);
-      } else {
-        let platformSpeed = -1;
-        this.platformMy.move(platformSpeed);
+
+      this.platformMy.interpolation();
+      this.platformEnemy.interpolation();
+
+      for (let i = 0; i < this.bonuses.length; i += 1) {
+        this.bonuses[i].animation();
       }
     }
 
@@ -273,14 +379,13 @@ export default class MultiStrategy {
   }
 
   setChangeGame(state) {
-    //console.log(state.balls.length);
-    // if (state.balls.length > 1) {
-    //   console.log(state.balls);
-    // }
+    console.log(state);
     this.state = state;
     if (us.getData().id === this.state.players[0].userId) {
       this.player1.setScore(this.state.players[0].score);
       this.player2.setScore(this.state.players[1].score);
+      this.player1.setShield(this.state.players[0].shield);
+      this.player2.setShield(this.state.players[1].shield);
       if (this.state.players[0].width !== this.platformMy.getSize().width) {
         this.scene.remove(this.platformMy.getModel());
         this.size = { width: this.state.players[0].width, height: this.platformMy.getSize().height };
@@ -296,6 +401,8 @@ export default class MultiStrategy {
     } else {
       this.player1.setScore(this.state.players[1].score);
       this.player2.setScore(this.state.players[0].score);
+      this.player1.setShield(this.state.players[1].shield);
+      this.player2.setShield(this.state.players[0].shield);
       if (this.state.players[1].width !== this.platformMy.getSize().width) {
         this.scene.remove(this.platformMy.getModel());
         this.size = { width: this.state.players[1].width, height: this.platformMy.getSize().height };
@@ -345,20 +452,62 @@ export default class MultiStrategy {
       }
     }
 
+    let bonusesLoc = [];
+
     for (let i = 0; i < this.bonuses.length; i += 1) {
-      this.scene.remove(this.bonuses[i].getModel());
+      let check = 0;
+      for (let j = 0; j < this.state.bonuses.length; j += 1) {
+        if (this.bonuses[i].getType() === this.state.bonuses[j].type) {
+          check = 1;
+        }
+      }
+      if (check === 0) {
+        this.scene.remove(this.bonuses[i].getPivot());
+      }
+      bonusesLoc.push(this.bonuses[i]);
     }
+
     this.bonuses = [];
 
+    for (let i = 0; i < bonusesLoc.length; i += 1) {
+      this.bonuses.push(bonusesLoc[i]);
+    }
+
     for (let i = 0; i < this.state.bonuses.length; i += 1) {
-      this.pos = {
-        x: this.state.bonuses[i].coords.x * this.coordsTransform,
-        y: 15,
-        z: this.state.bonuses[i].coords.y * this.coordsTransform };
-      this.radius = 10;
-      this.bonus = new Bonus(this.state.bonuses[i].type, this.pos, this.radius);
-      this.scene.add(this.bonus.getModel());
-      this.bonuses[i] = this.bonus;
+      console.log(this.state.bonuses[i].type);
+      let check = 0;
+      for (let j = 0; j < this.bonuses.length; j += 1) {
+        if (this.bonuses[j].getType() === this.state.bonuses[i].type) {
+          check = 1;
+        }
+      }
+      if (check === 0) {
+        this.pos = {
+          x: this.state.bonuses[i].coords.x * this.coordsTransform,
+          y: 15,
+          z: this.state.bonuses[i].coords.y * this.coordsTransform,
+        };
+        this.radius = 10;
+        this.bonus = new Bonus(this.state.bonuses[i].type, this.pos, this.radius);
+        this.scene.add(this.bonus.getPivot());
+        // this.scene.add(this.bonus.getModel());
+        // for (let j = 0; j < this.bonus.getModel().length; j += 1) {
+        //   this.scene.add(this.bonus.getModel()[j]);
+        // }
+        this.bonuses.push(this.bonus);
+      }
+    }
+
+    if (this.player1.checkShield() === true) {
+      this.scene.add(this.shieldMy.getModel());
+    } else {
+      this.scene.remove(this.shieldMy.getModel());
+    }
+
+    if (this.player2.checkShield() === true) {
+      this.scene.add(this.shieldEnemy.getModel());
+    } else {
+      this.scene.remove(this.shieldEnemy.getModel());
     }
 
     this.score1 = document.querySelector('.player1_score');
@@ -369,6 +518,7 @@ export default class MultiStrategy {
 
   setOpponent(state) {
     console.log(state);
+    this.play = true;
     this.state = state;
     this.coordsTransform = this.state.coordsTransform;
     this.player2 = new Player(this.state.opponentLogin, 0, this.state.opponentRating);
@@ -378,6 +528,8 @@ export default class MultiStrategy {
     this.rat2.innerHTML = this.player2.getRating();
     this.score2 = document.querySelector('.player2_score');
     this.score2.innerHTML = this.player2.getScore();
+    this.keyboard2 = new KeyboardState();
+    this.animationScene();
   }
 
   stop() {

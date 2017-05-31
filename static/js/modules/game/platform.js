@@ -58,6 +58,22 @@ export class Platform extends GameObject {
     return this.model;
   }
 
+  interpolation() {
+    if (this.X > this.modelPos.x) {
+      if (this.X - this.modelPos.x < 1.5) {
+        this.move(this.X - this.modelPos.x);
+      } else {
+        this.move(1.5);
+      }
+    } else if (this.X < this.modelPos.x) {
+      if (this.modelPos.x - this.X < 1.5) {
+        this.move(this.X - this.modelPos.x);
+      } else {
+        this.move(-1.5);
+      }
+    }
+  }
+
   move(speed) {
     this.modelPos.x += speed;
     this.model.position.set(this.modelPos.x, this.modelPos.y, this.modelPos.z);
