@@ -534,7 +534,9 @@ export default class MultiStrategy {
 
   stop() {
     this.play = false;
-    this.keyboard2.destroy();
+    if (this.keyboard2) {
+      this.keyboard2.destroy();
+    }
   }
 
   resume() {
