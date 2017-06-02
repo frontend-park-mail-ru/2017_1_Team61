@@ -24,10 +24,10 @@ export default class SingleStrategy {
     this.playTime = 0;
     this.play = true;
 
-    if (us.getData.nickname) {
-      this.player1 = new Player(us.getData().nickname, 0, us.getData().rating);
-    } else {
+    if (us === undefined) {
       this.player1 = new Player('Гость', 0, 0);
+    } else {
+      this.player1 = new Player(us.getData().nickname, 0, us.getData().rating);
     }
     this.player2 = new Player('Умный бот', 0, 777);
 
@@ -165,6 +165,15 @@ export default class SingleStrategy {
       this.control('right');
     }
 
+    if (this.touchCheck === 1) {
+      const canvas = document.querySelector('canvas');
+      if (this.touch.changedTouches[0].clientX < canvas.getBoundingClientRect().left +
+        (canvas.getBoundingClientRect().width / 2)) {
+        this.control('left');
+      } else {
+        this.control('right');
+      }
+    }
     this.gameProcess();
 
     this.renderer.render(this.scene, this.camera);
