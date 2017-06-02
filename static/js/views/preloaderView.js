@@ -5,7 +5,7 @@ export default class PreloaderView {
   constructor() {
     this.node = document.querySelector('.preloader-page');
     this.onLoad = new Event('onUserStatusLoad');
-    this.node.addEventListener('onUserStatusLoad', this.hide);
+    this.node.addEventListener('onUserStatusLoad', document.querySelector('body').removeChild(this.node));
   }
   hide() {
     this.hidden = true;

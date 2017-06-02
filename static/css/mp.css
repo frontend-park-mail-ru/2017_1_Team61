@@ -1,0 +1,8 @@
+.loading-icon {
+    background: url("../images/spinner.png") 100% 100% no-repeat;
+    width: 50px;
+    height: 50px;
+    border-radius: 25px;
+    border-style: none;
+    background-size: cover;
+}

@@ -2,8 +2,13 @@
 @import "login.css";
 @import "leaderboard.css";
 @import "game.css";
+@import "mp.css";
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,900');
 
 @media all  {
+    html {
+        font-family: 'Roboto', sans-serif;
+    }
     .main-page {
         display: flex;
         flex-direction: column;
@@ -11,7 +16,8 @@
     }
 
     .name-game {
-        font-family: 'Archivo Black', sans-serif;
+        font-family: 'Roboto', sans-serif;
+        font-weight: 900;
         display: inline-block;
         align-self: center;
         font-size: 100px;
@@ -31,7 +37,7 @@
     }
 
     .button {
-        font-family: 'Patua One', cursive;
+        font-family: 'Roboto', sans-serif;
         -webkit-transition-duration: 0.4s;
         transition-duration: 0.4s;
         border: none;
@@ -105,6 +111,7 @@
     .user-state {
         /*background-color: #0D47A1;*/
         display: block;
+        font-family: 'Roboto', sans-serif;
         /*text-align: center;*/
         /*align-self: flex-end;*/
         /*position: relative;*/
@@ -143,8 +150,9 @@
     }
 
     .username {
-        font-family: 'Patua One', cursive;
-        background-color: #4CAF50;
+        /*font-family: 'Patua One', cursive;*/
+        /*font-family: 'Roboto', sans-serif;*/
+        background-color: lightgray;
         border-radius: 50px 50px 50px 50px;
         position:fixed;
         padding: 15px 70px 13px 25px;
@@ -158,7 +166,8 @@
     .dropdown-list {
         position: absolute;
         right: 20px;
-        background: url("../images/arrow.png") 100% 100% no-repeat;
+        top: 3.5%;
+        background: url("../images/arrow2.png") 100% 100% no-repeat;
         background-size: cover;
         width: 50px;
         height: 50px;
@@ -190,10 +199,10 @@
     }
 
     .footer-button {
-        background: url("../images/faq.png") 100% 100% no-repeat;
+        background: url("../images/help.png") 100% 100% no-repeat;
         background-size: cover;
-        width: 100px;
-        height: 100px;
+        width: 10vh;
+        height: 10vh;
         border-radius: 50px;
         border-style: none;
     }
