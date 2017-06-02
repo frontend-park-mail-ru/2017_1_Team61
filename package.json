@@ -45,6 +45,7 @@
     "randomstrings": "",
     "style-loader": "^0.16.1",
     "three": "^0.85.2",
+    "uglify-js": "^2.8.0",
     "uglifyjs-webpack-plugin": "^0.4.3",
     "url-loader": "^0.5.8",
     "webpack": "^2.6.1"
