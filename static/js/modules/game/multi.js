@@ -48,7 +48,12 @@ export default class MultiStrategy {
     this.clock = new THREE.Clock();
     this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     this.spotLight = new THREE.SpotLight(0xffffff);
-    this.spotLight.position.set(0, 340, 340);
+    this.spotLight.position.set(0, 350, 340);
+    this.spotLight.shadowMapWidth = 1920;
+    this.spotLight.shadowMapHeight = 1080;
+    this.spotLight.shadow.camera.near = 0.5;       // default
+    this.spotLight.shadow.camera.far = 1000;      // default
+    this.spotLight.castShadow = true;
     this.scene.add(this.spotLight);
 
     this.x = window.innerWidth * 0.95;
@@ -57,6 +62,8 @@ export default class MultiStrategy {
     this.renderer = new THREE.WebGLRenderer({ alpha: true });
     this.renderer.setClearColor(0x000000, 0);
     this.renderer.setSize(this.x, this.y);
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
     document.body.appendChild(this.renderer.domElement);
 
     this.pos = { x: 0, y: 0, z: 0 };

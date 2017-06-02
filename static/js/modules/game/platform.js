@@ -7,11 +7,13 @@ import { GameObject } from './object';
 export class Platform extends GameObject {
   constructor(side, pos, size) {
     super(pos);
+    this.baseWidth = size.width;
     this.width = size.width;
     this.height = size.height;
     this.depth = size.depth;
 
     this.side = side;
+    this.time = 0;
     this.modelPos = pos;
 
     this.Geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
@@ -35,6 +37,10 @@ export class Platform extends GameObject {
 
   getSize() {
     return { width: this.width, height: this.height, depth: this.depth };
+  }
+
+  getBaseWidth() {
+    return this.baseWidth;
   }
 
   setSize(size) {
@@ -77,5 +83,21 @@ export class Platform extends GameObject {
   move(speed) {
     this.modelPos.x += speed;
     this.model.position.set(this.modelPos.x, this.modelPos.y, this.modelPos.z);
+  }
+
+  moveSingle(pos) {
+    super.setPosition(pos);
+    this.model.position.set(this.X, this.Y, this.Z);
+  }
+
+  setEffect() {
+    this.time = (new Date()).getTime();
+  }
+
+  checkEffect() {
+    if ((new Date()).getTime() - this.time < 10000) {
+      return true;
+    }
+    return false;
   }
 }
