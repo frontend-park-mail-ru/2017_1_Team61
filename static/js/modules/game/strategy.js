@@ -2,13 +2,14 @@
  * Created by sergey on 15.04.17.
  */
 
+import * as THREE from 'three';
 import { Platform } from './platform';
 import { Ball } from './ball';
 import { Barrier } from './barrier';
 import { Ground } from './ground';
 import { Bot } from './bot';
 import Player from './player';
-import * as THREE from 'three';
+import './KeyboardState';
 
 export default class SingleStrategy {
 

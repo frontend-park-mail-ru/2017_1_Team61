@@ -11,6 +11,7 @@ import GameModel from '../../models/gameModel';
 import EvenEmitter from '../eventEmitter/eventEmitter';
 import UserModel from '../../models/userModel';
 import Player from './player';
+import './KeyboardState';
 
 const ee = new EvenEmitter();
 const us = new UserModel();
