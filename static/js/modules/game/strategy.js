@@ -24,7 +24,7 @@ export default class SingleStrategy {
     this.playTime = 0;
     this.play = true;
 
-    if (us === undefined) {
+    if (us.getData().nickname === undefined) {
       this.player1 = new Player('Гость', 0, 0);
     } else {
       this.player1 = new Player(us.getData().nickname, 0, us.getData().rating);
