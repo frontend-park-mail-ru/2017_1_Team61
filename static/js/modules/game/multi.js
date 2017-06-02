@@ -379,7 +379,7 @@ export default class MultiStrategy {
   }
 
   setChangeGame(state) {
-    console.log(state);
+    // console.log(state);
     this.state = state;
     if (us.getData().id === this.state.players[0].userId) {
       this.player1.setScore(this.state.players[0].score);
