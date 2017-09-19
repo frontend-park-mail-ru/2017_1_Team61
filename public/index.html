@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FastBall</title>
+    <link href="css/preloader.css" rel="stylesheet">
+</head>
+<body>
+<style>
+    @import url(https://fonts.googleapis.com/css?family=Roboto);
+    .preloader-page {
+        top: 15%;
+        left: 45%;
+        position: absolute;
+    }
+    .line {
+        width: 200px;
+        height: 1px;
+        margin: 0 0 0 -100px;
+        background-color: black;
+        position: relative;
+        top: 200px;
+        left: 50%;
+    }
+    .line:after {
+        content: 'Loading...';
+        width: 100%;
+        color: black;
+        font-family: '  Roboto', cursive;
+        font-size: 32px;
+        text-align: center;
+        position: absolute;
+        /*top: 3px;*/
+        left: 0;
+    }
+
+    .ball {
+        width: 50px;
+        height: 50px;
+        margin: 0 0 0 -25px;
+        background-color: silver;
+        border-radius: 100%;
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        animation: ball 1s infinite;
+    }
+
+    @keyframes ball {
+        0% {
+            top: 6px;
+        }
+        5% {
+            top: 8px;
+        }
+        10% {
+            top: 12px;
+        }
+        15% {
+            top: 20px;
+        }
+        20% {
+            top: 38px;
+        }
+        25% {
+            top: 72px;
+        }
+        30% {
+            top: 100px;
+        }
+        35% {
+            top: 152px;
+        }
+        40% {
+            top: 154px;
+            height: 46px;
+            width: 54px;
+            margin-left: -27px;
+        }
+        50% {
+            top: 176px;
+            height: 24px;
+            width: 72px;
+            margin-left: -36px;
+        }
+        55% {
+            top: 162px;
+            height: 38px;
+            width: 58px;
+            margin-left: -29px;
+        }
+        60% {
+            top: 138px;
+            height: 48px;
+            width: 52px;
+            margin-left: -26px;
+        }
+        65% {
+            top: 110px;
+            height: 50px;
+            width: 50px;
+        }
+        70% {
+            top: 72px;
+        }
+        75% {
+            top: 38px;
+        }
+        80% {
+            top: 20px;
+        }
+        85% {
+            top: 12px;
+        }
+        90% {
+            top: 8px;
+        }
+        95% {
+            top: 5px;
+        }
+        100% {
+            top: 5px;
+        }
+    }
+
+</style>
+
+<div class="preloader-page">
+    <div class="ball"></div>
+    <div class="line">
+    </div>
+</div>
+
+
+<main>
+
+</main>
+
+<script src="bundle.js"></script>
+
+</body>
+</html>

@@ -17,7 +17,7 @@ export default class ModalView {
   }
   generateBase() {
     this.modal = document.createElement('div');
-    this.modal.className = 'modal';
+    this.modal.className = `modal ${this.headerText}`;
 
     const content = document.createElement('div');
     content.className = 'modal-content';
@@ -44,9 +44,9 @@ export default class ModalView {
   render(data) {
     this.alreadyInDOM = true;
     this.generateBase();
-    this.onClose(() => { router.go('/'); });
     this.bodyModal.innerHTML = this.drawFunc(data);
     this.parent.appendChild(this.modal);
+    this.onClose(() => router.go('/'));
     return this;
   }
   destruct() {

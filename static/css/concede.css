@@ -10,23 +10,23 @@
 }
 
 .choose {
+    display: flex;
     font-size: 24px;
     margin-bottom: 25px;
 }
 
 .choose__yes, .choose__no {
-    display: inline-block;
     font-size: 36px;
 }
 
 .choose__yes {
-    margin-left: 30%;
-    margin-right: 10%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .choose__no {
-    margin-left: 10%;
-    margin-right: 30%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .choose__yes:hover, .choose__no:hover {

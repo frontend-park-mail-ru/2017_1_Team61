@@ -2,19 +2,26 @@
 @import "login.css";
 @import "leaderboard.css";
 @import "game.css";
+@import "mp.css";
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,900');
 
 @media all  {
+    html {
+        font-family: 'Roboto', sans-serif;
+    }
     .main-page {
         display: flex;
         flex-direction: column;
-        height: 90vh;
+        height: 82vh;
     }
 
     .name-game {
+        font-family: 'Roboto', sans-serif;
+        font-weight: 900;
+        display: inline-block;
         align-self: center;
-        font-size: 120px;
-        margin-top: 5%;
-        margin-bottom: 4%;
+        font-size: 100px;
+        padding-top: 60px;
     }
 
     .main-page-center {
@@ -22,12 +29,15 @@
     }
 
     .start-game-buttons {
+        height: 150px;
         background-color: white;
         display: flex;
+        padding-top: 40px;
         /*align-self: center;*/
     }
 
     .button {
+        font-family: 'Roboto', sans-serif;
         -webkit-transition-duration: 0.4s;
         transition-duration: 0.4s;
         border: none;
@@ -45,31 +55,18 @@
     .button:hover {
         /*border: 6px solid darkcyan;*/
         width: 280px;
-        height: 90px;
+        height: 120px;
         cursor: pointer;
     }
 
-    /*.btn-left:hover {*/
-    /*transition: 3s;*/
-    /*flex-grow: 2;*/
-    /*}*/
-    /*.btn-left:hover ~ .btn-right{*/
-    /*!*transition: 3s;*!*/
-    /*!*width: 25px;*!*/
-    /*}*/
-    /*.btn-right:hover {*/
-    /*transition: 3s;*/
-    /*flex-grow: 2;*/
-    /*}*/
-    /*.btn-right:hover ~ .btn-left{*/
-    /*transition: 3s;*/
-    /*width: 25px;*/
-    /*}*/
     .leaderboard-button {
+        display: block;
+        margin-top: 20px;
+        margin-left: auto;
+        margin-right: auto;
         background-image: url("../images/leaderboard.png");
         width: 100px;
         height: 110px;
-        margin-top: 10%;
         color: black;
         border: none;
         font-size: 0.1px;
@@ -78,8 +75,8 @@
     }
 
     .leaderboard-button:hover {
+        box-shadow: 0 0 10px 8px rgb(255, 184, 24); /* Параметры тени */;
         background-color: darkcyan;
-        border: solid;
         cursor: pointer;
     }
 
@@ -102,38 +99,43 @@
 
     .main-page-leaderboard {
         text-align: center;
+        display: inherit;
     }
 
     .main-page-footer {
         text-align: right;
-        font-size: 32px;
-        margin-right: 2%;
+        /*font-size: 32px;*/
+        /*margin-right: 2%;*/
     }
 
     .user-state {
         /*background-color: #0D47A1;*/
-        height: 50px;
-        width: 200px;
-        text-align: center;
-        align-self: flex-end;
-        position: relative;
-        display: inline-block;
+        display: block;
+        font-family: 'Roboto', sans-serif;
+        /*text-align: center;*/
+        /*align-self: flex-end;*/
+        /*position: relative;*/
+        /*display: inline-block;*/
         font-size: 30px;
-        margin-right: 1%;
-        margin-top: 1%;
+        padding-top: 15px;
+        text-align: right;
     }
 
     .dropdown-link {
-
+        text-align: left;
+        /*background-color: #4CAF50;*/
+        /*border-radius: 50px 50px 50px 50px;*/
     }
 
     .dropdown-content {
+        position: fixed;
+        right: 30px;
+        top: 76px;
         display: none;
-        position: absolute;
         background-color: #f9f9f9;
-        min-width: 160px;
+        width: 160px;
         box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-        z-index: 1;
+        z-index: 6;
     }
 
     .dropdown-content a {
@@ -147,23 +149,66 @@
         background-color: #f1f1f1
     }
 
+    .username {
+        /*font-family: 'Patua One', cursive;*/
+        /*font-family: 'Roboto', sans-serif;*/
+        background-color: lightgray;
+        border-radius: 50px 50px 50px 50px;
+        position:fixed;
+        padding: 15px 70px 13px 25px;
+        top: 17px;
+        right: 10px;
+        text-align: left;
+        display: inline-block;
+        z-index: 1;
+    }
+
+    .dropdown-list {
+        position: absolute;
+        right: 20px;
+        top: 3.5%;
+        background: url("../images/arrow2.png") 100% 100% no-repeat;
+        background-size: cover;
+        width: 50px;
+        height: 50px;
+        border-radius: 25px;
+        border-style: none;
+        z-index: 4;
+    }
+
     .user-state:hover .dropdown-content {
         display: block;
     }
 
-    .login-link:hover, .signup-link:hover, .footer-help-link:hover {
+    .login-link:hover, .signup-link:hover, .footer-button:hover {
         color: mediumpurple;
         text-decoration: underline;
         cursor: pointer;
     }
 
     .login-link {
-        width: 10%;
+        padding-right: 25px;
     }
 
     .signup-link {
-        padding-left: 12%;
-        margin-right: 30%;
+        padding-right: 10px;
+    }
+
+    .footer-help-link {
+        padding-right: 20px;
+    }
+
+    .footer-button {
+        background: url("../images/help.png") 100% 100% no-repeat;
+        background-size: cover;
+        width: 10vh;
+        height: 10vh;
+        border-radius: 50px;
+        border-style: none;
+    }
+
+    .footer-button:hover {
+        box-shadow: 0 0 10px 8px rgb(255, 184, 24); /* Параметры тени */;
     }
 }
 
@@ -174,9 +219,15 @@
         height: 75vh;
     }
 
+    .start-game-buttons {
+        padding-top: 5px;
+        padding-bottom: 10px;
+        height: 100px;
+    }
+
     .name-game {
         align-self: center;
-        font-size: 100px;
+        font-size: 80px;
         margin-top: 2%;
         margin-bottom: 3%;
     }

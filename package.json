@@ -1,35 +1,53 @@
 {
-  "name": "sample",
+  "name": "fastball",
   "version": "1.0.0",
-  "description": "Sample",
+  "description": "Fastball game",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "build": "webpack"
+    "build:dev": "webpack",
+    "build:prod": "webpack"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/XfortunaX/sample.git"
+    "url": "git+https://github.com/frontend-park-mail-ru/2017_1_Team61.git"
   },
-  "keywords": [],
+  "keywords": [
+    "spa",
+    "game",
+    "fastball"
+  ],
   "author": "",
-  "homepage": "https://github.com/XfortunaX/sample.git#readme",
+  "homepage": "https://github.com/frontend-park-mail-ru/2017_1_Team61.git#readme",
   "dependencies": {
     "css-loader": "^0.28.0",
+    "html-loader": "^0.4.5",
+    "pug": "^2.0.0-beta.12",
+    "pug-loader": "^2.3.0",
+    "style-loader": "^0.16.1",
+    "three": "^0.85.2",
+    "url-loader": "^0.5.8",
+    "webpack": "^2.6.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.24.1",
+    "babel-loader": "^7.0.0",
+    "babel-preset-env": "^1.5.1",
+    "css-loader": "^0.28.0",
     "eslint": "^3.19.0",
+    "eslint-config-airbnb-base": "^11.1.1",
+    "eslint-plugin-import": "^2.2.0",
     "express": "^4.14.1",
     "html-loader": "^0.4.5",
-    "matter-js": "",
+    "postcss-loader": "^2.0.5",
     "pug": "^2.0.0-beta.12",
     "pug-loader": "^2.3.0",
     "randomstrings": "",
     "style-loader": "^0.16.1",
+    "three": "^0.85.2",
+    "uglify-js": "^2.8.0",
+    "uglifyjs-webpack-plugin": "^0.4.3",
     "url-loader": "^0.5.8",
-    "webpack": "^2.4.1"
-  },
-  "devDependencies": {
-    "eslint": "^3.17.1",
-    "eslint-config-airbnb-base": "^11.1.1",
-    "eslint-plugin-import": "^2.2.0"
+    "webpack": "^2.6.1"
   }
 }

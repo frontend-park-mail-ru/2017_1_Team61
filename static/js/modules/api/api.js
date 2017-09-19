@@ -3,11 +3,12 @@
 */
 
 import Net from '../network/net';
+import {API_URL} from '../../config';
 
 export default class API {
 
   constructor(
-    baseUrl = 'http://62.109.3.208:8082/api',
+    baseUrl = API_URL,
     headers = { 'content-type': 'application/json; charset=utf-8' }) {
     if (API.instance) {
       return API.instance;

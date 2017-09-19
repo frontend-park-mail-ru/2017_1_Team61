@@ -27,9 +27,10 @@ export default class SignupModal extends ModalView {
             router.go('/');
             this.destruct();
           })
-          .catch((error) => { this.showError(error.error); });
+          .catch((error) => { console.log(error); this.showError(error.error); });
       }
     });
+    this.onClose(() => router.go('/'));
   }
   show() {
     if (!userModel.isAuthorised()) {

@@ -15,7 +15,7 @@
  */
  
 // initialization
-KeyboardState = function()
+ KeyboardState = function()
 {	
 	// bind keyEvents
 	document.addEventListener("keydown", KeyboardState.onKeyDown, false);

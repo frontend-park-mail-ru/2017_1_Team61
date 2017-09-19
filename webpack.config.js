@@ -3,6 +3,7 @@
  */
 
 const path = require('path');
+const UglifyJS = require('uglifyjs-webpack-plugin');
 
 module.exports = {
   entry: './static/js/main.js',
@@ -10,21 +11,41 @@ module.exports = {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
   },
-  watch: true,
+  // watch: true,
   node: {
     fs: 'empty',
   },
   // devtool: 'source-map',
-  devtool: 'eval',
+
   module: {
     rules: [
+      // {
+      //   test: /\.js$/,
+      //   exclude: /(node_modules|bower_components)/,
+      //   use: {
+      //     loader: 'babel-loader',
+      //     options: {
+      //       presets: ['env'],
+      //     },
+      //   },
+      // },
       {
         test: /\.pug$/,
         loader: 'pug-loader',
       },
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader'],
+        use: [
+          {
+            loader: 'style-loader',
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              minimize: true,
+            },
+          },
+        ],
       },
       {
         test: /\.(png|jpg|gif|svg|eot|ttf|woff|woff2)$/,
@@ -32,4 +53,7 @@ module.exports = {
       },
     ],
   },
+  plugins: [
+    // new UglifyJS(),
+  ],
 };

@@ -11,4 +11,3 @@ export default class AboutModalView extends ModalView {
     super('About', template);
   }
 }
-

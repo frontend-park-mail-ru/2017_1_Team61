@@ -7,6 +7,7 @@ export default class Player {
     this.nickname = nickname;
     this.score = score;
     this.rating = rating;
+    this.isShield = true;
   }
 
   getNickname() {
@@ -24,4 +25,13 @@ export default class Player {
   getRating() {
     return this.rating;
   }
+
+  checkShield() {
+    return this.isShield;
+  }
+
+  setShield(shield) {
+    this.isShield = shield;
+  }
+
 }
