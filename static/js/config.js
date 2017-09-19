@@ -8,8 +8,8 @@
 // export const API_URL = 'http://185.158.154.191:8082/api';
 // export const WS_URL = 'ws://185.158.154.191:8082/ws';
 
-export const API_URL = 'http://62.109.3.208:8082/api';
-export const WS_URL = 'ws://62.109.3.208:8082/ws';
+export const API_URL = 'http://fastball-backend.herokuapp.com/api';
+export const WS_URL = 'ws://fastball-backend.herokuapp.com/ws';
 
 // export const WS_URL = 'wss://62.109.3.208:8082/game';
 
